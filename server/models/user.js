@@ -1,6 +1,6 @@
 import { Schema, model, models } from "mongoose";
 
-const UserSchema = newSchema({
+const UserSchema = new Schema({
   lastname: {
     type: String,
     required: [true, "Last Name is required"],
@@ -23,6 +23,21 @@ const UserSchema = newSchema({
   },
   status: {
     type: Boolean,
+  },
+  gradeLevel: {
+    type: Number,
+    required: function () {
+      return this.role === "student";
+    },
+  },
+  program: {
+    type: String,
+    required: function () {
+      return this.role === "student";
+    },
+  },
+  contactInfo: {
+    phone: String, // Add more contact fields (address, parent contact, etc.) as needed
   },
 });
 
