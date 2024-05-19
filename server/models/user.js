@@ -37,7 +37,7 @@ const UserSchema = new Schema({
     },
   },
   contactInfo: {
-    phone: String, // Add more contact fields (address, parent contact, etc.) as needed
+    type: String, // Add more contact fields (address, parent contact, etc.) as needed
   },
 });
 
