@@ -59,7 +59,7 @@ const LoginModal = ({ login, signup }) => {
           />
           <button
             type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold lg:mt-[100px]"
+            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold 2xl:mt-[100px]"
           >
             Login
           </button>
@@ -75,8 +75,8 @@ const LoginModal = ({ login, signup }) => {
       <div
         className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg: lg:translate-y-[-20px] ${
           signup
-            ? "translate-x-[-900px] ease-in duration-[0.2s]"
-            : "translate-x-[-1300px] lg:translate-x-[-1800px] ease-out duration-[0.2s]"
+            ? "lg:translate-x-[-600px] 2xl:translate-x-[-900px] ease-in duration-[0.2s]"
+            : "lg:translate-x-[-1300px] 2xl:translate-x-[-1800px] ease-out duration-[0.2s]"
         }`}
       >
         <Image src={ctuLogo} className="w-[80px] h-[80px]" />
@@ -107,7 +107,7 @@ const LoginModal = ({ login, signup }) => {
           />
           <button
             type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold lg:mt-10"
+            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold 2xl:mt-10"
           >
             Create Account
           </button>

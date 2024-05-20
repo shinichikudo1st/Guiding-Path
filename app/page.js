@@ -1,11 +1,10 @@
 "use client";
 
-import Background from "./components/ctuBackground";
-import Introduction from "./components/introduction";
-import LoginModal from "./components/loginModal";
-import Navbar from "./components/navbar";
-
 import { useState } from "react";
+import Background from "./components/universal/ctuBackground";
+import Navbar from "./components/universal/navbar";
+import LoginModal from "./components/universal/loginModal";
+import Introduction from "./components/universal/introduction";
 
 export default function Home() {
   const [loginFlag, setLoginFlag] = useState(true);
@@ -14,7 +13,6 @@ export default function Home() {
   const toggleLogin = () => {
     setLoginFlag(true);
     setSignupFlag(false);
-    
   };
   const toggleSignup = () => {
     setSignupFlag(true);
@@ -26,7 +24,7 @@ export default function Home() {
       <Navbar login={toggleLogin} signup={toggleSignup} />
       <Background />
       <LoginModal login={loginFlag} signup={signupFlag} />
-      <Introduction login={loginFlag} signup={signupFlag}/>
+      <Introduction login={loginFlag} signup={signupFlag} />
     </main>
   );
 }
