@@ -6,7 +6,7 @@ const Background = () => {
     <Image
       alt="ctuBackground"
       src={background}
-      className="absolute w-full h-[75vh] top-20 translate-y-5"
+      className="absolute w-full h-[75vh] top-20 translate-y-5 lg:h-[80vh]"
     />
   );
 };

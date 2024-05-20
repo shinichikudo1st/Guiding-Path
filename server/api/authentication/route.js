@@ -10,11 +10,13 @@ export const POST = async (request) => {
 
     // const passwordMatch = await bcrypt.compare( password, account.password); once createUser is done
 
-    if (password === account.password) {
+    if(!account) {
     }
 
-    if (account) {
+    if(password === account.password) {
     }
+
+    
   } catch (error) {
     console.log(error);
   }

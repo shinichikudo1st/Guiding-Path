@@ -1,10 +1,40 @@
 import Image from "next/image";
 import ctuLogo from "@/public/ctuLogo.png";
+import { FormEvent } from "react";
+import { useRouter } from "next/router";
 
-const LoginModal = ({ login }) => {
+const LoginModal = ({ login, signup }) => {
+  // const router = useRouter();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    // const response = await fetch('#', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json'},
+    //   body: JSON.stringify({email, password});
+    // })
+
+    // if(response.ok){
+    //   router.push('/')
+    // } else {
+    //   console.log("something went wrong");
+    // }
+  };
+
   return (
     <>
-      <div className="absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5">
+      <div
+        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg:translate-y-[-20px] ${
+          login
+            ? "translate-x-0 ease-in duration-[0.2s]"
+            : "translate-x-[700px] lg:translate-x-[1000px] ease-out duration-[0.2s]"
+        }`}
+      >
         <Image src={ctuLogo} className="w-[80px] h-[80px]" />
         <div className="flex flex-col items-center">
           <span className="text-[#062341] text-[20pt] font-bold">
@@ -16,16 +46,20 @@ const LoginModal = ({ login }) => {
           <input
             type="text"
             placeholder="Email"
+            name="email"
+            required
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <input
-            type="text"
+            type="password"
             placeholder="Password"
+            name="password"
+            required
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <button
             type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold"
+            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold lg:mt-[100px]"
           >
             Login
           </button>
@@ -38,7 +72,13 @@ const LoginModal = ({ login }) => {
         </span>
       </div>
 
-      <div className="absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 translate-x-[-1300px]">
+      <div
+        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg: lg:translate-y-[-20px] ${
+          signup
+            ? "translate-x-[-900px] ease-in duration-[0.2s]"
+            : "translate-x-[-1300px] lg:translate-x-[-1800px] ease-out duration-[0.2s]"
+        }`}
+      >
         <Image src={ctuLogo} className="w-[80px] h-[80px]" />
         <div className="flex flex-col items-center">
           <span className="text-[#062341] text-[20pt] font-bold">
@@ -46,7 +86,10 @@ const LoginModal = ({ login }) => {
           </span>
           <span className="text-[#062341]">Create an account</span>
         </div>
-        <form action="" className="flex flex-col items-center gap-2">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col items-center gap-2"
+        >
           <input
             type="text"
             placeholder="ID Number"
@@ -64,7 +107,7 @@ const LoginModal = ({ login }) => {
           />
           <button
             type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold"
+            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold lg:mt-10"
           >
             Create Account
           </button>

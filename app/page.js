@@ -11,21 +11,22 @@ export default function Home() {
   const [loginFlag, setLoginFlag] = useState(true);
   const [signupFlag, setSignupFlag] = useState(false);
 
-  const login = () => {
+  const toggleLogin = () => {
     setLoginFlag(true);
     setSignupFlag(false);
+    
   };
-  const signup = () => {
+  const toggleSignup = () => {
     setSignupFlag(true);
     setLoginFlag(false);
   };
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
-      <Navbar login={login} signup={signup} />
+      <Navbar login={toggleLogin} signup={toggleSignup} />
       <Background />
       <LoginModal login={loginFlag} signup={signupFlag} />
-      <Introduction />
+      <Introduction login={loginFlag} signup={signupFlag}/>
     </main>
   );
 }
