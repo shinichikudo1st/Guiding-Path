@@ -1,5 +1,5 @@
 const Navbar = ({ login, signup }) => {
-  const responsive = "lg:h-[10vh] 2xl:h-[20vh]";
+  const responsive = "lg:h-[10vh] 2xl:h-[8vh]";
 
   const buttonProperty =
     "w-[150px] text-[15pt] font-bold text-[#062341] rounded-[10px] ";
