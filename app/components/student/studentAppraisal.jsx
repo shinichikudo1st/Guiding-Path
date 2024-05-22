@@ -1,6 +1,10 @@
-const StudentAppraisal = ({ start }) => {
+const StudentAppraisal = ({ toggle, status }) => {
   return (
-    <div className="absolute w-[55%] h-[83vh] bg-[#E6F0F9] right-[22.5%] bottom-[2%] 2xl:bottom-[5%] rounded-[20px] flex flex-col items-center p-[50px] gap-5">
+    <div
+      className={`absolute w-[55%] h-[83vh] bg-[#E6F0F9] right-[22.5%] bottom-[2%] 2xl:bottom-[5%] rounded-[20px] flex flex-col items-center p-[50px] gap-5 lg:p-[30px] ${
+        status ? "invisible" : "visible"
+      }`}
+    >
       <div className="text-[#062341] text-[15pt] font-semibold">
         <span className="cursor-pointer">Past Appraisal </span>|
         <span className="cursor-pointer"> Start Appraisal</span>
@@ -24,8 +28,8 @@ const StudentAppraisal = ({ start }) => {
         </span>
       </div>
       <button
-        className=" 2xl:mt-8 2xl:w-[200px] 2xl:h-[50px] bg-[#0B6EC9] rounded-[10px] text-[#E6F0F9] font-semibold hover:scale-105 hover:duration-[0.3s]"
-        onClick={start}
+        className=" lg:mt-6 lg:w-[180px] lg:h-[40px] 2xl:mt-8 2xl:w-[200px] 2xl:h-[50px] bg-[#0B6EC9] rounded-[10px] text-[#E6F0F9] font-semibold hover:scale-105 "
+        onClick={toggle}
       >
         Start Appraisal
       </button>

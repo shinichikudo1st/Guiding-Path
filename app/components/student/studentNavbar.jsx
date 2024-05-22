@@ -1,6 +1,11 @@
 import { BsBellFill, BsGearFill } from "react-icons/bs";
+import { useRouter } from "next/navigation";
 
-const StudentNavbar = ({ logout }) => {
+const StudentNavbar = () => {
+  const router = useRouter();
+  const logout = () => {
+    router.push("/");
+  };
   const iconSize =
     "text-[20pt]  cursor-pointer 2xl:translate-x-[130px] hover:scale-110 hover:text-[#0B6EC9] hover:duration-[0.3s]";
 
@@ -10,7 +15,10 @@ const StudentNavbar = ({ logout }) => {
       <div className="flex w-[40%] h-[10vh] justify-center items-center gap-6 text-[#062341]">
         <BsBellFill className={iconSize} />
         <BsGearFill className={iconSize} />
-        <span className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s]">
+        <span
+          className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s]"
+          onClick={logout}
+        >
           LOGOUT
         </span>
       </div>

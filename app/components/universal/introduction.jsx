@@ -1,6 +1,4 @@
 const Introduction = ({ login, signup }) => {
-  const responsive = "";
-
   return (
     <>
       <div

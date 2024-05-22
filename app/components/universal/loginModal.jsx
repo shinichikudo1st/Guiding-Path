@@ -1,29 +1,12 @@
 import Image from "next/image";
 import ctuLogo from "@/public/ctuLogo.png";
-import { FormEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const LoginModal = ({ login, signup }) => {
-  // const router = useRouter();
+  const router = useRouter();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-
-    // const response = await fetch('#', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json'},
-    //   body: JSON.stringify({email, password});
-    // })
-
-    // if(response.ok){
-    //   router.push('/')
-    // } else {
-    //   console.log("something went wrong");
-    // }
+  const handleSubmit = () => {
+    router.push("/pages/studentDashboard");
   };
 
   return (
@@ -58,7 +41,7 @@ const LoginModal = ({ login, signup }) => {
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <button
-            type="submit"
+            onClick={handleSubmit}
             className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold 2xl:mt-[100px]"
           >
             Login
@@ -105,10 +88,7 @@ const LoginModal = ({ login, signup }) => {
             placeholder="Contact No."
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
-          <button
-            type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold 2xl:mt-10"
-          >
+          <button className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold 2xl:mt-10">
             Create Account
           </button>
         </form>
