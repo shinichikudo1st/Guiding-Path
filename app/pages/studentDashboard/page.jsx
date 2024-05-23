@@ -14,6 +14,8 @@ const studentDashboard = () => {
   const [appraisalFlag, setAppraisalFlag] = useState(false);
   const [otherButton, setOtherButton] = useState(true);
   const [start, setStart] = useState(false);
+  const [second, setSecond] = useState(false);
+  const [third, setThird] = useState(false);
 
   const appraisalToggle = () => {
     setAppraisalFlag(true);
@@ -29,6 +31,15 @@ const studentDashboard = () => {
     setStart(true);
   };
 
+  const nextButton = () => {
+    setSecond(true);
+  };
+
+  const nextThird = () => {
+    setThird(true);
+    setSecond(false);
+  };
+
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
@@ -38,7 +49,13 @@ const studentDashboard = () => {
       {appraisalFlag ? (
         <>
           <StudentAppraisal toggle={startToggle} status={start} />
-          <StartAppraisal status={start} />
+          <StartAppraisal
+            status={start}
+            wellBeing={second}
+            second={nextButton}
+            career={third}
+            third={nextThird}
+          />
         </>
       ) : otherButton ? (
         <SkeletonLoading />

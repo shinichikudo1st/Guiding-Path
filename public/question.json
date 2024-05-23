@@ -85,7 +85,7 @@
             },
             {
                 "id": 4,
-                "text": "I am able to resolve conflicts with others in a respectful and constructive manner.",
+                "text": "I am able to resolve conflicts with others in a respectful manner.",
                 "type": "likert",
                 "options": ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"]
             },

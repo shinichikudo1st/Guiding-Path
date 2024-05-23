@@ -21,14 +21,17 @@ const Question = ({ question, onAnswerChange }) => {
       </p>
       <div className="flex gap-2 text-[10pt] text-[#062341]">
         {question.options.map((option, index) => (
-          <label key={index} className="flex items-center lg:gap-3">
+          <label
+            key={index}
+            className="flex items-center lg:gap-2 text-[#062341] font-semibold"
+          >
             <input
               type="radio"
               name={question.id}
               value={index + 1}
               checked={answer === index + 1}
               onChange={handleInputChange}
-              className="form-radio h-4 w-4 text-indigo-600 focus:ring-indigo-500 "
+              className="form-radio h-6 w-6 text-indigo-600 bg-[#D9D9D9] focus:ring-indigo-500 cursor-pointer "
             />
             {option}
           </label>
