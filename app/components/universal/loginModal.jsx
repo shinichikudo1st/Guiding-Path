@@ -1,12 +1,79 @@
+"use client";
 import Image from "next/image";
 import ctuLogo from "@/public/ctuLogo.png";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-const LoginModal = ({ login, signup }) => {
+const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = () => {
-    router.push("/pages/studentDashboard");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (!email || !password) {
+      return;
+    }
+
+    const data = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await fetch("/api/loginUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log(result.message);
+      router.push("/pages/studentDashboard");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const id = formData.get("idNumber");
+    const email = formData.get("email");
+    const contact = formData.get("contact");
+
+    const data = {
+      id: id,
+      email: email,
+      contact: contact,
+    };
+
+    try {
+      const response = await fetch("/api/createUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.message);
+      }
+
+      const result = await response.json();
+      console.log(result.message);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -25,11 +92,16 @@ const LoginModal = ({ login, signup }) => {
           </span>
           <span className="text-[#062341]">Login existing account</span>
         </div>
-        <form action="" className="flex flex-col items-center gap-5">
+        {error && <p className="text-red-500">{error}</p>}
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col items-center gap-5"
+        >
           <input
             type="text"
             placeholder="Email"
             name="email"
+            id="emailLogin"
             required
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
@@ -37,11 +109,12 @@ const LoginModal = ({ login, signup }) => {
             type="password"
             placeholder="Password"
             name="password"
+            id="password"
             required
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold 2xl:mt-[100px]"
           >
             Login
@@ -49,7 +122,10 @@ const LoginModal = ({ login, signup }) => {
         </form>
         <span className=" text-[#818487] text-sm mt-3">
           Dont have an account?{" "}
-          <u className=" text-[#0A72D1] cursor-pointer font-semibold">
+          <u
+            className=" text-[#0A72D1] cursor-pointer font-semibold"
+            onClick={toggleSignup}
+          >
             Signup Now
           </u>
         </span>
@@ -58,7 +134,7 @@ const LoginModal = ({ login, signup }) => {
       <div
         className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg: lg:translate-y-[-20px] ${
           signup
-            ? "lg:translate-x-[-600px] 2xl:translate-x-[-900px] ease-in duration-[0.2s]"
+            ? "lg:translate-x-[-600px] 2xl:translate-x-[-700px] ease-in duration-[0.2s]"
             : "lg:translate-x-[-1300px] 2xl:translate-x-[-1800px] ease-out duration-[0.2s]"
         }`}
       >
@@ -70,31 +146,45 @@ const LoginModal = ({ login, signup }) => {
           <span className="text-[#062341]">Create an account</span>
         </div>
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSignup}
           className="flex flex-col items-center gap-2"
         >
           <input
             type="text"
             placeholder="ID Number"
+            name="idNumber"
+            id="idNumber"
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <input
             type="email"
             placeholder="Email"
+            name="email"
+            id="emailSignup"
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <input
             type="text"
             placeholder="Contact No."
+            name="contact"
+            id="contact"
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
-          <button className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold 2xl:mt-10">
+          <button
+            className="bg-[#0B6EC9] w-[200px] h-[40px] rounded-[10px] mt-2 font-bold 2xl:mt-10 text-[#F3F8FC]"
+            type="submit"
+          >
             Create Account
           </button>
         </form>
         <span className=" text-[#818487] text-sm mt-1">
           Already have an existing account?{" "}
-          <u className=" text-[#0A72D1] cursor-pointer font-semibold">Login</u>
+          <u
+            className=" text-[#0A72D1] cursor-pointer font-semibold"
+            onClick={toggleLogin}
+          >
+            Login
+          </u>
         </span>
       </div>
     </>

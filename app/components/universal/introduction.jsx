@@ -19,7 +19,7 @@ const Introduction = ({ login, signup }) => {
       <div
         className={` absolute flex flex-col w-[40%] h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold  2xl:translate-y-[-100px] text-[#f1f5fa] ${
           signup
-            ? "lg:translate-x-[700px] 2xl:translate-x-[1000px] ease-in duration-[0.2s]"
+            ? "lg:translate-x-[700px] 2xl:translate-x-[800px] ease-in duration-[0.2s]"
             : "lg:translate-x-[1300px] 2xl:translate-x-[1700px] ease-out duration-[0.2s]"
         }`}
       >

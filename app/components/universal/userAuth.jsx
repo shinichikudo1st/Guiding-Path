@@ -20,7 +20,12 @@ const UserAuth = () => {
   return (
     <>
       <Navbar login={toggleLogin} signup={toggleSignup} />
-      <LoginModal login={loginFlag} signup={signupFlag} />
+      <LoginModal
+        login={loginFlag}
+        signup={signupFlag}
+        toggleLogin={toggleLogin}
+        toggleSignup={toggleSignup}
+      />
       <Introduction login={loginFlag} signup={signupFlag} />
     </>
   );

@@ -3,7 +3,10 @@ import { useRouter } from "next/navigation";
 
 const StudentNavbar = () => {
   const router = useRouter();
-  const logout = () => {
+  const logout = async () => {
+    await fetch("/api/logoutUser", {
+      method: "POST",
+    });
     router.push("/");
   };
   const iconSize =
