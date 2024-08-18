@@ -9,6 +9,7 @@ export async function POST(request) {
   console.log(id, email, contact);
 
   const password = "123";
+  const role = "student";
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -29,8 +30,19 @@ export async function POST(request) {
         email: email,
         hashedPassword: hashedPassword,
         contact: contact,
+        role: role,
       },
     });
+
+    if (user.role === "student") {
+      await prisma.students.create({
+        data: {
+          student_id: user.user_id,
+          grade_level: "N/A",
+          program: "N/A",
+        },
+      });
+    }
 
     return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {

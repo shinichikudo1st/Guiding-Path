@@ -33,7 +33,7 @@ export async function POST(request) {
     }
 
     const sessionData = {
-      id: user.id,
+      id: user.user_id,
       name: user.name,
       email: user.email,
       role: user.role,
@@ -42,7 +42,15 @@ export async function POST(request) {
     const expires = new Date(Date.now() + 60 * 60 * 1000);
 
     const session = await encrypt({ sessionData, expires });
-    cookies().set("session", session, { expires, httpOnly: true });
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    cookies().set("session", session, {
+      expires,
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
+    });
 
     return NextResponse.json({ message: "Successful login" }, { status: 200 });
   } catch (error) {
