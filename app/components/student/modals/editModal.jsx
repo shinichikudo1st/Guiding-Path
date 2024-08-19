@@ -36,7 +36,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
   };
 
   return (
-    <div className="absolute h-[100%] w-[100%] flex pl-[20%] items-center bg-[#dfecf6] rounded-[20px]">
+    <div className="absolute h-[100%] w-[100%] flex pl-[30%] pt-[10%] bg-[#dfecf6] rounded-[20px] z-20">
       <button
         onClick={editButton}
         className=" right-1 top-3 absolute inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-[#0B6EC9] to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"

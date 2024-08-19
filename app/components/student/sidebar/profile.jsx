@@ -1,17 +1,54 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import LoadingSpinner from "../../UI/loadingSpinner";
 import EditModal from "../modals/editModal";
+import UploadProfilePicture from "../uploadProfilePicture";
+import UploadModal from "../modals/uploadModal";
 
 const Profile = () => {
   const [retrievingData, setRetrievingData] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [editModal, setEditModal] = useState(false);
+  const [uploadModal, setUploadModal] = useState(false);
+  const inputFileRef = useRef(null);
+  const [blob, setBlob] = useState(null);
+
+  const toggleUploadModal = () => {
+    setUploadModal(!uploadModal);
+  };
 
   const editButton = () => {
     setEditModal(!editModal);
   };
 
   const backButton = () => {};
+
+  const uploadImage = async (event) => {
+    event.preventDefault();
+
+    setRetrievingData(true);
+
+    const file = inputFileRef.current.files[0];
+
+    if (!file) {
+      console.log("No file detected");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/uploadProfile?filename=${file.name}`, {
+        method: "POST",
+        body: file,
+      });
+
+      const result = await response.json();
+      console.log(result.message);
+
+      const newBlob = result.blob;
+      setBlob(newBlob);
+
+      retrieveProfile();
+    } catch (error) {}
+  };
 
   const retrieveProfile = async () => {
     try {
@@ -35,6 +72,14 @@ const Profile = () => {
 
   return (
     <>
+      {uploadModal && (
+        <UploadModal
+          toggleUploadModal={toggleUploadModal}
+          blob={blob}
+          inputFileRef={inputFileRef}
+          uploadImage={uploadImage}
+        />
+      )}
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center">
         {editModal && (
           <EditModal
@@ -47,7 +92,15 @@ const Profile = () => {
           <LoadingSpinner />
         ) : (
           profileData && (
-            <div className="h-[90%] w-[90%] flex flex-col pl-[18%] text-[#1f3a56] gap-[30px]">
+            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#1f3a56] gap-[50px]">
+              <UploadProfilePicture
+                toggleUploadModal={toggleUploadModal}
+                picture={
+                  profileData.profilePicture !== ""
+                    ? profileData.profilePicture
+                    : null
+                }
+              />
               <span className="text-[25pt] font-bold">MY PROFILE</span>
               <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
                 <label htmlFor="name" className="font-bold 2xl:w-[25%]">
@@ -82,13 +135,13 @@ const Profile = () => {
               <div className="flex gap-[10%] 2xl:mt-[10%]">
                 <button
                   onClick={editButton}
-                  className="text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[30%]"
+                  className="text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px]"
                 >
                   Edit
                 </button>
                 <button
                   onClick={backButton}
-                  className="text-[#1f3a56] bg-[#8BB8E1] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 hover:text-white dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[30%]"
+                  className="text-[#1f3a56] bg-[#8BB8E1] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 hover:text-white dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px]"
                 >
                   Back
                 </button>

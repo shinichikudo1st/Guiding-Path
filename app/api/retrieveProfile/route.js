@@ -25,7 +25,8 @@ export async function GET() {
       },
     });
 
-    const { name, user_id, contact, student } = userWithStudentDetails;
+    const { name, user_id, contact, student, profilePicture } =
+      userWithStudentDetails;
     const { grade_level, program } = student || {};
 
     const data = {
@@ -34,6 +35,7 @@ export async function GET() {
       course: program,
       idNumber: user_id,
       contact: contact,
+      profilePicture: profilePicture,
     };
 
     return NextResponse.json(

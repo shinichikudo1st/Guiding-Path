@@ -17,6 +17,7 @@ model Users {
   role                String     @default("student")
   status              String     @default("active")
   contact             String
+  profilePicture      String?
 
   student             Students?
   counselor           Counselors?

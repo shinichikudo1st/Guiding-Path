@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const [logging, setLogging] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    setLogging(!logging);
 
     const formData = new FormData(e.target);
     const email = formData.get("email");
@@ -35,6 +38,8 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
 
       const result = await response.json();
       console.log(result.message);
+      setLogging(!logging);
+
       router.push("/pages/studentDashboard");
     } catch (error) {
       console.error(error);
@@ -85,7 +90,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             : "translate-x-[700px] lg:translate-x-[1000px] ease-out duration-[0.2s]"
         }`}
       >
-        <Image src={ctuLogo} className="w-[80px] h-[80px]" />
+        <Image src={ctuLogo} alt="ctuLogo" className="w-[80px] h-[80px]" />
         <div className="flex flex-col items-center">
           <span className="text-[#062341] text-[20pt] font-bold">
             GUIDING PATH
@@ -114,10 +119,20 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             className=" h-[50px] w-[300px] p-[10px] text-[#062341] outline-none bg-transparent border-b-2 border-[#062341]"
           />
           <button
+            disabled={logging}
             type="submit"
-            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold 2xl:mt-[100px]"
+            className="bg-[#0B6EC9] w-[200px] h-[40px] mt-5 rounded-[10px] font-bold 2xl:mt-[100px] flex justify-center items-center text-[#F3F8FC]"
           >
-            Login
+            {logging ? (
+              <div className="absolute flex space-x-2 justify-center items-center dark:invert">
+                <span className="sr-only">Loading...</span>
+                <div className="h-[8px] w-[8px] bg-[#F3F8FC] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="h-[8px] w-[8px] bg-[#F3F8FC] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="h-[8px] w-[8px] bg-[#F3F8FC] rounded-full animate-bounce"></div>
+              </div>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
         <span className=" text-[#818487] text-sm mt-3">
@@ -134,7 +149,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
       <div
         className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[33%] h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg: lg:translate-y-[-20px] ${
           signup
-            ? "lg:translate-x-[-600px] 2xl:translate-x-[-700px] ease-in duration-[0.2s]"
+            ? "lg:translate-x-[-600px] 2xl:translate-x-[-900px] ease-in duration-[0.2s]"
             : "lg:translate-x-[-1300px] 2xl:translate-x-[-1800px] ease-out duration-[0.2s]"
         }`}
       >
