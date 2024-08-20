@@ -10,7 +10,13 @@ const Profile = () => {
   const [editModal, setEditModal] = useState(false);
   const [uploadModal, setUploadModal] = useState(false);
   const inputFileRef = useRef(null);
-  const [blob, setBlob] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [isFileSelected, setIsFileSelected] = useState(false);
+
+  const handleFileChange = () => {
+    const file = inputFileRef.current?.files[0];
+    setIsFileSelected(!!file);
+  };
 
   const toggleUploadModal = () => {
     setUploadModal(!uploadModal);
@@ -25,7 +31,23 @@ const Profile = () => {
   const uploadImage = async (event) => {
     event.preventDefault();
 
-    setRetrievingData(true);
+    setUploading(!uploading);
+
+    if (profileData.profilePicture) {
+      try {
+        const url = profileData.profilePicture;
+        const deletePicture = await fetch("/api/deleteProfile", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url }),
+        });
+
+        const deleteResult = await deletePicture.json();
+        console.log(deleteResult.message);
+      } catch (error) {}
+    }
 
     const file = inputFileRef.current.files[0];
 
@@ -42,12 +64,11 @@ const Profile = () => {
 
       const result = await response.json();
       console.log(result.message);
-
-      const newBlob = result.blob;
-      setBlob(newBlob);
-
-      retrieveProfile();
     } catch (error) {}
+
+    toggleUploadModal();
+    setUploading(!uploading);
+    window.location.reload();
   };
 
   const retrieveProfile = async () => {
@@ -75,9 +96,11 @@ const Profile = () => {
       {uploadModal && (
         <UploadModal
           toggleUploadModal={toggleUploadModal}
-          blob={blob}
           inputFileRef={inputFileRef}
           uploadImage={uploadImage}
+          uploading={uploading}
+          handleFileChange={handleFileChange}
+          isFileSelected={isFileSelected}
         />
       )}
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center">

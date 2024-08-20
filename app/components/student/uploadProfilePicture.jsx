@@ -14,6 +14,7 @@ const UploadProfilePicture = ({ toggleUploadModal, picture }) => {
         className=" rounded-full"
         width={defaultWidth}
         height={defaultHeight}
+        quality={75}
       />
       <button onClick={toggleUploadModal}>
         <FaRegEdit className="text-[30pt]" />
