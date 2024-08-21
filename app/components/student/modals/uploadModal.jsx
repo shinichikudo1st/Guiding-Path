@@ -5,6 +5,8 @@ const UploadModal = ({
   uploading,
   handleFileChange,
   isFileSelected,
+  setUploadModal,
+  setIsFileSelected,
 }) => {
   return (
     <div className="h-[100vh] w-[2000px] absolute flex justify-center items-center">
@@ -32,9 +34,9 @@ const UploadModal = ({
         <div className="flex gap-[20%]">
           <button
             type="submit"
-            className={`px-5 py-2.5 rounded-lg w-[200px] text-sm tracking-wider font-medium border border-current outline-none bg-blue-700 ${
+            className={`px-5 py-2.5 rounded-lg w-[200px] text-sm tracking-wider font-medium border border-current outline-none  ${
               !uploading && isFileSelected
-                ? "hover:bg-transparent hover:text-blue-700 transition-all duration-300"
+                ? "hover:bg-transparent hover:text-blue-700 transition-all duration-300 bg-blue-700"
                 : "bg-blue-300"
             }  text-white `}
             disabled={uploading || !isFileSelected}
@@ -131,7 +133,10 @@ const UploadModal = ({
             )}
           </button>
           <button
-            onClick={toggleUploadModal}
+            onClick={() => {
+              setUploadModal(false);
+              setIsFileSelected(false);
+            }}
             type="button"
             className="px-5 py-2.5 rounded-lg text-sm tracking-wider font-medium border border-current outline-none bg-[#66a8ee] hover:bg-transparent text-white hover:text-blue-700 transition-all duration-300"
           >

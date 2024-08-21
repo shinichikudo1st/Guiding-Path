@@ -1,12 +1,17 @@
 import { BsBellFill, BsGearFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
+import OpenSettings from "./modals/openSetting";
+import { useState } from "react";
 
 const StudentNavbar = () => {
+  const [isSettingsToggled, setIsSettingsToggled] = useState(false);
   const router = useRouter();
+
   const logout = async () => {
     await fetch("/api/logoutUser", {
       method: "POST",
     });
+    setIsSettingsToggled(!isSettingsToggled);
     router.push("/");
   };
   const iconSize =
@@ -20,10 +25,16 @@ const StudentNavbar = () => {
         <BsGearFill className={iconSize} />
         <span
           className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s]"
-          onClick={logout}
+          onClick={() => setIsSettingsToggled(!isSettingsToggled)}
         >
           LOGOUT
         </span>
+        {isSettingsToggled && (
+          <OpenSettings
+            setIsSettingsToggled={setIsSettingsToggled}
+            logout={logout}
+          />
+        )}
       </div>
     </nav>
   );
