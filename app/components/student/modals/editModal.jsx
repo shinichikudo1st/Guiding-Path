@@ -1,5 +1,7 @@
 const EditModal = ({ editButton, profileData, retrieveProfile }) => {
   const handleSubmit = async (event) => {
+    event.preventDefault();
+
     const formData = new FormData(event.target);
     const newName = formData.get("name") || "";
     const newYear = formData.get("year") || "";

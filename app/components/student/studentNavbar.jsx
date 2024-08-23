@@ -1,9 +1,11 @@
 import { BsBellFill, BsGearFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import OpenSettings from "./modals/openSetting";
+import OpenLogout from "./modals/openLogout";
 import { useState } from "react";
+import OpenSettings from "./modals/openSettings";
 
 const StudentNavbar = () => {
+  const [isLogoutToggled, setIsLogoutToggled] = useState(false);
   const [isSettingsToggled, setIsSettingsToggled] = useState(false);
   const router = useRouter();
 
@@ -11,7 +13,8 @@ const StudentNavbar = () => {
     await fetch("/api/logoutUser", {
       method: "POST",
     });
-    setIsSettingsToggled(!isSettingsToggled);
+    setIsLogoutToggled(false);
+    setIsSettingsToggled(false);
     router.push("/");
   };
   const iconSize =
@@ -22,18 +25,25 @@ const StudentNavbar = () => {
       <h1 className=" text-[#062341] font-bold text-[25pt]">Guiding Path</h1>
       <div className="flex w-[40%] h-[10vh] justify-center items-center gap-6 text-[#062341]">
         <BsBellFill className={iconSize} />
-        <BsGearFill className={iconSize} />
+        <BsGearFill
+          className={iconSize}
+          onClick={() => {
+            setIsSettingsToggled(!isSettingsToggled);
+            setIsLogoutToggled(false);
+          }}
+        />
         <span
           className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s]"
-          onClick={() => setIsSettingsToggled(!isSettingsToggled)}
+          onClick={() => {
+            setIsLogoutToggled(!isLogoutToggled);
+            setIsSettingsToggled(false);
+          }}
         >
           LOGOUT
         </span>
-        {isSettingsToggled && (
-          <OpenSettings
-            setIsSettingsToggled={setIsSettingsToggled}
-            logout={logout}
-          />
+        {isSettingsToggled && <OpenSettings />}
+        {isLogoutToggled && (
+          <OpenLogout setisLogoutToggled={setIsLogoutToggled} logout={logout} />
         )}
       </div>
     </nav>

@@ -1,0 +1,74 @@
+{
+  "academicAssessment": {
+    "questions": [
+      "I feel confident in understanding my subjects.",
+      "I can complete assignments within the deadlines.",
+      "I am motivated to improve my academic performance.",
+      "I can easily grasp difficult concepts.",
+      "I manage my time well when studying.",
+      "I feel engaged and interested in my classes.",
+      "I regularly ask questions in class.",
+      "I perform well on exams.",
+      "I am satisfied with my grades.",
+      "I seek help when I need it.",
+      "I can organize my notes effectively.",
+      "I stay focused during study sessions.",
+      "I participate in class activities.",
+      "I find school work manageable.",
+      "I feel my teachers provide clear guidance.",
+      "I can balance school and personal life effectively.",
+      "I have clear academic goals.",
+      "I am well-prepared for my exams.",
+      "I can keep up with the coursework.",
+      "I believe I have the necessary resources to succeed academically."
+    ]
+  },
+  "socioEmotional": {
+    "questions": [
+      "I feel connected to my peers.",
+      "I can effectively manage stress.",
+      "I feel supported by my friends and family.",
+      "I feel comfortable sharing my feelings with others.",
+      "I generally feel happy and content.",
+      "I can cope with difficult situations.",
+      "I believe I have a positive self-image.",
+      "I maintain healthy relationships with others.",
+      "I can control my emotions during stressful times.",
+      "I feel respected by others.",
+      "I am comfortable seeking help when I am feeling down.",
+      "I feel positive about my life and future.",
+      "I have people who I can rely on for support.",
+      "I feel overwhelmed by my responsibilities.",
+      "I often feel lonely or isolated.",
+      "I handle conflicts with others in a healthy way.",
+      "I am optimistic about overcoming challenges.",
+      "I feel emotionally balanced most of the time.",
+      "I feel confident in my personal decisions.",
+      "I am able to maintain a healthy work-life balance."
+    ]
+  },
+  "careerExploration": {
+    "questions": [
+      "I have a clear idea of the career I want to pursue.",
+      "I know what steps I need to take to achieve my career goals.",
+      "I feel confident about my future career prospects.",
+      "I understand what skills are needed for my career.",
+      "I have explored different career options.",
+      "I have discussed my career goals with a counselor or teacher.",
+      "I regularly think about my future career.",
+      "I know what educational requirements my career will have.",
+      "I am aware of the financial requirements of my career.",
+      "I actively work on developing career-related skills.",
+      "I know where to find career-related resources.",
+      "I am excited about my future career.",
+      "I have participated in career-related activities (e.g., internships).",
+      "I feel supported by my school in exploring career options.",
+      "I know the qualifications necessary for my career.",
+      "I am comfortable with networking with professionals.",
+      "I feel motivated to achieve my career goals.",
+      "I am aware of the current trends in my desired career field.",
+      "I have a mentor guiding me toward my career.",
+      "I am confident that I will succeed in my chosen career."
+    ]
+  }
+}

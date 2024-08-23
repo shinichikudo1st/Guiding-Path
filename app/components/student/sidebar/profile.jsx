@@ -72,6 +72,7 @@ const Profile = () => {
   };
 
   const retrieveProfile = async () => {
+    setRetrievingData(true);
     try {
       const response = await fetch("/api/retrieveProfile");
 
@@ -83,7 +84,7 @@ const Profile = () => {
       const result = await response.json();
       console.log(result.message);
       setProfileData(result.userInfo);
-      setRetrievingData(!retrievingData);
+      setRetrievingData(false);
     } catch (error) {}
   };
 
