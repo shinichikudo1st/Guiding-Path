@@ -151,16 +151,16 @@ model Evaluation_Areas {
   appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
   appraisal_id        Int
   area_name           String
-  content             String
-  score               String
+  content             String?
+  score               Int
   @@id([appraisal_id, area_name])
 }
 
 model Aggregate_Scores {
   appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
   appraisal_id        Int         @id
-  academic_score      String
-  socio_emotional_score String
-  career_exploration_score  String
-  overall_average String
+  academic_score      Int
+  socio_emotional_score Int
+  career_exploration_score  Int
+  overall_average Int
 }

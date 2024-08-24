@@ -153,7 +153,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             : "lg:translate-x-[-1300px] 2xl:translate-x-[-1800px] ease-out duration-[0.2s]"
         }`}
       >
-        <Image src={ctuLogo} className="w-[80px] h-[80px]" />
+        <Image src={ctuLogo} alt="ctuLogo" className="w-[80px] h-[80px]" />
         <div className="flex flex-col items-center">
           <span className="text-[#062341] text-[20pt] font-bold">
             GUIDING PATH
