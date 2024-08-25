@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  relationMode = "prisma"
+}
+
+model Users {
+  user_id             String     @id
+  name                String     @default("Student-C137")
+  email               String     @unique
+  hashedPassword      String
+  role                String     @default("student")
+  status              String     @default("active")
+  contact             String
+  profilePicture      String?
+
+  student             Students?
+  counselor           Counselors?
+  teacher             Teachers?
+  userResources       User_Resources[]
+}
+
+model Students {
+  student           Users      @relation(fields: [student_id], references: [user_id])
+  student_id        String     @id 
+  grade_level       String?  
+  program           String?
+  eventRegistrations Event_Registration[]
+  referral          Referrals[]
+  appointment       Appointments[]
+  evaluationTrend   Evaluation_Trends[]
+  appraisal         Appraisals[]
+}
+
+model Events {
+  event_id          Int        @id @default(autoincrement())
+  title             String
+  description       String
+  date_time         String
+  location          String
+
+  eventRegistrations Event_Registration[] 
+}
+
+model Event_Registration {
+  event             Events     @relation(fields: [event_id], references: [event_id])
+  event_id          Int        
+  student           Students   @relation(fields: [student_id], references: [student_id])
+  student_id        String     
+  description       String
+  date_time         String
+  location          String
+  @@id([event_id, student_id])
+}
+
+model Counselors {
+  counselor         Users      @relation(fields: [counselor_id], references: [user_id])
+  counselor_id      String     @id
+  department        String
+
+  referral          Referrals[]
+  appointment       Appointments[]
+}
+
+model Appointments {
+  appointment_id  Int         @id @default(autoincrement())
+  student         Students    @relation(fields: [student_id], references: [student_id])
+  student_id      String
+  counselor       Counselors  @relation(fields: [counselor_id], references: [counselor_id])
+  counselor_id    String
+  date_time       String
+  type            String
+  notes           String
+  status          String
+}
+
+model Referrals {
+  referral_id   Int       @id @default(autoincrement())
+  student       Students  @relation(fields: [student_id], references: [student_id])
+  student_id    String
+  teacher       Teachers  @relation(fields: [teacher_id], references: [teacher_id])
+  teacher_id    String
+  reason        String
+  notes         String
+  counselor     Counselors  @relation(fields: [counselor_id], references: [counselor_id])
+  counselor_id  String
+  status        String
+}
+
+model Teachers {
+  teacher           Users      @relation(fields: [teacher_id], references: [user_id])
+  teacher_id        String     @id
+  department        String
+
+  referral          Referrals[]
+}
+
+model Resources {
+  resource_id       Int        @id @default(autoincrement())
+  title             String
+  description       String
+  link              String
+  resourceCategories Resource_Category[]
+  userResources     User_Resources[]
+}
+
+model Resource_Category {
+  resource          Resources  @relation(fields: [resource_id], references: [resource_id])
+  resource_id       Int
+  category          String
+  img_path          String
+  @@id([resource_id, category])
+}
+
+model User_Resources {
+  user              Users      @relation(fields: [user_id], references: [user_id])
+  user_id           String
+  resource          Resources  @relation(fields: [resource_id], references: [resource_id])
+  resource_id       Int
+  access_date       String
+  @@id([user_id, resource_id])
+}
+
+model Evaluation_Trends {
+  student                     Students  @relation(fields: [student_id], references: [student_id])
+  student_id                  String
+  date                        String
+  academic_average            String
+  socio_emotional_average     String
+  career_exploration_average  String
+  overall_average             String
+  @@id([student_id, date])
+}
+
+model Appraisals {
+  appraisal_id          Int         @id @default(autoincrement())
+  student               Students    @relation(fields: [student_id], references: [student_id])
+  student_id            String
+  date                  String
+  date_of_submission    String
+  evaluationAreas       Evaluation_Areas[]
+  aggregateScores       Aggregate_Scores?
+}
+
+model Evaluation_Areas {
+  appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
+  appraisal_id        Int
+  area_name           String
+  content             String?
+  score               Int
+  @@id([appraisal_id, area_name])
+}
+
+model Aggregate_Scores {
+  appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
+  appraisal_id        Int         @id
+  academic_score      Int
+  socio_emotional_score Int
+  career_exploration_score  Int
+  overall_average Int
+}
