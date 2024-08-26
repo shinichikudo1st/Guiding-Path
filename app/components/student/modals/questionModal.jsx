@@ -17,9 +17,6 @@ const QuestionModal = ({
   const [responses, setResponses] = useState({});
 
   const submitAppraisal = async (event) => {
-    event.preventDefault();
-
-    // Directly calculate the scores before submitting
     const academicFinalScore =
       area === 1
         ? Object.values(responses).reduce((acc, val) => acc + val, 0)
@@ -89,7 +86,7 @@ const QuestionModal = ({
   };
 
   const nextAppraisal = () => {
-    calculateScore(); // Ensure score is calculated for the current area
+    calculateScore();
     setResponses({});
     if (area >= 3) {
       setArea(1);
@@ -126,7 +123,7 @@ const QuestionModal = ({
                       <input
                         type="radio"
                         className="w-[25px] h-[25px]"
-                        name={`q${area}-${index}`} // Unique name for each area and question
+                        name={`q${area}-${index}`}
                         value={value}
                         checked={responses[index] === value}
                         onChange={() => handleResponseChange(index, value)}

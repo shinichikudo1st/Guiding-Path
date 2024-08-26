@@ -2,7 +2,7 @@ const Introduction = ({ login, signup }) => {
   return (
     <>
       <div
-        className={` absolute flex flex-col w-[40%] h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold lg:translate-y-[20px] 2xl:translate-y-[-100px] text-[#f1f5fa] ${
+        className={` absolute invisible sm:visible flex flex-col 2xl:w-[40%] 2xl:h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold lg:translate-y-[20px] 2xl:translate-y-[-100px] text-[#f1f5fa] ${
           login
             ? "translate-x-0 ease-in duration-[0.2s]"
             : "translate-x-[-500px] lg:translate-x-[-700px] ease-out duration-[0.2s]"
@@ -17,7 +17,7 @@ const Introduction = ({ login, signup }) => {
         </p>
       </div>
       <div
-        className={` absolute flex flex-col w-[40%] h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold  2xl:translate-y-[-100px] text-[#f1f5fa] ${
+        className={` absolute invisible sm:visible flex flex-col w-[40%] h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold  2xl:translate-y-[-100px] text-[#f1f5fa] ${
           signup
             ? "lg:translate-x-[700px] 2xl:translate-x-[1000px] ease-in duration-[0.2s]"
             : "lg:translate-x-[1300px] 2xl:translate-x-[1700px] ease-out duration-[0.2s]"
