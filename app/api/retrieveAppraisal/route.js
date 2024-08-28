@@ -11,19 +11,23 @@ export async function GET() {
   try {
     const appraisals = await prisma.appraisals.findMany({
       where: {
-        user_id: sessionData.id,
+        student_id: sessionData.id,
       },
       select: {
         appraisal_id: true,
         date_of_submission: true,
-        aggregateScores: true,
+        aggregateScores: {
+          select: {
+            overall_average: true,
+          },
+        },
       },
     });
 
     const formattedAppraisals = appraisals.map((appraisal) => ({
       id: appraisal.appraisal_id,
       date: appraisal.date_of_submission,
-      aggregateScores: appraisal.aggregateScores,
+      overallAverage: appraisal.aggregateScores.overall_average,
     }));
 
     return NextResponse.json(
