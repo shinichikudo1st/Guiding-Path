@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
   const url = new URL(request.url);
-  const appraisalID = url.searchParams("id");
+  const appraisalID = parseInt(url.searchParams.get("id"));
 
   const { sessionData } = await getSession();
   if (!sessionData) {
