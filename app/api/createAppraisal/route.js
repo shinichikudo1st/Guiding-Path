@@ -17,7 +17,7 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const formattedDate = date.toLocaleString("en_US", {
+  const formattedDate = date.toLocaleString("en-US", {
     weekday: "short",
     year: "numeric",
     month: "short",
