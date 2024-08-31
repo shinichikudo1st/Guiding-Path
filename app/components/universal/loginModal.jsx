@@ -40,7 +40,11 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
       console.log(result.message);
       setLogging(!logging);
 
-      router.push("/pages/studentDashboard");
+      if (result.role === "counselor") {
+        router.push("/pages/adminDashboard");
+      } else if (result.role === "student") {
+        router.push("/pages/studentDashboard");
+      }
     } catch (error) {
       console.error(error);
     }

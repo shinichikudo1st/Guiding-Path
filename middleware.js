@@ -12,5 +12,9 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/pages/adminDashboard"],
+  matcher: [
+    "/pages/teacherDashboard",
+    "/pages/adminDashboard",
+    "/pages/studentDashboard",
+  ],
 };

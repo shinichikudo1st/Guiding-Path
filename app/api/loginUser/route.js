@@ -52,7 +52,10 @@ export async function POST(request) {
       sameSite: isProduction ? "None" : "Lax",
     });
 
-    return NextResponse.json({ message: "Successful login" }, { status: 200 });
+    return NextResponse.json(
+      { message: "Successful login", role: sessionData.role },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },
