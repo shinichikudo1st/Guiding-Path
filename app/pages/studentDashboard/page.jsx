@@ -3,11 +3,11 @@
 import { useState } from "react";
 
 import FullBackground from "@/app/components/universal/fullBackground";
-import StudentNavbar from "@/app/components/student/studentNavbar";
 import StudentSidebar from "@/app/components/student/studentSidebar";
 import StudentQuickView from "@/app/components/student/studentQuickView";
 import Profile from "@/app/components/student/sidebar/profile";
 import Appraisal from "@/app/components/student/sidebar/appraisal";
+import UserNavbar from "@/app/components/UI/userNavbar";
 
 const studentDashboard = () => {
   const [profileFlag, setProfileFlag] = useState(false);
@@ -26,7 +26,7 @@ const studentDashboard = () => {
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
-      <StudentNavbar />
+      <UserNavbar />
       <StudentSidebar viewProfile={viewProfile} viewAppraisal={viewAppraisal} />
       <StudentQuickView />
       {profileFlag && <Profile />}

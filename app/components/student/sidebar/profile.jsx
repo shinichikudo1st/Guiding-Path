@@ -84,12 +84,20 @@ const Profile = () => {
       const result = await response.json();
       console.log(result.message);
       setProfileData(result.userInfo);
+
+      sessionStorage.setItem("profileData", JSON.stringify(result.userInfo));
       setRetrievingData(false);
     } catch (error) {}
   };
 
   useEffect(() => {
-    retrieveProfile();
+    const storedProfile = sessionStorage.getItem("profileData");
+    if (storedProfile) {
+      setProfileData(JSON.parse(storedProfile));
+      setRetrievingData(false);
+    } else {
+      retrieveProfile();
+    }
   }, []);
 
   return (
