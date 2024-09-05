@@ -1,11 +1,42 @@
 const AppointmentRequest = () => {
+  const handleSubmit = async (event) => {
+    const formData = new FormData(event.target);
+
+    const data = {
+      name: formData.get("name"),
+      grade: formData.get("grade"),
+      reason: formData.get("reason"),
+      urgency: formData.get("urgency"),
+      contact: formData.get("contact"),
+      notes: formData.get("notes"),
+    };
+
+    try {
+      const response = await fetch("/api/requestAppointment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+
+      console.log(result.message);
+    } catch (error) {}
+  };
+
   return (
     <div className="absolute flex flex-col w-[90%] h-[80%] bg-[#E6F0F9] border-[1px] border-[#062341] mt-[6%] items-center">
-      <form className="flex w-[100%] h-[80%] text-[#062341]">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-[100%] h-[80%] text-[#062341]"
+      >
         <div className="flex flex-col justify-center items-center gap-[8%] p-[2%] w-[50%] h-[100%]">
           <div className="w-[90%] flex justify-between pl-[2%]">
             <label className="font-semibold text-[17pt]">Name:</label>
             <input
+              required
+              name="name"
               className="outline-none w-[70%] bg-transparent border-b-[2px] px-[2%] border-[#062341]"
               type="text"
             />
@@ -13,6 +44,8 @@ const AppointmentRequest = () => {
           <div className="w-[90%] flex justify-between pl-[2%]">
             <label className="font-semibold text-[17pt]">Grade:</label>
             <input
+              required
+              name="grade"
               className="outline-none w-[70%] bg-transparent border-b-[2px] px-[2%] border-[#062341]"
               type="text"
             />
@@ -20,42 +53,34 @@ const AppointmentRequest = () => {
           <div className="w-[90%] flex justify-between pl-[2%]">
             <label className="font-semibold text-[17pt]">Reason:</label>
             <select
+              name="reason"
               id="reason"
               class="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option value="US">Stress Management</option>
-              <option value="CA">Encouragement</option>
-              <option value="FR">Practicing Gusion</option>
-              <option value="DE">Yessir</option>
+              <option value="stress_management">Stress Management</option>
+              <option value="encouragement">Encouragement</option>
+              <option value="career_guidance">Career Guidance</option>
+              <option value="emotional_support">Emotional Support</option>
             </select>
           </div>
           <div className="w-[90%] flex justify-between pl-[2%]">
             <label className="font-semibold text-[17pt]">Urgency:</label>
             <select
+              name="urgency"
               id="urgency"
               class="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option value="US">Stress Management</option>
-              <option value="CA">Encouragement</option>
-              <option value="FR">Practicing Gusion</option>
-              <option value="DE">Yessir</option>
+              <option value="less">Less Urgent</option>
+              <option value="somewhat">Somewhat Urgent</option>
+              <option value="very">Very Urgent</option>
             </select>
           </div>
-          <div className="w-[90%] flex justify-between pl-[2%]">
-            <label className="font-semibold text-[17pt]">Receive:</label>
-            <select
-              id="method"
-              class="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option value="US">Stress Management</option>
-              <option value="CA">Encouragement</option>
-              <option value="FR">Practicing Gusion</option>
-              <option value="DE">Yessir</option>
-            </select>
-          </div>
+
           <div className="w-[90%] flex justify-between pl-[2%]">
             <label className="font-semibold text-[17pt]">Contact:</label>
             <input
+              required
+              name="contact"
               className="outline-none w-[70%] bg-transparent border-b-[2px] px-[2%] border-[#062341]"
               type="text"
             />

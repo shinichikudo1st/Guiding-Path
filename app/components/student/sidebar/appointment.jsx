@@ -40,7 +40,7 @@ const Appointment = () => {
             onClick={togglePending}
             className={`text-[16pt] w-[33%] ${
               !openPending ? "text-[#818487]" : "text-[#0B6EC9]"
-            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center border-r-[3px] border-[#062341] font-bold`}
+            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center font-bold`}
           >
             Pending Appointments
           </span>
@@ -48,7 +48,7 @@ const Appointment = () => {
             onClick={toggleSubmitRequest}
             className={`text-[16pt] w-[33%] ${
               !openRequest ? "text-[#818487]" : "text-[#0B6EC9]"
-            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center border-r-[3px] border-[#062341] font-bold`}
+            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center border-l-[3px] border-[#062341] font-bold`}
           >
             Submit Request
           </span>
