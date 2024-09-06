@@ -1,5 +1,7 @@
 const AppointmentRequest = () => {
   const handleSubmit = async (event) => {
+    event.preventDefault();
+
     const formData = new FormData(event.target);
 
     const data = {
@@ -21,6 +23,7 @@ const AppointmentRequest = () => {
       });
       const result = await response.json();
 
+      event.target.reset();
       console.log(result.message);
     } catch (error) {}
   };
@@ -55,7 +58,7 @@ const AppointmentRequest = () => {
             <select
               name="reason"
               id="reason"
-              class="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="stress_management">Stress Management</option>
               <option value="encouragement">Encouragement</option>
@@ -68,7 +71,7 @@ const AppointmentRequest = () => {
             <select
               name="urgency"
               id="urgency"
-              class="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="less">Less Urgent</option>
               <option value="somewhat">Somewhat Urgent</option>
@@ -94,15 +97,15 @@ const AppointmentRequest = () => {
             className="h-[70%] rounded-[5px] p-[5%] font-sans bg-[#EDF2F5] border-[2px] border-[#062341]"
           ></textarea>
         </div>
+        <button
+          type="submit"
+          className="absolute bottom-10 right-[40%] w-[20%] mt-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-[#0B6EC9] to-blue-500 group-hover:from-[#0B6EC9] group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+        >
+          <span className="w-[100%] relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#83bef5] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 font-bold">
+            Submit
+          </span>
+        </button>
       </form>
-      <button
-        type="submit"
-        className="w-[20%] mt-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-[#0B6EC9] to-blue-500 group-hover:from-[#0B6EC9] group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-      >
-        <span className="w-[100%] relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#83bef5] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 font-bold">
-          Submit
-        </span>
-      </button>
     </div>
   );
 };
