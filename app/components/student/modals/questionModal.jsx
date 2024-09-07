@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ThankYouModal from "./thankYou";
 
 const QuestionModal = ({
   academicAssessment,
@@ -8,6 +9,7 @@ const QuestionModal = ({
   const [area, setArea] = useState(1);
   const [question, setQuestion] = useState([]);
   const [title, setTitle] = useState("");
+  const [thankyou, setThankYou] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [academicScore, setAcademicScore] = useState(0);
@@ -15,6 +17,11 @@ const QuestionModal = ({
   const [careerScore, setCareerScore] = useState(0);
 
   const [responses, setResponses] = useState({});
+
+  const refresh = () => {
+    setThankYou(false);
+    window.location.reload();
+  };
 
   const submitAppraisal = async (event) => {
     const academicFinalScore =
@@ -52,10 +59,11 @@ const QuestionModal = ({
       const result = await response.json();
       console.log(result.message);
     } catch (error) {
-      console.error("Submission error", error);
+      return console.error("Submission error", error);
     }
 
     setSubmitting(false);
+    setThankYou(true);
   };
 
   const changeQuestion = () => {
@@ -108,6 +116,7 @@ const QuestionModal = ({
 
   return (
     <>
+      {thankyou && <ThankYouModal refresh={refresh} />}
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
         <div className="absolute text-[20pt] top-[1%] font-bold">{title}</div>
         <form className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#1A5590] scrollbar-track-[#98A9BA]">

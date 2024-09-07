@@ -1,15 +1,16 @@
 import { BsBellFill, BsGearFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import OpenLogout from "./modals/openLogout";
 import { useState } from "react";
-import OpenSettings from "./modals/openSettings";
+import OpenSettings from "../student/modals/openSettings";
+import OpenLogout from "../student/modals/openLogout";
 
-const StudentNavbar = () => {
+const UserNavbar = () => {
   const [isLogoutToggled, setIsLogoutToggled] = useState(false);
   const [isSettingsToggled, setIsSettingsToggled] = useState(false);
   const router = useRouter();
 
   const logout = async () => {
+    sessionStorage.clear();
     await fetch("/api/logoutUser", {
       method: "POST",
     });
@@ -33,7 +34,7 @@ const StudentNavbar = () => {
           }}
         />
         <span
-          className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s]"
+          className="text-[16pt] font-bold translate-x-[60px] cursor-pointer 2xl:translate-x-[200px] hover:text-[#0B6EC9] hover:scale-105 hover:duration-[0.3s] select-none"
           onClick={() => {
             setIsLogoutToggled(!isLogoutToggled);
             setIsSettingsToggled(false);
@@ -50,4 +51,4 @@ const StudentNavbar = () => {
   );
 };
 
-export default StudentNavbar;
+export default UserNavbar;

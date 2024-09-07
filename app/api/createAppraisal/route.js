@@ -17,7 +17,16 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const currentDate = String(date);
+  const formattedDate = date.toLocaleString("en-US", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  const currentDate = String(formattedDate);
   const currentYear = String(date.getFullYear());
 
   try {

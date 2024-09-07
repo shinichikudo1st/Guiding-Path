@@ -35,6 +35,7 @@ model Students {
   appointment       Appointments[]
   evaluationTrend   Evaluation_Trends[]
   appraisal         Appraisals[]
+  request           Appointment_Requests[]
 }
 
 model Events {
@@ -65,6 +66,20 @@ model Counselors {
 
   referral          Referrals[]
   appointment       Appointments[]
+}
+
+model Appointment_Requests {
+  request_id      Int         @id @default(autoincrement())
+  student         Students    @relation(fields: [student_id], references: [student_id])
+  student_id      String
+  name            String
+  grade           String
+  reason          String
+  urgency         String
+  contact         String
+  role            String
+  notes           String
+  request_date    String
 }
 
 model Appointments {

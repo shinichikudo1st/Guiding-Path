@@ -28,6 +28,14 @@ const Profile = () => {
 
   const backButton = () => {};
 
+  /**
+   *
+   * uploadImage function checks first if there is a profile picture
+   * present and proceeds to delete the existing url in the database and the file in the
+   * vercel blob storage. After deleting the existing profile, it uploads the new file
+   * in the blob storage and updates the url field in the database.
+   *
+   */
   const uploadImage = async (event) => {
     event.preventDefault();
 
@@ -84,12 +92,20 @@ const Profile = () => {
       const result = await response.json();
       console.log(result.message);
       setProfileData(result.userInfo);
+
+      sessionStorage.setItem("profileData", JSON.stringify(result.userInfo));
       setRetrievingData(false);
     } catch (error) {}
   };
 
   useEffect(() => {
-    retrieveProfile();
+    const storedProfile = sessionStorage.getItem("profileData");
+    if (storedProfile) {
+      setProfileData(JSON.parse(storedProfile));
+      setRetrievingData(false);
+    } else {
+      retrieveProfile();
+    }
   }, []);
 
   return (
