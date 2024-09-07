@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import PaginationButton from "../../UI/paginationButton";
 import Image from "next/image";
+import ManageRequest from "./manageRequest";
 
 const ShowAppointmentRequest = () => {
   const [requests, setRequests] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [manageRequest, setManageRequests] = useState(false);
+  const [request_id, setRequest_id] = useState(null);
+
+  const handleManageRequest = (id) => {
+    setRequest_id(id);
+
+    setManageRequests(true);
+  };
+
+  const closeButton = () => {
+    setManageRequests(false);
+  };
 
   useEffect(() => {
     const initialRequests = async () => {
@@ -37,6 +50,13 @@ const ShowAppointmentRequest = () => {
 
   return (
     <>
+      {manageRequest && (
+        <ManageRequest
+          closeButton={closeButton}
+          requests={requests}
+          requestID={request_id}
+        />
+      )}
       <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] border-[1px] border-[#062341]">
         {loading ? (
           <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#D8E8F6] dark:bg-gray-800 dark:border-gray-700">
@@ -54,6 +74,7 @@ const ShowAppointmentRequest = () => {
               <div className="flex justify-center items-center w-[25%] h-[100%]">
                 <Image
                   priority
+                  alt="profile picture"
                   src={request.student.student.profilePicture}
                   width={70}
                   height={70}
@@ -68,7 +89,7 @@ const ShowAppointmentRequest = () => {
               </span>
               <div className="flex justify-center items-center w-[25%] h-[100%]">
                 <button
-                  type="button"
+                  onClick={() => handleManageRequest(request.request_id)}
                   className="text-white bg-[#63a7e4] hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                 >
                   Manage
