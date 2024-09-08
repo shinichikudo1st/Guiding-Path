@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 /**
  *
- * @function createAppointment create new appointment record in the database after accepting appointment request
+ * @function AppointmentHandler create new appointment record in the database after accepting appointment request
  *
  * @param {Request} request request object with a JSON body containing id, role, notes
  * @param {Object} request.body JSON body of the request
@@ -32,23 +32,13 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const formattedDate = date.toLocaleString("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  const currentDate = String(formattedDate);
 
   try {
     await prisma.appointments.create({
       data: {
         student_id: id,
         counselor_id: sessionData.id,
-        date_time: currentDate,
+        date_time: date,
         type: submitType,
         notes: notes,
         status: "pending",

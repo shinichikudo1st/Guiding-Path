@@ -51,6 +51,23 @@ export async function GET(request) {
       },
     });
 
+    requests = requests.map((request) => {
+      const date = new Date(request.request_date);
+      const formattedDate = date.toLocaleString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      request.request_date = formattedDate;
+
+      return request;
+    });
+
     return NextResponse.json(
       {
         requests,

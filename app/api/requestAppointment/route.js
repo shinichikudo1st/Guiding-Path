@@ -12,16 +12,6 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const formattedDate = date.toLocaleString("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  const currentDate = String(formattedDate);
 
   try {
     await prisma.appointment_Requests.create({
@@ -34,7 +24,7 @@ export async function POST(request) {
         contact: contact,
         notes: notes,
         role: sessionData.role,
-        request_date: currentDate,
+        request_date: date,
       },
     });
 

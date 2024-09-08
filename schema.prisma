@@ -79,7 +79,7 @@ model Appointment_Requests {
   contact         String
   role            String
   notes           String
-  request_date    String
+  request_date    DateTime
 }
 
 model Appointments {
@@ -88,7 +88,7 @@ model Appointments {
   student_id      String
   counselor       Counselors  @relation(fields: [counselor_id], references: [counselor_id])
   counselor_id    String
-  date_time       String
+  date_time       DateTime
   type            String
   notes           String
   status          String

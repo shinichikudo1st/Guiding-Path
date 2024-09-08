@@ -21,18 +21,19 @@ const ShowAppointmentRequest = () => {
     setManageRequests(false);
   };
 
+  const initialRequests = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/getRequests?page=${currentPage}`);
+      const data = await response.json();
+      setRequests(data.requests);
+      setTotalPages(data.totalPages);
+      console.log(data.message);
+    } catch (error) {}
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const initialRequests = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/getRequests?page=${currentPage}`);
-        const data = await response.json();
-        setRequests(data.requests);
-        setTotalPages(data.totalPages);
-        console.log(data.message);
-      } catch (error) {}
-      setLoading(false);
-    };
     initialRequests();
   }, [currentPage]);
 
@@ -55,6 +56,7 @@ const ShowAppointmentRequest = () => {
           closeButton={closeButton}
           requests={requests}
           requestID={request_id}
+          initialRequests={initialRequests}
         />
       )}
       <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] border-[1px] border-[#062341]">

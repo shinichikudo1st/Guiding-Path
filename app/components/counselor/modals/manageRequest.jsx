@@ -1,30 +1,52 @@
 import Image from "next/image";
 
-const ManageRequest = ({ requests, closeButton, requestID }) => {
+const ManageRequest = ({
+  requests,
+  closeButton,
+  requestID,
+  initialRequests,
+}) => {
   const renderRequest = requests.find(
     (request) => request.request_id === requestID
   );
 
   const acceptRequest = async () => {
+    const data = {
+      id: renderRequest.student_id,
+      role: renderRequest.role,
+      notes: renderRequest.notes,
+    };
+
     try {
       const response = await fetch("/api/createAppointment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(data),
       });
+
+      await fetch(`/api/deleteRequest?id=${renderRequest.request_id}`, {
+        method: "DELETE",
+      });
+
+      const result = response.json();
+      console.log(result.message);
     } catch (error) {}
+
+    initialRequests();
+    closeButton();
   };
 
   return (
     <div className=" absolute w-screen h-screen flex justify-center z-10">
       <div className="absolute w-full h-full translate-x-[-0.05%] translate-y-[-21.87%] bg-black opacity-75 z-20"></div>
-      <div className="flex justify-center items-center bg-[#dfecf6] w-[40%] h-[80%] translate-y-[-15%] opacity-100 z-30 rounded-[20px]">
+      <div className="flex flex-col justify-center items-center bg-[#dfecf6] w-[40%] h-[80%] translate-y-[-15%] opacity-100 z-30 rounded-[20px]">
         <button
           onClick={closeButton}
-          class="absolute right-[3%] top-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+          className="absolute right-[3%] top-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
         >
-          <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
             X
           </span>
         </button>
@@ -59,6 +81,14 @@ const ManageRequest = ({ requests, closeButton, requestID }) => {
             "{renderRequest.notes}"
           </div>
         </div>
+        <button
+          onClick={acceptRequest}
+          className="bottom-[5%] absolute inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+        >
+          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+            Accept Request
+          </span>
+        </button>
       </div>
     </div>
   );
