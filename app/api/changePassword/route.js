@@ -3,6 +3,19 @@ import prisma from "@/app/utils/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
+/**
+ *
+ * @function changePassword handles post request for changing the password of the user
+ *
+ *
+ * @param {Request} request incoming request object that is expected to contain a JSON body with password
+ * @param {Object} request.body JSON body of request
+ * @param {string} request.body.password new password
+ *
+ * @returns {NextResponse}
+ *
+ */
+
 export async function POST(request) {
   const { password } = await request.json();
 

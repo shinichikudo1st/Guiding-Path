@@ -2,6 +2,19 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 
+/**
+ *
+ * @function createAppointment create new appointment record in the database after accepting appointment request
+ *
+ * @param {Request} request request object with a JSON body containing id, role, notes
+ * @param {Object} request.body JSON body of the request
+ * @param {string} request.body.id student id
+ * @param {string} request.body.role role of user eg: student, counselor, teacher
+ * @param {string} request.body.notes additional information in the appointment request to support the reason of request
+ *
+ * @returns {NextResponse}
+ */
+
 export async function POST(request) {
   const { id, role, notes } = await request.json();
   const { sessionData } = await getSession();
