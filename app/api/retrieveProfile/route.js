@@ -10,33 +10,63 @@ export async function GET() {
   }
 
   try {
-    const userWithStudentDetails = await prisma.users.findUnique({
-      where: {
-        user_id: sessionData.id,
-      },
-      include: {
-        student: {
-          select: {
-            student_id: true,
-            grade_level: true,
-            program: true,
+    let data;
+
+    if (sessionData.role === "student") {
+      const userWithStudentDetails = await prisma.users.findUnique({
+        where: {
+          user_id: sessionData.id,
+        },
+        include: {
+          student: {
+            select: {
+              student_id: true,
+              grade_level: true,
+              program: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    const { name, user_id, contact, student, profilePicture } =
-      userWithStudentDetails;
-    const { grade_level, program } = student || {};
+      const { name, user_id, contact, student, profilePicture } =
+        userWithStudentDetails;
+      const { grade_level, program } = student || {};
 
-    const data = {
-      name: name,
-      year: grade_level,
-      course: program,
-      idNumber: user_id,
-      contact: contact,
-      profilePicture: profilePicture,
-    };
+      data = {
+        name: name,
+        year: grade_level,
+        course: program,
+        idNumber: user_id,
+        contact: contact,
+        profilePicture: profilePicture,
+      };
+    } else if (sessionData.role === "counselor") {
+      const userWithCounselorDetails = await prisma.users.findUnique({
+        where: {
+          user_id: sessionData.id,
+        },
+        include: {
+          counselor: {
+            select: {
+              counselor_id: true,
+              department: true,
+            },
+          },
+        },
+      });
+
+      const { name, user_id, contact, counselor, profilePicture } =
+        userWithCounselorDetails;
+      const { department } = counselor || {};
+
+      data = {
+        name: name,
+        department: department,
+        idNumber: user_id,
+        contact: contact,
+        profilePicture: profilePicture,
+      };
+    }
 
     return NextResponse.json(
       { message: "User Data Retrieved", userInfo: data },
