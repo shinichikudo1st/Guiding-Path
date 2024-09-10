@@ -16,7 +16,7 @@ import { NextResponse } from "next/server";
  */
 
 export async function POST(request) {
-  const { id, role, notes } = await request.json();
+  const { date, id, role, notes } = await request.json();
   const { sessionData } = await getSession();
 
   if (!sessionData) {
@@ -31,14 +31,14 @@ export async function POST(request) {
     submitType = "referral";
   }
 
-  const date = new Date();
+  const formatDate = new Date(date);
 
   try {
     await prisma.appointments.create({
       data: {
         student_id: id,
         counselor_id: sessionData.id,
-        date_time: date,
+        date_time: formatDate,
         type: submitType,
         notes: notes,
         status: "pending",

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const PendingAppointment = () => {
@@ -37,7 +38,13 @@ const PendingAppointment = () => {
           >
             <div className="flex w-[70%] h-[100%] border-y-[1px] border-[#062341] bg-[#EDF6FF]">
               <div className="w-[35%] h-[100%] flex justify-center p-[5%]">
-                <span className="bg-red-500 w-[130px] h-[130px] rounded-[999px]"></span>
+                <Image
+                  alt="profilePicture"
+                  src={appointment.counselor.counselor.profilePicture}
+                  width={130}
+                  height={130}
+                  className="bg-red-500 w-[130px] h-[130px] rounded-[999px]"
+                ></Image>
               </div>
               <div className="flex flex-col justify-center pl-[5%] gap-[10%] w-[65%] h-[100%] ">
                 <div>
@@ -54,7 +61,7 @@ const PendingAppointment = () => {
                 </div>
                 <div>
                   <label className="font-bold">Date & Time:</label>
-                  <span className="ml-[2%]">September 32, 2024 - 4:00PM</span>
+                  <span className="ml-[2%]">{appointment.date_time}</span>
                 </div>
                 <div>
                   <label className="font-bold">Location:</label>

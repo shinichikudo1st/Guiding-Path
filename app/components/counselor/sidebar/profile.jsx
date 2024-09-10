@@ -39,7 +39,7 @@ const ProfileCounselor = () => {
   const uploadImage = async (event) => {
     event.preventDefault();
 
-    setUploading(!uploading);
+    setUploading(true);
 
     if (profileData.profilePicture) {
       try {
@@ -75,8 +75,8 @@ const ProfileCounselor = () => {
     } catch (error) {}
 
     toggleUploadModal();
-    setUploading(!uploading);
-    window.location.reload();
+    retrieveProfile();
+    setUploading(false);
   };
 
   const retrieveProfile = async () => {

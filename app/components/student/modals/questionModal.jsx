@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ThankYouModal from "./thankYou";
 
 const QuestionModal = ({
@@ -17,6 +17,14 @@ const QuestionModal = ({
   const [careerScore, setCareerScore] = useState(0);
 
   const [responses, setResponses] = useState({});
+
+  const scrollableDiv = useRef(null);
+
+  const scrollBackTop = () => {
+    if (scrollableDiv.current) {
+      scrollableDiv.current.scrollTop = 0;
+    }
+  };
 
   const refresh = () => {
     setThankYou(false);
@@ -94,6 +102,7 @@ const QuestionModal = ({
   };
 
   const nextAppraisal = () => {
+    scrollBackTop();
     calculateScore();
     setResponses({});
     if (area >= 3) {
@@ -119,7 +128,10 @@ const QuestionModal = ({
       {thankyou && <ThankYouModal refresh={refresh} />}
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
         <div className="absolute text-[20pt] top-[1%] font-bold">{title}</div>
-        <form className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#1A5590] scrollbar-track-[#98A9BA]">
+        <form
+          ref={scrollableDiv}
+          className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#1A5590] scrollbar-track-[#98A9BA] scroll-smooth"
+        >
           {question && question.length > 0 ? (
             question.map((questionText, index) => (
               <div key={index} className="flex flex-col gap-4">

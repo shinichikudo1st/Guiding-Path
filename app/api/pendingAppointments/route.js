@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   try {
-    const appointments = await prisma.appointments.findMany({
+    let appointments = await prisma.appointments.findMany({
       where: {
         status: "pending",
       },
@@ -19,6 +19,7 @@ export async function GET() {
           include: {
             counselor: {
               select: {
+                profilePicture: true,
                 name: true,
                 contact: true,
               },
@@ -26,6 +27,23 @@ export async function GET() {
           },
         },
       },
+    });
+
+    appointments = appointments.map((appointment) => {
+      const date = new Date(appointment.date_time);
+      const formattedDate = date.toLocaleString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      appointment.date_time = formattedDate;
+
+      return appointment;
     });
 
     return NextResponse.json(
