@@ -22,6 +22,7 @@ const ManageAppointmentDate = ({
       id: renderRequest.student_id,
       role: renderRequest.role,
       notes: renderRequest.notes,
+      reason: renderRequest.reason,
     };
 
     try {

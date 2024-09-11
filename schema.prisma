@@ -92,6 +92,7 @@ model Appointments {
   type            String
   notes           String
   status          String
+  reason          String?
 }
 
 model Referrals {
