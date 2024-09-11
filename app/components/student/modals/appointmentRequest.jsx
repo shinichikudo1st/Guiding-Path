@@ -9,6 +9,7 @@ const AppointmentRequest = () => {
       grade: formData.get("grade"),
       reason: formData.get("reason"),
       urgency: formData.get("urgency"),
+      type: formData.get("type"),
       contact: formData.get("contact"),
       notes: formData.get("notes"),
     };
@@ -76,6 +77,18 @@ const AppointmentRequest = () => {
               <option value="less">Less Urgent</option>
               <option value="somewhat">Somewhat Urgent</option>
               <option value="very">Very Urgent</option>
+            </select>
+          </div>
+
+          <div className="w-[90%] flex justify-between pl-[2%]">
+            <label className="font-semibold text-[17pt]">Urgency:</label>
+            <select
+              name="type"
+              id="type"
+              className="font-semibold outline-none w-[70%] bg-[#CFE2F2] border-[1px] border-[#062341] text-[#062341] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option value="virtual">Virtual/Online</option>
+              <option value="inperson">In Person</option>
             </select>
           </div>
 

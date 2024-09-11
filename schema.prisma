@@ -79,6 +79,7 @@ model Appointment_Requests {
   contact         String
   role            String
   notes           String
+  type            String?
   request_date    DateTime
 }
 
@@ -90,6 +91,7 @@ model Appointments {
   counselor_id    String
   date_time       DateTime
   type            String
+  counsel_type    String?
   notes           String
   status          String
   reason          String?

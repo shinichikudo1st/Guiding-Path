@@ -23,6 +23,7 @@ const ManageAppointmentDate = ({
       role: renderRequest.role,
       notes: renderRequest.notes,
       reason: renderRequest.reason,
+      counsel_type: renderRequest.type,
     };
 
     try {
@@ -60,7 +61,7 @@ const ManageAppointmentDate = ({
         <span className="text-[15pt] font-bold">Pick an appointment date:</span>
         <input
           onChange={onChangeHandler}
-          type="date"
+          type="datetime-local"
           className="w-[50%] text-[15pt] font-bold p-[5%] outline-none rounded-[10px]"
         />
       </div>

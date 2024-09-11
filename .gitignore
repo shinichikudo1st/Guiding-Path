@@ -38,3 +38,6 @@ next-env.d.ts
 
 #jsdoc documentation
 out/
+
+#credentials.json google cloud
+client_secret_226046245506-tgv0cepblqne99t3ou4f597c0rccp87q.apps.googleusercontent.com.json

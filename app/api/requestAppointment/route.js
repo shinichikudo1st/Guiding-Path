@@ -3,7 +3,8 @@ import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
-  const { name, grade, reason, urgency, contact, notes } = await request.json();
+  const { name, grade, reason, urgency, type, contact, notes } =
+    await request.json();
 
   const { sessionData } = await getSession();
 
@@ -23,6 +24,7 @@ export async function POST(request) {
         urgency: urgency,
         contact: contact,
         notes: notes,
+        type: type,
         role: sessionData.role,
         request_date: date,
       },

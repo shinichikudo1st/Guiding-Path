@@ -16,7 +16,7 @@ import { NextResponse } from "next/server";
  */
 
 export async function POST(request) {
-  const { date, id, role, notes, reason } = await request.json();
+  const { date, id, role, notes, reason, counsel_type } = await request.json();
   const { sessionData } = await getSession();
 
   if (!sessionData) {
@@ -42,6 +42,7 @@ export async function POST(request) {
         type: submitType,
         notes: notes,
         reason: reason,
+        counsel_type: counsel_type,
         status: "pending",
       },
     });

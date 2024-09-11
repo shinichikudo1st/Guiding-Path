@@ -49,8 +49,9 @@ const ManageRequest = ({
             <div className=" bg-yellow-100 col-span-2 flex justify-center items-center text-[#062341] font-semibold">
               {renderRequest.name}
             </div>
-            <div className=" bg-yellow-200 col-span-2 flex justify-center items-center italic">
-              {renderRequest.grade}
+            <div className=" bg-yellow-200 col-span-2 flex justify-center items-center font-semibold">
+              type:{" "}
+              <span className="font-medium ml-[5%]">{renderRequest.type}</span>
             </div>
           </div>
           <div className="bg-pink-100 w-[100%] h-[15%] flex gap-[30%] items-center pl-[20%] font-medium">

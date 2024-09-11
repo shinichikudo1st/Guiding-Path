@@ -24,9 +24,11 @@ export async function GET() {
         },
       },
       select: {
+        appointment_id: true,
         notes: true,
         reason: true,
         date_time: true,
+        counsel_type: true,
         student: {
           include: {
             student: {
