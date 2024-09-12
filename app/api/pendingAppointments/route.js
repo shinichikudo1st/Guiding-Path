@@ -13,6 +13,7 @@ export async function GET() {
     let appointments = await prisma.appointments.findMany({
       where: {
         status: "pending",
+        student_id: sessionData.id,
       },
       include: {
         counselor: {
