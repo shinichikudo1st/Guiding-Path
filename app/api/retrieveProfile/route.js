@@ -66,6 +66,32 @@ export async function GET() {
         contact: contact,
         profilePicture: profilePicture,
       };
+    } else if (sessionData.role === "teacher") {
+      const userWithTeacherDetails = await prisma.users.findUnique({
+        where: {
+          user_id: sessionData.id,
+        },
+        include: {
+          teacher: {
+            select: {
+              teacher_id: true,
+              department: true,
+            },
+          },
+        },
+      });
+
+      const { name, user_id, contact, teacher, profilePicture } =
+        userWithTeacherDetails;
+      const { department } = teacher || {};
+
+      data = {
+        name: name,
+        department: department,
+        idNumber: user_id,
+        contact: contact,
+        profilePicture: profilePicture,
+      };
     }
 
     return NextResponse.json(
