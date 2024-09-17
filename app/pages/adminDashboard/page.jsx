@@ -2,6 +2,7 @@
 
 import CounselorSidebar from "@/app/components/counselor/counselorSidebar";
 import AppointmentCounselor from "@/app/components/counselor/sidebar/appointment";
+import CreateResources from "@/app/components/counselor/sidebar/createResources";
 import GenerateReport from "@/app/components/counselor/sidebar/generateReport";
 import CounselorHome from "@/app/components/counselor/sidebar/homeDashboard";
 import ProfileCounselor from "@/app/components/counselor/sidebar/profile";
@@ -16,9 +17,11 @@ const AdminDashboard = () => {
   const [userManagement, setUserManagement] = useState(false);
   const [generateReport, setGenerateReport] = useState(false);
   const [appointment, setAppointment] = useState(false);
+  const [create, setCreate] = useState(false);
   const [otherButton, setOtherButton] = useState(true);
 
   const toggleProfile = () => {
+    setCreate(false);
     setAppointment(false);
     setOtherButton(false);
     setGenerateReport(false);
@@ -27,6 +30,7 @@ const AdminDashboard = () => {
   };
 
   const toggleUserManagement = () => {
+    setCreate(false);
     setAppointment(false);
     setOtherButton(false);
     setGenerateReport(false);
@@ -35,6 +39,7 @@ const AdminDashboard = () => {
   };
 
   const toggleReport = () => {
+    setCreate(false);
     setAppointment(false);
     setOtherButton(false);
     setUserManagement(false);
@@ -43,6 +48,7 @@ const AdminDashboard = () => {
   };
 
   const toggleAppointment = () => {
+    setCreate(false);
     setOtherButton(false);
     setUserManagement(false);
     setGenerateReport(false);
@@ -50,7 +56,17 @@ const AdminDashboard = () => {
     setAppointment(true);
   };
 
+  const toggleCreate = () => {
+    setOtherButton(false);
+    setUserManagement(false);
+    setGenerateReport(false);
+    setProfile(false);
+    setAppointment(false);
+    setCreate(true);
+  };
+
   const toggleOtherButton = () => {
+    setCreate(false);
     setUserManagement(false);
     setGenerateReport(false);
     setProfile(false);
@@ -68,6 +84,7 @@ const AdminDashboard = () => {
         generateReport={toggleReport}
         appointment={toggleAppointment}
         profile={toggleProfile}
+        create={toggleCreate}
       />
       <StudentQuickView />
       {otherButton && <CounselorHome />}
@@ -75,6 +92,7 @@ const AdminDashboard = () => {
       {userManagement && <UserManagement />}
       {generateReport && <GenerateReport />}
       {appointment && <AppointmentCounselor />}
+      {create && <CreateResources />}
     </main>
   );
 };

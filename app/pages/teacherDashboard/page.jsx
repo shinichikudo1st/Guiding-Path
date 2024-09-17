@@ -1,6 +1,7 @@
 "use client";
 import StudentQuickView from "@/app/components/student/studentQuickView";
 import ProfileTeacher from "@/app/components/teacher/sidebar/profile";
+import TeacherReferral from "@/app/components/teacher/sidebar/referral";
 import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
@@ -52,6 +53,7 @@ const TeacherDashboard = () => {
         resource={toggleResources}
       />
       {profile && <ProfileTeacher />}
+      {referral && <TeacherReferral />}
     </main>
   );
 };

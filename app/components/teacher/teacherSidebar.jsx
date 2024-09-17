@@ -14,7 +14,10 @@ const TeacherSidebar = ({ profile, appointment, referral, resource }) => {
         <FaUserClock className="text-[30pt]" />
         <span>Appointments</span>
       </div>
-      <div className="flex items-center font-bold border-b-[1px] border-[#75818C] gap-4 2xl:gap-6 w-[230px] h-[55px] pl-5 cursor-pointer hover:text-[#0B6EC9] hover:duration-[0.4s]">
+      <div
+        onClick={referral}
+        className="flex items-center font-bold border-b-[1px] border-[#75818C] gap-4 2xl:gap-6 w-[230px] h-[55px] pl-5 cursor-pointer hover:text-[#0B6EC9] hover:duration-[0.4s]"
+      >
         <FaEdit className="text-[30pt]" />
         <span>Referrals</span>
       </div>

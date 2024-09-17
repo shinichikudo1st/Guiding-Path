@@ -42,8 +42,9 @@ model Events {
   event_id          Int        @id @default(autoincrement())
   title             String
   description       String
-  date_time         String
+  date_time         DateTime
   location          String
+  link              String?
 
   eventRegistrations Event_Registration[] 
 }
@@ -54,7 +55,7 @@ model Event_Registration {
   student           Students   @relation(fields: [student_id], references: [student_id])
   student_id        String     
   description       String
-  date_time         String
+  date_time         DateTime
   location          String
   @@id([event_id, student_id])
 }
