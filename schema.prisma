@@ -109,6 +109,7 @@ model Referrals {
   counselor     Counselors  @relation(fields: [counselor_id], references: [counselor_id])
   counselor_id  String
   status        String
+  dateSubmitted DateTime?
 }
 
 model Teachers {
