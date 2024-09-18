@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CreateEvent from "../modals/createEvent";
+import CreateAnnouncement from "../modals/createAnnouncement";
 
 const CreateResources = () => {
   const [events, setEvents] = useState(false);
@@ -54,6 +55,7 @@ const CreateResources = () => {
           </span>
         </div>
         {events && <CreateEvent />}
+        {announcements && <CreateAnnouncement />}
       </div>
     </>
   );

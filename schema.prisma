@@ -124,17 +124,13 @@ model Resources {
   title             String
   description       String
   link              String
-  resourceCategories Resource_Category[]
+  img_path          String?
+  category          String
+  createdAt         DateTime?   @default(now())
+  
   userResources     User_Resources[]
 }
 
-model Resource_Category {
-  resource          Resources  @relation(fields: [resource_id], references: [resource_id])
-  resource_id       Int
-  category          String
-  img_path          String
-  @@id([resource_id, category])
-}
 
 model User_Resources {
   user              Users      @relation(fields: [user_id], references: [user_id])
