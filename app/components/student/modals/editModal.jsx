@@ -1,3 +1,12 @@
+import {
+  FaTimes,
+  FaUser,
+  FaGraduationCap,
+  FaBook,
+  FaPhone,
+  FaSave,
+} from "react-icons/fa";
+
 const EditModal = ({ editButton, profileData, retrieveProfile }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -34,88 +43,98 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
 
       retrieveProfile();
       editButton();
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      // TODO: Add user-friendly error handling
+    }
   };
 
   return (
     <div className="absolute h-[100%] w-[100%] flex pl-[30%] pt-[10%] bg-[#dfecf6] rounded-[20px] z-20">
       <button
         onClick={editButton}
-        className=" right-1 top-3 absolute inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-[#0B6EC9] to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+        className="right-4 top-4 absolute inline-flex items-center justify-center p-2 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-white hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 focus:ring-4 focus:outline-none focus:ring-blue-300"
       >
-        <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-          X
-        </span>
+        <FaTimes className="h-6 w-6" />
       </button>
-      <form onSubmit={handleSubmit} className="max-w-sm mx-auto absolute">
-        <div className="mb-5">
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-sm mx-auto absolute space-y-6"
+      >
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
+        <div>
           <label
             htmlFor="name"
-            className="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-gray-900"
           >
-            New Name
+            <FaUser className="inline-block mr-2" />
+            Name
           </label>
           <input
             type="text"
             id="name"
             name="name"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
             placeholder={profileData.name}
           />
         </div>
 
-        <div className="mb-5">
+        <div>
           <label
             htmlFor="year"
-            className="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-gray-900"
           >
-            Set Year Level
+            <FaGraduationCap className="inline-block mr-2" />
+            Year Level
           </label>
           <input
             type="text"
             id="year"
             name="year"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
             placeholder={profileData.year}
           />
         </div>
 
-        <div className="mb-5">
+        <div>
           <label
             htmlFor="course"
-            className="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-gray-900"
           >
-            Set Course
+            <FaBook className="inline-block mr-2" />
+            Course
           </label>
           <input
             type="text"
             id="course"
             name="course"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
             placeholder={profileData.course}
           />
         </div>
 
-        <div className="mb-5">
+        <div>
           <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-bold text-gray-900 dark:text-white"
+            htmlFor="contact"
+            className="block mb-2 text-sm font-medium text-gray-900"
           >
-            New Contact
+            <FaPhone className="inline-block mr-2" />
+            Contact
           </label>
           <input
             type="text"
             id="contact"
             name="contact"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
             placeholder={profileData.contact}
           />
         </div>
         <button
           type="submit"
-          className="text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="w-full text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-300 flex items-center justify-center"
         >
-          Submit
+          <FaSave className="mr-2" />
+          Save Changes
         </button>
       </form>
     </div>

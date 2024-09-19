@@ -1,4 +1,13 @@
 import { useEffect, useState, useRef } from "react";
+import {
+  FaEdit,
+  FaArrowLeft,
+  FaUser,
+  FaGraduationCap,
+  FaBook,
+  FaIdCard,
+  FaPhone,
+} from "react-icons/fa";
 import LoadingSpinner from "../../UI/loadingSpinner";
 import EditModal from "../modals/editModal";
 import UploadProfilePicture from "../uploadProfilePicture";
@@ -122,7 +131,7 @@ const Profile = () => {
           setIsFileSelected={setIsFileSelected}
         />
       )}
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center">
+      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
         {editModal && (
           <EditModal
             editButton={editButton}
@@ -134,7 +143,7 @@ const Profile = () => {
           <LoadingSpinner />
         ) : (
           profileData && (
-            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#1f3a56] gap-[50px]">
+            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] gap-[50px]">
               <UploadProfilePicture
                 toggleUploadModal={toggleUploadModal}
                 picture={
@@ -143,49 +152,56 @@ const Profile = () => {
                     : null
                 }
               />
-              <span className="text-[25pt] font-bold">MY PROFILE</span>
-              <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
-                <label htmlFor="name" className="font-bold 2xl:w-[25%]">
+              <span className="text-[28pt] font-bold text-[#062341]">
+                MY PROFILE
+              </span>
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaUser className="text-[#0B6EC9] text-xl" />
+                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
                   Name:
                 </label>
-                <span>{profileData.name}</span>
+                <span className="font-medium">{profileData.name}</span>
               </div>
-              <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
-                <label htmlFor="name" className="font-bold 2xl:w-[25%]">
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaGraduationCap className="text-[#0B6EC9] text-xl" />
+                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
                   Year:
                 </label>
-                <span>{profileData.year}</span>
+                <span className="font-medium">{profileData.year}</span>
               </div>
-              <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
-                <label htmlFor="name" className="font-bold 2xl:w-[25%]">
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaBook className="text-[#0B6EC9] text-xl" />
+                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
                   Course:
                 </label>
-                <span>{profileData.course}</span>
+                <span className="font-medium">{profileData.course}</span>
               </div>
-              <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
-                <label htmlFor="name" className="font-bold 2xl:w-[25%]">
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaIdCard className="text-[#0B6EC9] text-xl" />
+                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
                   ID Number:
                 </label>
-                <span>{profileData.idNumber}</span>
+                <span className="font-medium">{profileData.idNumber}</span>
               </div>
-              <div className="flex gap-[10px] text-[15pt] 2xl:w-[90%]">
-                <label htmlFor="name" className="font-bold 2xl:w-[25%]">
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaPhone className="text-[#0B6EC9] text-xl" />
+                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
                   Contact:
                 </label>
-                <span>{profileData.contact}</span>
+                <span className="font-medium">{profileData.contact}</span>
               </div>
               <div className="flex gap-[10%] 2xl:mt-[10%]">
                 <button
                   onClick={editButton}
-                  className="text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px]"
+                  className="text-white bg-[#0B6EC9] hover:bg-[#095396] focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px] transition duration-300 ease-in-out flex items-center justify-center"
                 >
-                  Edit
+                  <FaEdit className="mr-2" /> Edit
                 </button>
                 <button
                   onClick={backButton}
-                  className="text-[#1f3a56] bg-[#8BB8E1] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 hover:text-white dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px]"
+                  className="text-[#062341] bg-[#E6F0F9] hover:bg-[#C4E0F9] focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 hover:text-[#062341] dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px] transition duration-300 ease-in-out flex items-center justify-center"
                 >
-                  Back
+                  <FaArrowLeft className="mr-2" /> Back
                 </button>
               </div>
             </div>
