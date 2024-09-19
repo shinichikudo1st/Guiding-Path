@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AppointmentRequest from "../modals/appointmentRequest";
 import PendingAppointment from "../modals/pendingAppointment";
+import AppointmentCalendar from "../modals/appointmentCalendar";
 
 const Appointment = () => {
   const [openRequest, setOpenRequest] = useState(true);
@@ -56,6 +57,7 @@ const Appointment = () => {
         </div>
         {openRequest && <AppointmentRequest />}
         {openPending && <PendingAppointment />}
+        {openAppointments && <AppointmentCalendar />}
       </div>
     </>
   );
