@@ -6,6 +6,7 @@ import CreateResources from "@/app/components/counselor/sidebar/createResources"
 import GenerateReport from "@/app/components/counselor/sidebar/generateReport";
 import CounselorHome from "@/app/components/counselor/sidebar/homeDashboard";
 import ProfileCounselor from "@/app/components/counselor/sidebar/profile";
+import ReferralCounselor from "@/app/components/counselor/sidebar/referralCounselor";
 import UserManagement from "@/app/components/counselor/sidebar/userManagement";
 import StudentQuickView from "@/app/components/student/studentQuickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
@@ -13,86 +14,39 @@ import FullBackground from "@/app/components/universal/fullBackground";
 import { useState } from "react";
 
 const AdminDashboard = () => {
-  const [profile, setProfile] = useState(false);
-  const [userManagement, setUserManagement] = useState(false);
-  const [generateReport, setGenerateReport] = useState(false);
-  const [appointment, setAppointment] = useState(false);
-  const [create, setCreate] = useState(false);
-  const [otherButton, setOtherButton] = useState(true);
+  const [activeComponent, setActiveComponent] = useState("otherButton");
 
-  const toggleProfile = () => {
-    setCreate(false);
-    setAppointment(false);
-    setOtherButton(false);
-    setGenerateReport(false);
-    setUserManagement(false);
-    setProfile(true);
+  const components = {
+    profile: ProfileCounselor,
+    userManagement: UserManagement,
+    generateReport: GenerateReport,
+    appointment: AppointmentCounselor,
+    create: CreateResources,
+    otherButton: CounselorHome,
+    referral: ReferralCounselor,
   };
 
-  const toggleUserManagement = () => {
-    setCreate(false);
-    setAppointment(false);
-    setOtherButton(false);
-    setGenerateReport(false);
-    setProfile(false);
-    setUserManagement(true);
+  const toggleComponent = (componentName) => {
+    setActiveComponent(componentName);
   };
 
-  const toggleReport = () => {
-    setCreate(false);
-    setAppointment(false);
-    setOtherButton(false);
-    setUserManagement(false);
-    setProfile(false);
-    setGenerateReport(true);
-  };
-
-  const toggleAppointment = () => {
-    setCreate(false);
-    setOtherButton(false);
-    setUserManagement(false);
-    setGenerateReport(false);
-    setProfile(false);
-    setAppointment(true);
-  };
-
-  const toggleCreate = () => {
-    setOtherButton(false);
-    setUserManagement(false);
-    setGenerateReport(false);
-    setProfile(false);
-    setAppointment(false);
-    setCreate(true);
-  };
-
-  const toggleOtherButton = () => {
-    setCreate(false);
-    setUserManagement(false);
-    setGenerateReport(false);
-    setProfile(false);
-    setAppointment(false);
-    setOtherButton(true);
-  };
+  const ActiveComponent = components[activeComponent];
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
       <UserNavbar />
       <CounselorSidebar
-        otherButton={toggleOtherButton}
-        userManagement={toggleUserManagement}
-        generateReport={toggleReport}
-        appointment={toggleAppointment}
-        profile={toggleProfile}
-        create={toggleCreate}
+        otherButton={() => toggleComponent("otherButton")}
+        userManagement={() => toggleComponent("userManagement")}
+        generateReport={() => toggleComponent("generateReport")}
+        appointment={() => toggleComponent("appointment")}
+        profile={() => toggleComponent("profile")}
+        create={() => toggleComponent("create")}
+        referral={() => toggleComponent("referral")}
       />
       <StudentQuickView />
-      {otherButton && <CounselorHome />}
-      {profile && <ProfileCounselor />}
-      {userManagement && <UserManagement />}
-      {generateReport && <GenerateReport />}
-      {appointment && <AppointmentCounselor />}
-      {create && <CreateResources />}
+      <ActiveComponent />
     </main>
   );
 };

@@ -16,7 +16,8 @@ import { NextResponse } from "next/server";
  */
 
 export async function POST(request) {
-  const { date, id, role, notes, reason, counsel_type } = await request.json();
+  const { date, id, role, notes, reason, counsel_type, referral_id } =
+    await request.json();
   const { sessionData } = await getSession();
 
   if (!sessionData) {
@@ -46,6 +47,17 @@ export async function POST(request) {
         status: "pending",
       },
     });
+
+    if (role === "teacher") {
+      await prisma.referrals.update({
+        where: {
+          referral_id: referral_id,
+        },
+        data: {
+          status: "confirmed",
+        },
+      });
+    }
 
     return NextResponse.json(
       { message: "Appointment Created" },

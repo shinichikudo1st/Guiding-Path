@@ -9,8 +9,10 @@ import {
 
 const ViewReferrals = () => {
   const [referrals, setReferrals] = useState([]);
+  const [filteredReferrals, setFilteredReferrals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     const fetchReferrals = async () => {
@@ -21,6 +23,7 @@ const ViewReferrals = () => {
         }
         const data = await response.json();
         setReferrals(data);
+        setFilteredReferrals(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -30,6 +33,16 @@ const ViewReferrals = () => {
 
     fetchReferrals();
   }, []);
+
+  useEffect(() => {
+    if (statusFilter === "all") {
+      setFilteredReferrals(referrals);
+    } else {
+      setFilteredReferrals(
+        referrals.filter((referral) => referral.status === statusFilter)
+      );
+    }
+  }, [statusFilter, referrals]);
 
   if (isLoading) {
     return (
@@ -43,14 +56,55 @@ const ViewReferrals = () => {
     return <div className="text-red-500 text-center">Error: {error}</div>;
   }
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-200 text-yellow-800";
+      case "confirmed":
+      case "in_progress":
+        return "bg-blue-200 text-blue-800";
+      case "closed":
+      case "completed":
+        return "bg-gray-200 text-gray-700";
+      default:
+        return "bg-gray-200 text-gray-800";
+    }
+  };
+
+  const filterOptions = [
+    { value: "all", label: "All" },
+    { value: "pending", label: "Pending" },
+    { value: "confirmed", label: "Confirmed/In Progress" },
+    { value: "closed", label: "Closed/Completed" },
+  ];
+
   return (
     <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#E6F0F9]">
-      <h2 className="text-3xl font-bold text-[#062341] mb-6">View Referrals</h2>
-      {referrals.length === 0 ? (
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-[#062341] mb-4 md:mb-0">
+          View Referrals
+        </h2>
+        <div className="flex flex-wrap justify-center gap-2">
+          {filterOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setStatusFilter(option.value)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+                statusFilter === option.value
+                  ? "bg-[#0B6EC9] text-white"
+                  : "bg-white text-[#0B6EC9] hover:bg-[#0B6EC9] hover:text-white"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {filteredReferrals.length === 0 ? (
         <p className="text-center text-gray-500">No referrals found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {referrals.map((referral) => (
+          {filteredReferrals.map((referral) => (
             <div
               key={referral.referral_id}
               className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl flex flex-col h-full"
@@ -88,24 +142,17 @@ const ViewReferrals = () => {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 flex justify-between items-center pt-4 border-t border-gray-200">
+              <div className="mt-4 flex justify-end items-center pt-4 border-t border-gray-200">
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    referral.status === "pending"
-                      ? "bg-yellow-200 text-yellow-800"
-                      : referral.status === "in_progress"
-                      ? "bg-blue-200 text-blue-800"
-                      : "bg-green-200 text-green-800"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                    referral.status
+                  )}`}
                 >
                   {referral.status
                     ? referral.status.charAt(0).toUpperCase() +
                       referral.status.slice(1).replace("_", " ")
                     : "N/A"}
                 </span>
-                <button className="text-[#0B6EC9] hover:underline focus:outline-none">
-                  View Details
-                </button>
               </div>
             </div>
           ))}
