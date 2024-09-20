@@ -44,6 +44,8 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
         router.push("/pages/adminDashboard");
       } else if (result.role === "student") {
         router.push("/pages/studentDashboard");
+      } else if (result.role === "teacher") {
+        router.push("/pages/teacherDashboard");
       }
     } catch (error) {
       console.error(error);

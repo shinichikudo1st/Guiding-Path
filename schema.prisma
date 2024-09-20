@@ -17,7 +17,7 @@ model Users {
   role                String     @default("student")
   status              String     @default("active")
   contact             String
-  profilePicture      String?
+  profilePicture      String?    @default("/noProfile.png")
 
   student             Students?
   counselor           Counselors?
@@ -42,8 +42,9 @@ model Events {
   event_id          Int        @id @default(autoincrement())
   title             String
   description       String
-  date_time         String
+  date_time         DateTime
   location          String
+  link              String?
 
   eventRegistrations Event_Registration[] 
 }
@@ -54,7 +55,7 @@ model Event_Registration {
   student           Students   @relation(fields: [student_id], references: [student_id])
   student_id        String     
   description       String
-  date_time         String
+  date_time         DateTime
   location          String
   @@id([event_id, student_id])
 }
@@ -79,7 +80,8 @@ model Appointment_Requests {
   contact         String
   role            String
   notes           String
-  request_date    String
+  type            String?
+  request_date    DateTime
 }
 
 model Appointments {
@@ -88,10 +90,12 @@ model Appointments {
   student_id      String
   counselor       Counselors  @relation(fields: [counselor_id], references: [counselor_id])
   counselor_id    String
-  date_time       String
+  date_time       DateTime
   type            String
+  counsel_type    String?
   notes           String
   status          String
+  reason          String?
 }
 
 model Referrals {
@@ -105,6 +109,7 @@ model Referrals {
   counselor     Counselors  @relation(fields: [counselor_id], references: [counselor_id])
   counselor_id  String
   status        String
+  dateSubmitted DateTime?
 }
 
 model Teachers {
@@ -120,17 +125,13 @@ model Resources {
   title             String
   description       String
   link              String
-  resourceCategories Resource_Category[]
+  img_path          String?
+  category          String
+  createdAt         DateTime?   @default(now())
+  
   userResources     User_Resources[]
 }
 
-model Resource_Category {
-  resource          Resources  @relation(fields: [resource_id], references: [resource_id])
-  resource_id       Int
-  category          String
-  img_path          String
-  @@id([resource_id, category])
-}
 
 model User_Resources {
   user              Users      @relation(fields: [user_id], references: [user_id])

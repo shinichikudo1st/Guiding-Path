@@ -7,11 +7,14 @@ const CounselorSidebar = ({
   userManagement,
   generateReport,
   appointment,
+  profile,
+  create,
+  referral,
 }) => {
   return (
     <aside className="absolute w-[20%] h-[90vh] bg-[#E6F0F9] translate-y-[75px] text-[#062341] p-[20px] text-[12pt] flex flex-col items-center gap-[25px] 2xl:gap-[50px] 2xl:p-[50px] pt-[30px]">
       <div
-        onClick={otherButton}
+        onClick={profile}
         className="flex items-center font-bold border-b-[1px] border-[#75818C] gap-4 2xl:gap-6 w-[230px] h-[55px] pl-5 cursor-pointer hover:text-[#0B6EC9] hover:duration-[0.4s]"
       >
         <FaUserCircle className="text-[30pt]" />
@@ -32,7 +35,7 @@ const CounselorSidebar = ({
         <span>User Management</span>
       </div>
       <div
-        onClick={otherButton}
+        onClick={create}
         className="flex items-center font-bold border-b-[1px] border-[#75818C] gap-4 2xl:gap-6 w-[230px] h-[55px] pl-5 cursor-pointer hover:text-[#0B6EC9] hover:duration-[0.4s]"
       >
         <FaEdit className="text-[30pt]" />
@@ -53,7 +56,7 @@ const CounselorSidebar = ({
         <span>System Settings</span>
       </div>
       <div
-        onClick={otherButton}
+        onClick={referral}
         className="flex items-center font-bold border-b-[1px] border-[#75818C] gap-4 2xl:gap-6 w-[230px] h-[55px] pl-5 cursor-pointer hover:text-[#0B6EC9] hover:duration-[0.4s]"
       >
         <MdGroups className="text-[30pt]" />

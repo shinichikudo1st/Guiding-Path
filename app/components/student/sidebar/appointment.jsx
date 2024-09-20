@@ -1,59 +1,40 @@
 import { useState } from "react";
 import AppointmentRequest from "../modals/appointmentRequest";
+import PendingAppointment from "../modals/pendingAppointment";
+import AppointmentCalendar from "../modals/appointmentCalendar";
 
 const Appointment = () => {
-  const [openRequest, setOpenRequest] = useState(true);
-  const [openAppointments, setOpenAppointments] = useState(false);
-  const [openPending, setOpenPending] = useState(false);
+  const [activeTab, setActiveTab] = useState("request");
 
-  const toggleSubmitRequest = () => {
-    setOpenRequest(true);
-    setOpenAppointments(false);
-    setOpenPending(false);
-  };
-
-  const toggleAppointment = () => {
-    setOpenAppointments(true);
-    setOpenRequest(false);
-    setOpenPending(false);
-  };
-
-  const togglePending = () => {
-    setOpenPending(true);
-    setOpenAppointments(false);
-    setOpenRequest(false);
-  };
+  const tabs = [
+    { id: "appointments", label: "Appointments" },
+    { id: "pending", label: "Pending Appointments" },
+    { id: "request", label: "Submit Request" },
+  ];
 
   return (
     <>
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col pt-[2%] items-center">
         <div className="flex w-[80%] justify-evenly select-none">
-          <span
-            onClick={toggleAppointment}
-            className={`text-[16pt] w-[33%] ${
-              !openAppointments ? "text-[#818487]" : "text-[#0B6EC9]"
-            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center border-r-[3px] border-[#062341] font-bold`}
-          >
-            Appointments
-          </span>
-          <span
-            onClick={togglePending}
-            className={`text-[16pt] w-[33%] ${
-              !openPending ? "text-[#818487]" : "text-[#0B6EC9]"
-            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center font-bold`}
-          >
-            Pending Appointments
-          </span>
-          <span
-            onClick={toggleSubmitRequest}
-            className={`text-[16pt] w-[33%] ${
-              !openRequest ? "text-[#818487]" : "text-[#0B6EC9]"
-            } cursor-pointer hover:text-[#0B6EC9] duration-[0.2s] hover:text-[17pt] text-center border-l-[3px] border-[#062341] font-bold`}
-          >
-            Submit Request
-          </span>
+          {tabs.map((tab) => (
+            <span
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`text-[16pt] w-[33%] cursor-pointer transition-all duration-300 ease-in-out text-center font-bold
+                ${activeTab === tab.id ? "text-[#0B6EC9]" : "text-[#818487]"}
+                hover:text-[#0B6EC9] hover:text-[17pt]
+                relative after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-full after:h-[3px] after:bg-[#0B6EC9]
+                after:transform after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out
+                ${activeTab === tab.id ? "after:scale-x-100" : ""}
+              `}
+            >
+              {tab.label}
+            </span>
+          ))}
         </div>
-        {openRequest && <AppointmentRequest />}
+        {activeTab === "request" && <AppointmentRequest />}
+        {activeTab === "pending" && <PendingAppointment />}
+        {activeTab === "appointments" && <AppointmentCalendar />}
       </div>
     </>
   );

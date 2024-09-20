@@ -1,5 +1,7 @@
 import { useState } from "react";
 import ShowAppointmentRequest from "../modals/showRequest";
+import ShowAppointmentToday from "../modals/appointmentToday";
+import ShowAppointmentUpcoming from "../modals/appointmentUpcoming";
 
 const AppointmentCounselor = () => {
   const [request, setToggleRequest] = useState(false);
@@ -54,6 +56,8 @@ const AppointmentCounselor = () => {
           </span>
         </div>
         {request && <ShowAppointmentRequest />}
+        {today && <ShowAppointmentToday />}
+        {upcoming && <ShowAppointmentUpcoming />}
       </div>
     </>
   );

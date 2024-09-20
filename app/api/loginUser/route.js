@@ -1,10 +1,24 @@
 import { encrypt } from "@/app/utils/authentication";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import prisma from "@/app/utils/prisma";
 
-const prisma = new PrismaClient();
+/**
+ *
+ * user entering the right and existing credential are logged in and given a role
+ *
+ * @function loginUser
+ *
+ * @param {Request} request request object containing the JSON body { email, password }
+ *
+ * @param {string} email      email used for validating login credential
+ * @param {string} password   password credential to be compared to hashed password in the database
+ *
+ * @returns {NextResponse} NextResponse object containing message and role of the user
+ *
+ *
+ */
 
 export async function POST(request) {
   const { email, password } = await request.json();

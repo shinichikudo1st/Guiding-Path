@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ThankYouModal from "./thankYou";
 
 const QuestionModal = ({
@@ -17,6 +17,14 @@ const QuestionModal = ({
   const [careerScore, setCareerScore] = useState(0);
 
   const [responses, setResponses] = useState({});
+
+  const scrollableDiv = useRef(null);
+
+  const scrollBackTop = () => {
+    if (scrollableDiv.current) {
+      scrollableDiv.current.scrollTop = 0;
+    }
+  };
 
   const refresh = () => {
     setThankYou(false);
@@ -94,6 +102,7 @@ const QuestionModal = ({
   };
 
   const nextAppraisal = () => {
+    scrollBackTop();
     calculateScore();
     setResponses({});
     if (area >= 3) {
@@ -114,30 +123,39 @@ const QuestionModal = ({
     changeQuestion();
   }, [area]);
 
+  const isAllQuestionsAnswered =
+    question.length > 0 && Object.keys(responses).length === question.length;
+
   return (
     <>
       {thankyou && <ThankYouModal refresh={refresh} />}
       <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
         <div className="absolute text-[20pt] top-[1%] font-bold">{title}</div>
-        <form className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#1A5590] scrollbar-track-[#98A9BA]">
+        <form
+          ref={scrollableDiv}
+          className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#E5E7EB] scroll-smooth"
+        >
           {question && question.length > 0 ? (
             question.map((questionText, index) => (
-              <div key={index} className="flex flex-col gap-4">
-                <p className="text-[18pt] text-[#1A5590] font-bold">
+              <div
+                key={index}
+                className="flex flex-col gap-6 bg-white p-8 rounded-lg shadow-md"
+              >
+                <p className="text-[20pt] text-[#1E40AF] font-bold leading-tight mb-4">
                   {questionText}
                 </p>
-                <div className="flex text-[10pt] text-[#062341] gap-[5%] justify-center font-semibold">
+                <div className="flex text-[14pt] text-[#374151] gap-[5%] justify-between">
                   {[1, 2, 3, 4, 5].map((value) => (
                     <div key={value} className="flex flex-col items-center">
                       <input
                         type="radio"
-                        className="w-[25px] h-[25px]"
+                        className="w-[24px] h-[24px] text-[#2563EB] focus:ring-[#2563EB] cursor-pointer transition-all duration-200 ease-in-out"
                         name={`q${area}-${index}`}
                         value={value}
                         checked={responses[index] === value}
                         onChange={() => handleResponseChange(index, value)}
                       />
-                      <label>
+                      <label className="mt-3 text-center font-medium">
                         {value === 1
                           ? "Strongly Disagree"
                           : value === 5
@@ -154,23 +172,27 @@ const QuestionModal = ({
               </div>
             ))
           ) : (
-            <p>Loading questions...</p>
+            <p className="text-center text-[#4B5563] text-[18pt] font-semibold">
+              Loading questions...
+            </p>
           )}
         </form>
         {area < 3 ? (
           <button
             onClick={nextAppraisal}
-            className="absolute right-[10%] bottom-[5%] w-[10%] h-[8%] px-6 py-2 min-w-[120px] text-center text-[#EAF1F9] font-medium bg-[#265E99] border border-[#265E99] rounded-[10px] active:text-[#265E99] hover:bg-transparent hover:text-[#265E99] focus:outline-none focus:ring"
+            disabled={!isAllQuestionsAnswered}
+            className="absolute right-[10%] bottom-[5%] w-[15%] h-[10%] px-6 py-3 min-w-[150px] text-[18px] text-center text-[#EAF1F9] font-semibold bg-[#265E99] border-2 border-[#265E99] rounded-[15px] shadow-md transition-all duration-300 active:scale-95 hover:bg-[#1a4a7c] hover:border-[#1a4a7c] focus:outline-none focus:ring-2 focus:ring-[#265E99] focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            Next <span className="ml-2">→</span>
           </button>
         ) : (
           <button
             type="button"
             onClick={submitAppraisal}
-            className="absolute right-[10%] bottom-[5%] w-[10%] h-[8%] px-6 py-2 min-w-[120px] text-center text-[#EAF1F9] font-medium bg-[#265E99] border border-[#265E99] rounded-[10px] active:text-[#265E99] hover:bg-transparent hover:text-[#265E99] focus:outline-none focus:ring"
+            disabled={submitting || !isAllQuestionsAnswered}
+            className="absolute right-[10%] bottom-[5%] w-[15%] h-[10%] px-6 py-3 min-w-[150px] text-[18px] text-center text-[#EAF1F9] font-semibold bg-[#265E99] border-2 border-[#265E99] rounded-[15px] shadow-md transition-all duration-300 active:scale-95 hover:bg-[#1a4a7c] hover:border-[#1a4a7c] focus:outline-none focus:ring-2 focus:ring-[#265E99] focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Submit
+            {submitting ? "Submitting..." : "Submit"}
           </button>
         )}
       </div>

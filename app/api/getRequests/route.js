@@ -2,6 +2,23 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 
+/**
+ *
+ * fetches all the appointment request based on the page being passed
+ *
+ * @function getRequests
+ *
+ * @param {Request} request The incoming request object that includes URL parameters
+ * @param {string} request.url URL containing the page query parameter
+ * @param {number} page page number passed as a URL parameter
+ *
+ * @example
+ * GET /api/getRequests?page=1
+ *
+ * @returns {NextResponse} response containing the appointment requests, current page, total pages, and total request count
+ *
+ */
+
 export async function GET(request) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
@@ -34,9 +51,25 @@ export async function GET(request) {
       },
     });
 
+    requests = requests.map((request) => {
+      const date = new Date(request.request_date);
+      const formattedDate = date.toLocaleString("en-US", {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      request.request_date = formattedDate;
+
+      return request;
+    });
+
     return NextResponse.json(
       {
-        message: "hello",
         requests,
         currentPage: pageNumber,
         totalPages: Math.ceil(totalRequest / limit),

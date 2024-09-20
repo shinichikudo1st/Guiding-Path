@@ -2,6 +2,23 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 
+/**
+ *
+ *
+ * @function createAppraisal creating new appraisal record and new appraisal area record
+ *
+ * @param {Request} request request object with a JSON body containing raw scores of
+ * academic, socioEmotional, and career appraisal
+ *
+ * @param {Object} request.body                 JSON body of the request
+ * @param {number} request.body.academic        academic score 1-100 eg: 87
+ * @param {number} request.body.socioEmotional  socioEmotional score 1-100 eg: 98
+ * @param {number} request.body.career          career score 1-100 eg: 80
+ *
+ *
+ * @returns {NextResponse}
+ */
+
 export async function POST(request) {
   const { academic, socioEmotional, career } = await request.json();
 

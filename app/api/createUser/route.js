@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/app/utils/prisma";
 
+/**
+ *
+ * @function createUser creates new record in the User schema with the provided inputs
+ *
+ * @param {Request} request request object with a JSON body containing { id, name, contact }
+ * @param {Object} request.body JSON body of the request
+ * @param {string} request.body.id ID of the user
+ * @param {string} request.body.email Email of the user
+ * @param {string} request.body.contact Contact of the user
+ *
+ * @returns {NextResponse}
+ */
+
 export async function POST(request) {
   console.log("Request received");
   const { id, email, contact } = await request.json();
