@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import PaginationButton from "../../UI/paginationButton";
 import Image from "next/image";
 import ManageRequest from "./manageRequest";
+import { AiOutlineCalendar, AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaUserGraduate, FaEnvelope, FaClipboardList } from "react-icons/fa";
 
 const ShowAppointmentRequest = () => {
   const [requests, setRequests] = useState([]);
@@ -59,46 +61,65 @@ const ShowAppointmentRequest = () => {
           initialRequests={initialRequests}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] border-[1px] border-[#062341]">
+      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#D8E8F6] dark:bg-gray-800 dark:border-gray-700">
-            <div className="px-3 py-1 text-[15pt] font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse flex items-center">
+              <AiOutlineLoading3Quarters className="animate-spin mr-2" />
               Loading Requests...
             </div>
           </div>
+        ) : requests.length > 0 ? (
+          <div className="space-y-4 p-4">
+            {requests.map((request) => (
+              <div
+                key={request.request_id}
+                className="flex items-center p-4 bg-[#F0F7FF] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              >
+                <div className="flex-shrink-0 mr-4">
+                  <Image
+                    priority
+                    alt="profile picture"
+                    src={request.student.student.profilePicture}
+                    width={64}
+                    height={64}
+                    className="rounded-full object-cover border-2 border-blue-500"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <FaUserGraduate className="mr-2 text-blue-500" />
+                    {request.name}
+                  </h3>
+                  <p className="text-sm font-medium text-gray-600 mt-1 flex items-center">
+                    <AiOutlineCalendar className="mr-1 text-blue-500" />
+                    Requested for: {request.request_date}
+                  </p>
+                </div>
+                <div className="flex-shrink-0 text-right">
+                  <button
+                    onClick={() => handleManageRequest(request.request_id)}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors duration-150 shadow-md hover:shadow-lg"
+                  >
+                    <FaClipboardList className="mr-2" />
+                    Manage Request
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
-          requests &&
-          requests.map((request) => (
-            <div
-              key={request.request_id}
-              className="h-[20%] w-[100%] border-b-[1px] border-[#062341] flex"
-            >
-              <div className="flex justify-center items-center w-[25%] h-[100%]">
-                <Image
-                  priority
-                  alt="profile picture"
-                  src={request.student.student.profilePicture}
-                  width={70}
-                  height={70}
-                  className="rounded-[999px]"
-                />
-              </div>
-              <span className="flex items-center w-[25%] text-[10pt] font-bold text-center">
-                {request.name}
-              </span>
-              <span className="flex justify-center items-center w-[25%] text-[10pt] text-[#0B6EC9] font-medium">
-                {request.request_date}
-              </span>
-              <div className="flex justify-center items-center w-[25%] h-[100%]">
-                <button
-                  onClick={() => handleManageRequest(request.request_id)}
-                  className="text-white bg-[#63a7e4] hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Manage
-                </button>
-              </div>
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="text-center">
+              <FaClipboardList className="mx-auto text-4xl text-gray-400 mb-2" />
+              <p className="text-xl font-semibold text-gray-600">
+                No appointment requests
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                Check back later for new requests
+              </p>
             </div>
-          ))
+          </div>
         )}
       </div>
 

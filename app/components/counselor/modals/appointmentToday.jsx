@@ -60,59 +60,71 @@ const ShowAppointmentToday = () => {
           appointment={singleAppointment}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] border-[1px] border-[#062341] overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#A8B9C9]">
+      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#D8E8F6] dark:bg-gray-800 dark:border-gray-700">
-            <div className="px-3 py-1 text-[15pt] font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-              Loading Requests...
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse">
+              Loading Appointments...
             </div>
           </div>
+        ) : appointments.length > 0 ? (
+          <div className="space-y-4 p-4">
+            {appointments.map((appointment, index) => (
+              <div
+                key={index}
+                className="flex items-center p-4 bg-[#F0F7FF] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              >
+                <div className="flex-shrink-0 mr-4">
+                  <Image
+                    alt="Profile Picture"
+                    src={appointment.student.student.profilePicture}
+                    width={64}
+                    height={64}
+                    className="rounded-full object-cover border-2 border-blue-500"
+                  />
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {appointment.student.student.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {appointment.student.student.email}
+                  </p>
+                </div>
+                <div className="flex-shrink-0 text-right">
+                  <p className="text-sm font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                    {appointment.date_time}
+                  </p>
+                  <div className="mt-2 space-x-2">
+                    <button
+                      onClick={() =>
+                        specificAppointment(appointment.appointment_id)
+                      }
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-150"
+                    >
+                      <AiFillEye className="mr-1" />
+                      View
+                    </button>
+                    <button className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-150">
+                      <AiFillBook className="mr-1" />
+                      Set
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
-          appointments &&
-          appointments.map((appointment, index) => (
-            <div
-              key={index}
-              className="w-[100%] h-[33.3%] bg-blue-200 flex items-center border-y-[1px] border-[#062341]"
-            >
-              <div className="w-[15%] flex justify-center items-center h-[100%] ">
-                <Image
-                  alt="profilePicture"
-                  src={appointment.student.student.profilePicture}
-                  width={100}
-                  height={100}
-                  className="rounded-[999px] border-[1px] border-[#062341]"
-                />
-              </div>
-              <div className="flex flex-col justify-center items-center w-[30%] h-[100%]">
-                <span className="font-semibold">
-                  {appointment.student.student.name}
-                </span>
-                <span className="text-[10pt] text-[#858C92]">
-                  {appointment.student.student.email}
-                </span>
-              </div>
-              <div className="flex flex-col justify-center items-center w-[20%] h-[100%]">
-                <span className="font-bold text-[10pt] text-[#F75555]">
-                  {appointment.date_time}
-                </span>
-              </div>
-              <div className="flex justify-evenly items-center w-[35%] h-[100%]">
-                <div
-                  onClick={() =>
-                    specificAppointment(appointment.appointment_id)
-                  }
-                  className="cursor-pointer flex gap-[5%] justify-center items-center text-[15pt] font-semibold hover:text-[#0B6EC9] duration-[0.3s]"
-                >
-                  <AiFillEye className="text-[20pt]" />
-                  <span>View</span>
-                </div>
-                <div className="cursor-pointer flex gap-[5%] justify-center items-center text-[15pt] font-semibold hover:text-[#0B6EC9] duration-[0.3s]">
-                  <AiFillBook className="text-[20pt]" />
-                  <span>Set</span>
-                </div>
-              </div>
+          <div className="flex items-center justify-center w-full h-full">
+            <div className="text-center">
+              <p className="text-xl font-semibold text-gray-600">
+                No appointments for today
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                Check back later or schedule new appointments
+              </p>
             </div>
-          ))
+          </div>
         )}
       </div>
     </>

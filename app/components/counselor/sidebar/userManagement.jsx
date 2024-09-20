@@ -1,7 +1,12 @@
-import { IoMdArrowDropdown, IoMdSearch } from "react-icons/io";
-import PaginationButton from "../../UI/paginationButton";
+import { IoMdSearch } from "react-icons/io";
+import {
+  FaUsersCog,
+  FaUserEdit,
+  FaUserMinus,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { FaGears, FaUserLargeSlash, FaUserXmark } from "react-icons/fa6";
 import Image from "next/image";
 
 const UserManagement = () => {
@@ -38,97 +43,165 @@ const UserManagement = () => {
     }
   };
 
+  // Add this function to determine the role color
+  const getRoleColor = (role) => {
+    switch (role.toLowerCase()) {
+      case "counselor":
+        return "bg-blue-200 text-blue-800";
+      case "teacher":
+        return "bg-green-200 text-green-800";
+      case "student":
+        return "bg-yellow-200 text-yellow-800";
+      default:
+        return "bg-gray-200 text-gray-800";
+    }
+  };
+
   return (
     <>
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center">
-        <div className="flex items-center justify-between w-[100%] h-[15%] px-[5%]">
-          <span className="text-[25pt] font-sans font-bold select-none">
+      <div className="userContainer absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center">
+        <div className="flex items-center justify-between w-full h-[15%] px-6">
+          <h1 className="text-3xl font-bold text-[#062341] flex items-center">
+            <FaUsersCog className="mr-3" />
             User Management
-          </span>
-          <div className="flex justify-between w-[50%]">
-            <button className="w-[30%] text-[#062341] border-[2px] border-[#062341] bg-transparent hover:bg-[#1F5B9B] hover:text-white font-medium text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Select Role
-              <IoMdArrowDropdown />
-            </button>
-            <form className="w-[65%]">
-              <div className="relative">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <IoMdSearch />
-                </div>
-                <input
-                  type="search"
-                  id="search"
-                  name="search"
-                  className="block w-full p-4 ps-10 text-sm text-gray-900 border-[2px] border-[#062341] bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                  placeholder="Search Name"
-                  required
-                />
-              </div>
-            </form>
+          </h1>
+          <div className="flex items-center space-x-4">
+            <select className="bg-white text-[#062341] py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B] border border-[#062341]">
+              <option value="">All Roles</option>
+              <option value="counselor">Counselor</option>
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+            <div className="relative">
+              <input
+                type="search"
+                placeholder="Search users..."
+                className="pl-10 pr-4 py-2 border border-[#062341] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B]"
+              />
+              <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#062341]" />
+            </div>
           </div>
         </div>
-        <div className="flex h-[8%] w-[90%]">
-          <span className="w-[35%] flex pl-[10%] items-center text-[12pt] font-bold">
-            Name
-          </span>
-          <span className="w-[30%] flex justify-center items-center text-[12pt] font-bold">
-            User Role
-          </span>
-          <span className="w-[35%] flex justify-center items-center text-[12pt] font-bold">
-            Manage
-          </span>
+
+        <div className="w-full px-6 mt-4 flex-grow overflow-auto">
+          <div className="bg-white rounded-lg shadow-md">
+            <table className="w-full">
+              <thead className="bg-[#1F5B9B] text-white">
+                <tr>
+                  <th className="py-3 px-4 text-left">User</th>
+                  <th className="py-3 px-4 text-center">Role</th>
+                  <th className="py-3 px-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-4">
+                      <div className="animate-pulse text-[#1F5B9B]">
+                        Loading users...
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user) => (
+                    <tr
+                      key={user.user_id}
+                      className="border-b border-gray-200 hover:bg-gray-50"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="flex items-center space-x-3">
+                          <Image
+                            alt="Profile"
+                            src={user.profilePicture}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div>
+                            <p className="font-semibold text-[#062341]">
+                              {user.name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleColor(
+                            user.role
+                          )}`}
+                        >
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex justify-center space-x-2">
+                          <button
+                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
+                            title="Edit"
+                          >
+                            <FaUserEdit size={18} />
+                          </button>
+                          <button
+                            className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
+                            title="Remove"
+                          >
+                            <FaUserMinus size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="h-[60%] w-[90%] bg-[#D8E8F6] border-[1px] border-[#062341]">
-          {loading ? (
-            <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#D8E8F6] dark:bg-gray-800 dark:border-gray-700">
-              <div className="px-3 py-1 text-[15pt] font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-                Loading Users...
-              </div>
-            </div>
-          ) : (
-            users &&
-            users.map((user) => (
-              <div
-                key={user.user_id}
-                className="flex w-[100%] h-[20%] border-y-[1px] border-[#062341]"
-              >
-                <div className="flex gap-[10%] items-center pl-[2%] w-[40%]">
-                  <Image
-                    alt={"profilePicture"}
-                    src={user.profilePicture}
-                    width={80}
-                    height={80}
-                    className="bg-red-600 rounded-[999px] w-[80px] h-[80px]"
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-[12pt] text-[#062341] font-bold">
-                      {user.name}
-                    </span>
-                    <span className="text-[10pt] text-[#A8AFB5]">
-                      {user.email}
-                    </span>
-                  </div>
-                </div>
-                <div className="w-[20%] flex justify-center items-center">
-                  <span className="flex justify-center items-center font-semibold text-[#062341] bg-[#97C9F5] w-[80%] h-[60%] rounded-[20px]">
-                    {user.role}
-                  </span>
-                </div>
-                <div className="flex justify-evenly items-center w-[40%] text-[#1F5B9B]">
-                  <div className="flex h-[50%] justify-center items-center gap-[10%] hover:text-[#127cee] duration-[0.3s] cursor-pointer">
-                    <FaGears className="text-[30pt]" />
-                    <span className="font-bold">Modify</span>
-                  </div>
-                  <div className="flex h-[50%] justify-center items-center gap-[10%] hover:text-[#127cee] duration-[0.3s] cursor-pointer">
-                    <FaUserLargeSlash className="text-[30pt]" />
-                    <span className="font-bold">Remove</span>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
+
+        <div className="w-full px-6 py-4 flex items-center justify-between bg-white border-t border-gray-200">
+          <div className="flex items-center">
+            <span className="text-sm text-gray-700">
+              Showing{" "}
+              <span className="font-semibold">
+                {(currentPage - 1) * 10 + 1}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold">
+                {Math.min(currentPage * 10, totalPage * 10)}
+              </span>{" "}
+              of <span className="font-semibold">{totalPage * 10}</span> results
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={previousPage}
+              disabled={currentPage === 1}
+              className={`p-2 rounded-full ${
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-[#1F5B9B] hover:bg-[#1F5B9B] hover:text-white"
+              } transition-colors`}
+            >
+              <FaChevronLeft size={16} />
+            </button>
+            <span className="text-sm font-medium text-gray-700">
+              Page {currentPage} of {totalPage}
+            </span>
+            <button
+              onClick={nextPage}
+              disabled={currentPage === totalPage}
+              className={`p-2 rounded-full ${
+                currentPage === totalPage
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-[#1F5B9B] hover:bg-[#1F5B9B] hover:text-white"
+              } transition-colors`}
+            >
+              <FaChevronRight size={16} />
+            </button>
+          </div>
         </div>
-        <PaginationButton nextPage={nextPage} previousPage={previousPage} />
       </div>
     </>
   );
