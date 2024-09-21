@@ -1,40 +1,40 @@
 import { useState, useEffect } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { AiFillEye } from "react-icons/ai";
-import AnnouncementModal from "./createAnnouncementModal";
-import ViewAnnouncementModal from "./viewAnnouncement";
 import { FaCalendar, FaClock, FaLink, FaSpinner } from "react-icons/fa";
+import ResourceModal from "./createResourceModal";
+import ViewResourceModal from "./viewResource";
 
-const CreateAnnouncement = () => {
+const CreateResource = () => {
   const [createModal, setCreateModal] = useState(false);
   const [viewModal, setViewModal] = useState(false);
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-  const [announcements, setAnnouncements] = useState([]);
+  const [selectedResource, setSelectedResource] = useState(null);
+  const [resources, setResources] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAnnouncements = async () => {
+  const fetchResources = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/getAnnouncements?page=${currentPage}`);
+      const response = await fetch(`/api/getResources?page=${currentPage}`);
       const data = await response.json();
       if (response.ok) {
-        setAnnouncements(data.announcements);
+        setResources(data.resources);
         setTotalPages(data.totalPages);
       } else {
-        console.error("Failed to fetch announcements:", data.message);
+        console.error("Failed to fetch resources:", data.message);
       }
     } catch (error) {
-      console.error("Error fetching announcements:", error);
+      console.error("Error fetching resources:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAnnouncements();
+    fetchResources();
   }, [currentPage, refreshKey]);
 
   const handleCreateModalClose = () => {
@@ -42,25 +42,23 @@ const CreateAnnouncement = () => {
     setRefreshKey((oldKey) => oldKey + 1);
   };
 
-  const handleViewAnnouncement = (announcement) => {
-    setSelectedAnnouncement(announcement);
+  const handleViewResource = (resource) => {
+    setSelectedResource(resource);
     setViewModal(true);
   };
 
   const handleViewModalClose = () => {
     setViewModal(false);
-    setSelectedAnnouncement(null);
+    setSelectedResource(null);
     setRefreshKey((oldKey) => oldKey + 1);
   };
 
   return (
     <>
-      {createModal && (
-        <AnnouncementModal closeButton={handleCreateModalClose} />
-      )}
-      {viewModal && selectedAnnouncement && (
-        <ViewAnnouncementModal
-          announcement={selectedAnnouncement}
+      {createModal && <ResourceModal closeButton={handleCreateModalClose} />}
+      {viewModal && selectedResource && (
+        <ViewResourceModal
+          resource={selectedResource}
           closeModal={handleViewModalClose}
           onUpdate={() => setRefreshKey((oldKey) => oldKey + 1)}
         />
@@ -71,45 +69,45 @@ const CreateAnnouncement = () => {
             <div className="flex items-center justify-center h-full">
               <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
               <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
-                Loading announcements...
+                Loading resources...
               </p>
             </div>
-          ) : announcements && announcements.length > 0 ? (
-            announcements.map((announcement) => (
+          ) : resources && resources.length > 0 ? (
+            resources.map((resource) => (
               <div
-                key={announcement.resource_id}
+                key={resource.resource_id}
                 className="flex items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="flex-grow">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {announcement.title}
+                    {resource.title}
                   </h3>
                   <div className="flex items-center text-sm text-gray-500">
                     <FaCalendar className="mr-2" />
                     <span>
-                      {new Date(announcement.createdAt).toLocaleDateString()}
+                      {new Date(resource.createdAt).toLocaleDateString()}
                     </span>
                     <FaClock className="ml-4 mr-2" />
                     <span>
-                      {new Date(announcement.createdAt).toLocaleTimeString()}
+                      {new Date(resource.createdAt).toLocaleTimeString()}
                     </span>
                   </div>
-                  {announcement.link && (
+                  {resource.link && (
                     <a
-                      href={announcement.link}
+                      href={resource.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center text-blue-600 hover:underline mt-2"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <FaLink className="mr-2" />
-                      Related Link
+                      Resource Link
                     </a>
                   )}
                 </div>
                 <div className="flex-shrink-0">
                   <button
-                    onClick={() => handleViewAnnouncement(announcement)}
+                    onClick={() => handleViewResource(resource)}
                     className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-150"
                   >
                     <AiFillEye className="mr-1" />
@@ -120,8 +118,8 @@ const CreateAnnouncement = () => {
             ))
           ) : (
             <div className="text-center text-gray-500">
-              <p>No announcements found.</p>
-              <p>Click the + button to create a new announcement.</p>
+              <p>No resources found.</p>
+              <p>Click the + button to create a new resource.</p>
             </div>
           )}
         </div>
@@ -129,7 +127,7 @@ const CreateAnnouncement = () => {
         <button
           onClick={() => setCreateModal(true)}
           className="fixed bottom-8 right-8 inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0B6EC9] text-white shadow-lg hover:bg-[#095396] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] transition-all duration-300 transform hover:scale-110"
-          title="Create New Announcement"
+          title="Create New Resource"
         >
           <svg
             className="h-6 w-6"
@@ -194,4 +192,4 @@ const CreateAnnouncement = () => {
   );
 };
 
-export default CreateAnnouncement;
+export default CreateResource;

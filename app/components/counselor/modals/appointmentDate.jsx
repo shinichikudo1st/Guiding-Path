@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 const ManageAppointmentDate = ({
   renderRequest,
@@ -48,32 +49,60 @@ const ManageAppointmentDate = ({
   };
 
   return (
-    <div className="absolute flex flex-col justify-center items-center bg-[#dfecf6] w-[40%] h-[80%] translate-y-[-15%] opacity-100 z-40 rounded-[20px]">
-      <button
-        onClick={closeButtonDate}
-        className="absolute right-[3%] top-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-      >
-        <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-          X
-        </span>
-      </button>
-      <div className="flex flex-col justify-center items-center w-[80%] h-[50%] border-[2px] border-[#062341] bg-pink-300 rounded-[10px] gap-[10%] p-[5%]">
-        <span className="text-[15pt] font-bold">Pick an appointment date:</span>
-        <input
-          onChange={onChangeHandler}
-          type="datetime-local"
-          className="w-[50%] text-[15pt] font-bold p-[5%] outline-none rounded-[10px]"
-        />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-[20px] z-50"
+    >
+      <div className="bg-white w-full max-w-md rounded-lg shadow-lg overflow-hidden">
+        <div className="flex justify-between items-center p-4 bg-gray-50">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Schedule Appointment
+          </h2>
+          <button
+            onClick={closeButtonDate}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div className="p-6">
+          <div className="mb-6">
+            <label
+              htmlFor="appointment-date"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Pick an appointment date:
+            </label>
+            <input
+              id="appointment-date"
+              onChange={onChangeHandler}
+              type="datetime-local"
+              className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            onClick={acceptRequest}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Schedule Appointment
+          </button>
+        </div>
       </div>
-      <button
-        onClick={acceptRequest}
-        className="bottom-[10%] w-[20%] absolute inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-      >
-        <span className="font-bold text-[15pt] relative w-[100%] px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-          Submit
-        </span>
-      </button>
-    </div>
+    </motion.div>
   );
 };
 

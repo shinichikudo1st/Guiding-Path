@@ -1,6 +1,10 @@
 import Image from "next/image";
 import { useState } from "react";
 import ManageAppointmentDate from "./appointmentDate";
+import { IoClose } from "react-icons/io5";
+import { FaUser, FaCalendarAlt } from "react-icons/fa";
+import { MdPriorityHigh } from "react-icons/md";
+import { BsChatQuoteFill } from "react-icons/bs";
 
 const ManageRequest = ({
   requests,
@@ -25,55 +29,58 @@ const ManageRequest = ({
           initialRequests={initialRequests}
         />
       )}
-      <div className="flex flex-col justify-center items-center bg-[#dfecf6] w-[40%] h-[80%] translate-y-[-15%] opacity-100 z-30 rounded-[20px]">
-        <button
-          onClick={closeButton}
-          className="absolute right-[3%] top-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-        >
-          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            X
-          </span>
-        </button>
-        <div className="w-[80%] h-[80%] mt-[3%]">
-          <div className="grid grid-rows-2 grid-cols-3 w-[100%] h-[30%] bg-pink-50">
-            <div className="row-span-2 bg-yellow-50 flex justify-center items-center">
-              <Image
-                priority
-                alt="profile picture"
-                src={renderRequest.student.student.profilePicture}
-                width={150}
-                height={150}
-                className="rounded-[999px] border-[2px] border-[#062341]"
-              />
-            </div>
-            <div className=" bg-yellow-100 col-span-2 flex justify-center items-center text-[#062341] font-semibold">
-              {renderRequest.name}
-            </div>
-            <div className=" bg-yellow-200 col-span-2 flex justify-center items-center font-semibold">
-              type:{" "}
-              <span className="font-medium ml-[5%]">{renderRequest.type}</span>
+      <div className="imHereContainer flex flex-col bg-white w-[90%] max-w-[500px] h-[90%] max-h-[600px] shadow-2xl rounded-[20px] overflow-hidden z-30">
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 relative">
+          <h2 className="text-white text-xl font-semibold">
+            {renderRequest.name}
+          </h2>
+          <button
+            onClick={closeButton}
+            className="absolute right-4 top-4 text-white hover:text-gray-200 transition-colors"
+          >
+            <IoClose size={24} />
+          </button>
+        </div>
+        <div className="flex-grow overflow-y-auto p-6 space-y-6">
+          <div className="flex items-center space-x-4">
+            <Image
+              priority
+              alt="profile picture"
+              src={renderRequest.student.student.profilePicture}
+              width={80}
+              height={80}
+              className="rounded-full border-2 border-cyan-500"
+            />
+            <div>
+              <p className="text-gray-600">
+                <FaUser className="inline mr-2" />
+                {renderRequest.type}
+              </p>
+              <p className="text-gray-600">
+                <MdPriorityHigh className="inline mr-2" />
+                {renderRequest.urgency} urgent
+              </p>
             </div>
           </div>
-          <div className="bg-pink-100 w-[100%] h-[15%] flex gap-[30%] items-center pl-[20%] font-medium">
-            <label className="font-bold">Reason:</label>
-            {renderRequest.reason}
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 text-gray-700">Reason:</h3>
+            <p className="text-gray-600">{renderRequest.reason}</p>
           </div>
-          <div className="bg-pink-100 w-[100%] h-[15%] flex gap-[30%] items-center pl-[20%] font-medium">
-            <label className="font-bold">Urgency:</label>
-            {renderRequest.urgency} urgent
-          </div>
-          <div className="h-[30%] bg-emerald-300 flex justify-center items-center italic font-semibold text-justify px-[30px] overflow-auto">
-            "{renderRequest.notes}"
+          <div className="bg-gray-100 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 text-gray-700 flex items-center">
+              <BsChatQuoteFill className="mr-2" /> Notes:
+            </h3>
+            <p className="text-gray-600 italic">"{renderRequest.notes}"</p>
           </div>
         </div>
-        <button
-          onClick={() => setOpenDatePicker(true)}
-          className="bottom-[5%] absolute inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-        >
-          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            Accept Request
-          </span>
-        </button>
+        <div className="p-4 bg-gray-50 border-t">
+          <button
+            onClick={() => setOpenDatePicker(true)}
+            className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-2 px-4 rounded-lg font-medium hover:from-cyan-600 hover:to-blue-600 transition-colors flex items-center justify-center"
+          >
+            <FaCalendarAlt className="mr-2" /> Accept Request
+          </button>
+        </div>
       </div>
     </div>
   );

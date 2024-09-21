@@ -1,56 +1,80 @@
 import Image from "next/image";
+import {
+  IoClose,
+  IoLocationOutline,
+  IoCalendarOutline,
+  IoDocumentTextOutline,
+} from "react-icons/io5";
 
 const AppointmentSingleDashboard = ({ closeButton, appointment }) => {
+  const location =
+    appointment.counsel_type === "virtual"
+      ? "Google Meet"
+      : "CTU-MAIN Admin Building Room 301A";
+
   return (
     <div className="absolute w-screen h-screen flex justify-center z-10">
-      <div className="absolute w-full h-full bg-black opacity-75 z-20"></div>
-      <div className="flex flex-col p-[5%] bg-[#dfecf6] w-[60%] h-[80%] translate-y-[10%] opacity-100 z-30 rounded-[20px]">
-        <button
-          onClick={closeButton}
-          className="absolute right-[3%] top-[3%] inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
-        >
-          <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-[#dfecf6] dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            X
-          </span>
-        </button>
-        <div className="flex items-center h-[40%]">
-          <div className="h-[100%] w-[33.3%] flex justify-center items-center">
+      <div className="absolute w-full h-full  bg-black opacity-75 z-20"></div>
+      <div className="bg-white w-[90%] max-w-4xl max-h-[80vh] overflow-y-auto rounded-2xl shadow-2xl z-30 translate-y-[10%]">
+        <div className="relative p-8">
+          <button
+            onClick={closeButton}
+            className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <IoClose size={24} />
+          </button>
+
+          {/* Student Information */}
+          <div className="flex flex-col md:flex-row items-center mb-8 border-b pb-6">
             <Image
               alt="profilePicture"
               src={appointment.student.student.profilePicture}
-              height={200}
-              width={200}
-              className="rounded-[999px] border-[2px] border-[#062341]"
+              height={120}
+              width={120}
+              className="rounded-full border-4 border-blue-200 shadow-md mb-4 md:mb-0"
             />
+            <div className="md:ml-8 text-center md:text-left">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                {appointment.student.student.name}
+              </h2>
+              <p className="text-gray-600">
+                {appointment.student.student.email}
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col items-center justify-center h-[100%] w-[33.3%]">
-            <span className="text-[25pt] font-semibold text-[#062341]">
-              {appointment.student.student.name}
-            </span>
-            <span className="text-[#858C92]">
-              {appointment.student.student.email}
-            </span>
+
+          {/* Appointment Details */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-8 shadow-inner">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
+              Appointment Details
+            </h3>
+            <div className="flex items-center text-blue-800 mb-4">
+              <IoCalendarOutline size={24} className="mr-4 text-blue-600" />
+              <span className="text-xl font-semibold">
+                {appointment.date_time}
+              </span>
+            </div>
+            <div className="flex items-center text-gray-700 mb-4">
+              <IoLocationOutline size={24} className="mr-4 text-green-600" />
+              <span>{location}</span>
+            </div>
+            <div className="flex items-center text-gray-700">
+              <IoDocumentTextOutline
+                size={24}
+                className="mr-4 text-purple-600"
+              />
+              <span>{appointment.reason}</span>
+            </div>
           </div>
-          <div className="flex justify-center items-center h-[100%] w-[33.3%] text-[15pt] text-[#F75555] font-bold">
-            {appointment.date_time}
-          </div>
-        </div>
-        <div className="flex flex-col h-[60%]">
-          <div className="h-[20%] flex items-center pl-[10%] gap-[10%] text-[15pt]">
-            <span>Location:</span>
-            <span className="font-bold">
-              {appointment.counsel_type === "virtual"
-                ? "Gmeet"
-                : "Admin Building Room 3A1"}
-            </span>
-          </div>
-          <div className="h-[20%] flex items-center pl-[10%] gap-[10%]  text-[15pt]">
-            <span>Description:</span>
-            <span className="font-bold">{appointment.reason}</span>
-          </div>
-          <div className="flex flex-col gap-5 h-[60%] pt-[2%] pl-[10%]  text-[15pt]">
-            <span>Additional Notes:</span>
-            <span className="ml-[5%] font-bold">{appointment.notes}</span>
+
+          {/* Additional Notes */}
+          <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
+              Additional Notes
+            </h3>
+            <p className="text-gray-700 whitespace-pre-wrap">
+              {appointment.notes}
+            </p>
           </div>
         </div>
       </div>

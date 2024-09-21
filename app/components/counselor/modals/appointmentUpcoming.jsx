@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AiFillBook } from "react-icons/ai";
-import PaginationButton from "../../UI/paginationButton";
+import { AiFillBook, AiFillEye } from "react-icons/ai";
+import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
 const ShowAppointmentUpcoming = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,16 +11,16 @@ const ShowAppointmentUpcoming = () => {
 
   const getAppointments = async () => {
     setLoading(true);
-
     try {
       const response = await fetch(
         `/api/getAppointments?type=${"upcoming"}&page=${currentPage}`
       );
       const result = await response.json();
-
       setAppointments(result.appointments);
-      setTotalPages(data.totalPages);
-    } catch (error) {}
+      setTotalPages(result.totalPages);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
     setLoading(false);
   };
 
@@ -41,58 +41,122 @@ const ShowAppointmentUpcoming = () => {
   };
 
   return (
-    <>
-      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] border-[1px] border-[#062341] overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#A8B9C9]">
-        {loading ? (
-          <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#D8E8F6] dark:bg-gray-800 dark:border-gray-700">
-            <div className="px-3 py-1 text-[15pt] font-medium leading-none text-center text-blue-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-              Loading Requests...
-            </div>
+    <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
+      {loading ? (
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse">
+            Loading Appointments...
           </div>
-        ) : (
-          appointments &&
-          appointments.map((appointment, index) => (
+        </div>
+      ) : appointments.length > 0 ? (
+        <div className="space-y-4 p-4 overflow-auto h-full">
+          {appointments.map((appointment, index) => (
             <div
               key={index}
-              className="w-[100%] h-[33.3%] bg-blue-200 flex items-center border-y-[1px] border-[#062341]"
+              className="flex items-center p-4 bg-[#F0F7FF] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
             >
-              <div className="w-[15%] flex justify-center items-center h-[100%] ">
+              <div className="flex-shrink-0 mr-4">
                 <Image
-                  alt="profilePicture"
+                  alt="Profile Picture"
                   src={appointment.student.student.profilePicture}
-                  width={100}
-                  height={100}
-                  className="rounded-[999px] border-[1px] border-[#062341]"
+                  width={64}
+                  height={64}
+                  className="rounded-full object-cover border-2 border-blue-500"
                 />
               </div>
-              <div className="flex flex-col justify-center items-center w-[30%] h-[100%]">
-                <span className="font-semibold">
+              <div className="flex-grow">
+                <h3 className="text-lg font-semibold text-gray-900">
                   {appointment.student.student.name}
-                </span>
-                <span className="text-[10pt] text-[#858C92]">
+                </h3>
+                <p className="text-sm text-gray-500">
                   {appointment.student.student.email}
-                </span>
+                </p>
               </div>
-              <div className="flex flex-col justify-center items-center w-[20%] h-[100%]">
-                <span className="font-bold text-[10pt] text-[#F75555]">
+              <div className="flex-shrink-0 text-right">
+                <p className="text-sm font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
                   {appointment.date_time}
-                </span>
-              </div>
-              <div className="flex justify-evenly items-center w-[35%] h-[100%]">
-                <div className="cursor-pointer flex gap-[5%] justify-center items-center text-[15pt] font-semibold hover:text-[#0B6EC9] duration-[0.3s]">
-                  <AiFillBook className="text-[20pt]" />
-                  <span>Reschedule</span>
+                </p>
+                <div className="mt-2 space-x-2">
+                  <button className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-150">
+                    <AiFillEye className="mr-1" />
+                    View
+                  </button>
+                  <button className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-150">
+                    <AiFillBook className="mr-1" />
+                    Reschedule
+                  </button>
                 </div>
               </div>
             </div>
-          ))
-        )}
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center w-full h-full">
+          <div className="text-center">
+            <p className="text-xl font-semibold text-gray-600">
+              No upcoming appointments
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Check back later or schedule new appointments
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* New Pagination UI */}
+      <div className="mt-auto p-4 flex items-center justify-between border-t border-gray-200 bg-white">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <button
+            onClick={handlePreviousPage}
+            disabled={currentPage === 1}
+            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-700">
+              Showing page <span className="font-medium">{currentPage}</span> of{" "}
+              <span className="font-medium">{totalPages}</span>
+            </p>
+          </div>
+          <div>
+            <nav
+              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              aria-label="Pagination"
+            >
+              <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Previous</span>
+                <IoChevronBackOutline className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Next</span>
+                <IoChevronForwardOutline
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                />
+              </button>
+            </nav>
+          </div>
+        </div>
       </div>
-      <PaginationButton
-        handleNextPage={handleNextPage}
-        handlePreviousPage={handlePreviousPage}
-      />
-    </>
+    </div>
   );
 };
 
