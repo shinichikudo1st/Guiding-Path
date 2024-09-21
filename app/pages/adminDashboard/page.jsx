@@ -44,6 +44,7 @@ const AdminDashboard = () => {
         profile={() => toggleComponent("profile")}
         create={() => toggleComponent("create")}
         referral={() => toggleComponent("referral")}
+        activeComponent={activeComponent}
       />
       <StudentQuickView />
       <ActiveComponent />

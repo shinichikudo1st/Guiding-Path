@@ -28,6 +28,7 @@ const StudentDashboard = () => {
         viewAppraisal={viewAppraisal}
         viewAppointment={viewAppointment}
         viewAnnouncement={viewAnnouncement}
+        activeComponent={activeComponent}
       />
       <StudentQuickView />
       {activeComponent === "profile" && <Profile />}
