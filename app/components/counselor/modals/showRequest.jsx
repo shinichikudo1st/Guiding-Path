@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import PaginationButton from "../../UI/paginationButton";
 import Image from "next/image";
 import ManageRequest from "./manageRequest";
 import { AiOutlineCalendar, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaUserGraduate, FaEnvelope, FaClipboardList } from "react-icons/fa";
+import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
 const ShowAppointmentRequest = () => {
   const [requests, setRequests] = useState([]);
@@ -61,7 +61,7 @@ const ShowAppointmentRequest = () => {
           initialRequests={initialRequests}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[60%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden">
+      <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center w-full h-full">
             <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse flex items-center">
@@ -70,7 +70,7 @@ const ShowAppointmentRequest = () => {
             </div>
           </div>
         ) : requests.length > 0 ? (
-          <div className="space-y-4 p-4">
+          <div className="space-y-4 p-4 overflow-auto h-full">
             {requests.map((request) => (
               <div
                 key={request.request_id}
@@ -121,12 +121,64 @@ const ShowAppointmentRequest = () => {
             </div>
           </div>
         )}
-      </div>
 
-      <PaginationButton
-        handleNextPage={handleNextPage}
-        handlePreviousPage={handlePreviousPage}
-      />
+        {/* New Pagination UI */}
+        <div className="mt-auto p-4 flex items-center justify-between border-t border-gray-200 bg-white">
+          <div className="flex-1 flex justify-between sm:hidden">
+            <button
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing page <span className="font-medium">{currentPage}</span>{" "}
+                of <span className="font-medium">{totalPages}</span>
+              </p>
+            </div>
+            <div>
+              <nav
+                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Previous</span>
+                  <IoChevronBackOutline
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </button>
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Next</span>
+                  <IoChevronForwardOutline
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
