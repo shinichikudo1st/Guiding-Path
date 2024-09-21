@@ -20,6 +20,10 @@ const RecordedAppraisal = ({
       const result = await response.json();
 
       setRecordedAppraisal(result.appraisal);
+      sessionStorage.setItem(
+        "recordedAppraisal",
+        JSON.stringify(result.appraisal)
+      );
     } catch (error) {}
 
     setRetrievingAppraisal(false);
@@ -30,18 +34,28 @@ const RecordedAppraisal = ({
   };
 
   const retrieveScores = async (id) => {
-    try {
-      const response = await fetch(`/api/retrieveScore?id=${id}`);
-      const result = await response.json();
+    const sessionCache = sessionStorage.getItem("areaScores");
+    if (sessionCache) {
+      setAreaScores(JSON.parse(sessionCache));
+    } else {
+      try {
+        const response = await fetch(`/api/retrieveScore?id=${id}`);
+        const result = await response.json();
 
-      setAreaScores(result.score);
-    } catch (error) {}
-
+        setAreaScores(result.score);
+        sessionStorage.setItem("areaScores", JSON.stringify(result.score));
+      } catch (error) {}
+    }
     toggleResult();
   };
 
   useEffect(() => {
-    fetchAppraisals();
+    const sessionCache = sessionStorage.getItem("recordedAppraisal");
+    if (sessionCache) {
+      setRecordedAppraisal(JSON.parse(sessionCache));
+    } else {
+      fetchAppraisals();
+    }
   }, []);
 
   return (

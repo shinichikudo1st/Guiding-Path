@@ -34,22 +34,12 @@ const ShowAppointmentToday = () => {
       const result = await response.json();
 
       setAppointments(result.appointments);
-
-      sessionStorage.setItem(
-        "appointment_today",
-        JSON.stringify(result.appointments)
-      );
     } catch (error) {}
     setLoading(false);
   };
 
   useEffect(() => {
-    const storedAppointment = sessionStorage.getItem("appointment_today");
-    if (storedAppointment) {
-      setAppointments(JSON.parse(storedAppointment));
-    } else {
-      getAppointments();
-    }
+    getAppointments();
   }, []);
 
   return (

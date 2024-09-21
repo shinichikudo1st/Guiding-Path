@@ -63,7 +63,12 @@ const AppointmentCalendar = () => {
   }, []);
 
   useEffect(() => {
-    fetchAppointments();
+    const sessionCache = sessionStorage.getItem("calendarAppointments");
+    if (sessionCache) {
+      setAppointments(JSON.parse(sessionCache));
+    } else {
+      fetchAppointments();
+    }
   }, []);
 
   const fetchAppointments = async () => {
@@ -72,6 +77,10 @@ const AppointmentCalendar = () => {
       if (response.ok) {
         const data = await response.json();
         setAppointments(data.appointments);
+        sessionStorage.setItem(
+          "calendarAppointments",
+          JSON.stringify(data.appointments)
+        );
       } else {
         console.error("Failed to fetch appointments");
       }

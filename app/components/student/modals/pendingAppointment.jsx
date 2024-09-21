@@ -20,12 +20,21 @@ const PendingAppointment = () => {
 
       console.log(result.message);
       setAppointments(result.appointment);
+      sessionStorage.setItem(
+        "pendingAppointments",
+        JSON.stringify(result.appointment)
+      );
     } catch (error) {}
     setLoading(false);
   };
 
   useEffect(() => {
-    retrievePendingAppointments();
+    const sessionCache = sessionStorage.getItem("pendingAppointments");
+    if (sessionCache) {
+      setAppointments(JSON.parse(sessionCache));
+    } else {
+      retrievePendingAppointments();
+    }
   }, []);
 
   return (
