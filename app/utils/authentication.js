@@ -2,16 +2,16 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const secretKey = process.env.SECRET_KEY;
-
-if (!secretKey) {
-  throw new Error("Missing SECRET_KEY environment variable");
-}
-
-const key = new TextEncoder().encode(secretKey);
-
 //Creates a JWT that contains the session payload.
 export async function encrypt(payload) {
+  const secretKey = process.env.SECRET_KEY;
+
+  if (!secretKey) {
+    throw new Error("Missing SECRET_KEY environment variable");
+  }
+
+  const key = new TextEncoder().encode(secretKey);
+
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -21,7 +21,16 @@ export async function encrypt(payload) {
 
 //Verifies and decodes a JWT
 export async function decrypt(input) {
+  const secretKey = process.env.SECRET_KEY;
+
+  if (!secretKey) {
+    throw new Error("Missing SECRET_KEY environment variable");
+  }
+
+  const key = new TextEncoder().encode(secretKey);
+
   const { payload } = await jwtVerify(input, key, { algorithms: ["HS256"] });
+
   return payload;
 }
 

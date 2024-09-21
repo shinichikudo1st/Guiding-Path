@@ -7,6 +7,7 @@ import {
   FaClock,
   FaMapMarkerAlt,
   FaEye,
+  FaVideo,
 } from "react-icons/fa";
 
 const CounselorHome = () => {
@@ -142,6 +143,17 @@ const CounselorHome = () => {
                       <FaEye className="mr-2" />
                       View Details
                     </button>
+                    {appointment.counsel_type === "virtual" && (
+                      <a
+                        href="https://meet.google.com/dcv-iuva-bni"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full mt-2 bg-[#4CAF50] hover:bg-[#45a049] text-white py-2 px-4 rounded-full transition-colors duration-300 flex items-center justify-center shadow-md hover:shadow-lg"
+                      >
+                        <FaVideo className="mr-2" />
+                        Join Meeting
+                      </a>
+                    )}
                   </div>
                 </div>
               ))}

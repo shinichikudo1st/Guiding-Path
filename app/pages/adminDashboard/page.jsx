@@ -8,7 +8,7 @@ import CounselorHome from "@/app/components/counselor/sidebar/homeDashboard";
 import ProfileCounselor from "@/app/components/counselor/sidebar/profile";
 import ReferralCounselor from "@/app/components/counselor/sidebar/referralCounselor";
 import UserManagement from "@/app/components/counselor/sidebar/userManagement";
-import StudentQuickView from "@/app/components/student/studentQuickView";
+import QuickView from "@/app/components/UI/quickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
 import { useState } from "react";
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
         referral={() => toggleComponent("referral")}
         activeComponent={activeComponent}
       />
-      <StudentQuickView />
+      <QuickView />
       <ActiveComponent />
     </main>
   );
