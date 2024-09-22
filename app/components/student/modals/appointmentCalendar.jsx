@@ -63,24 +63,21 @@ const AppointmentCalendar = () => {
   }, []);
 
   useEffect(() => {
-    const sessionCache = sessionStorage.getItem("calendarAppointments");
-    if (sessionCache) {
-      setAppointments(JSON.parse(sessionCache));
-    } else {
-      fetchAppointments();
-    }
-  }, []);
+    fetchAppointments();
+  }, [currentDate]);
 
   const fetchAppointments = async () => {
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const monthString = `${year}-${month}`;
+
     try {
-      const response = await fetch("/api/getStudentAppointments");
+      const response = await fetch(
+        `/api/getStudentAppointments?month=${monthString}`
+      );
       if (response.ok) {
         const data = await response.json();
         setAppointments(data.appointments);
-        sessionStorage.setItem(
-          "calendarAppointments",
-          JSON.stringify(data.appointments)
-        );
       } else {
         console.error("Failed to fetch appointments");
       }

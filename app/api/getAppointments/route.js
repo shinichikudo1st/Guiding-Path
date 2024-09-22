@@ -41,7 +41,7 @@ export async function GET(request) {
           date_time: true,
           counsel_type: true,
           student: {
-            include: {
+            select: {
               student: {
                 select: {
                   name: true,
@@ -69,7 +69,7 @@ export async function GET(request) {
           date_time: true,
           counsel_type: true,
           student: {
-            include: {
+            select: {
               student: {
                 select: {
                   name: true,
