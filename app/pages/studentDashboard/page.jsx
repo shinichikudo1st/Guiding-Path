@@ -10,6 +10,7 @@ import Appraisal from "@/app/components/student/sidebar/appraisal";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import Appointment from "@/app/components/student/sidebar/appointment";
 import Announcement from "@/app/components/student/sidebar/announcements";
+import ResourceFeed from "@/app/components/UI/resources";
 
 const StudentDashboard = () => {
   const [activeComponent, setActiveComponent] = useState(null);
@@ -18,6 +19,7 @@ const StudentDashboard = () => {
   const viewAppraisal = () => setActiveComponent("appraisal");
   const viewAppointment = () => setActiveComponent("appointment");
   const viewAnnouncement = () => setActiveComponent("announcement");
+  const viewResources = () => setActiveComponent("resources");
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
@@ -28,6 +30,7 @@ const StudentDashboard = () => {
         viewAppraisal={viewAppraisal}
         viewAppointment={viewAppointment}
         viewAnnouncement={viewAnnouncement}
+        viewResources={viewResources}
         activeComponent={activeComponent}
       />
       <StudentQuickView />
@@ -35,6 +38,7 @@ const StudentDashboard = () => {
       {activeComponent === "appraisal" && <Appraisal />}
       {activeComponent === "appointment" && <Appointment />}
       {activeComponent === "announcement" && <Announcement />}
+      {activeComponent === "resources" && <ResourceFeed />}
     </main>
   );
 };

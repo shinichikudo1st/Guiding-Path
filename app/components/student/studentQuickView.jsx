@@ -112,15 +112,6 @@ const StudentQuickView = () => {
           <p className="mt-1 text-sm text-gray-500">
             You have no appointments scheduled for today.
           </p>
-          <button
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center mx-auto"
-            onClick={() => {
-              /* Add schedule appointment logic */
-            }}
-          >
-            <FaCalendarAlt className="mr-2" />
-            Schedule Appointment
-          </button>
         </div>
       )}
     </aside>

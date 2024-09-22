@@ -2,12 +2,12 @@ import { FaBell, FaBookOpen, FaUserCircle, FaUserClock } from "react-icons/fa";
 import { BsChatFill } from "react-icons/bs";
 
 const StudentSidebar = ({
-  otherButton,
   viewProfile,
   viewAppraisal,
   viewAppointment,
   viewAnnouncement,
   activeComponent,
+  viewResources,
 }) => {
   const getItemClassName = (itemName) => {
     const baseClass =
@@ -39,7 +39,7 @@ const StudentSidebar = ({
         <FaBell className="text-[30pt]" />
         <span>Announcements</span>
       </div>
-      <div className={getItemClassName("resources")} onClick={otherButton}>
+      <div className={getItemClassName("resources")} onClick={viewResources}>
         <FaBookOpen className="text-[30pt]" />
         <span>Resources</span>
       </div>

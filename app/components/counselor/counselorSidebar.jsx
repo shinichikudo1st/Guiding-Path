@@ -43,7 +43,10 @@ const CounselorSidebar = ({
         <FaEdit className="text-[30pt]" />
         <span>Create & Edit</span>
       </div>
-      <div className={getItemClassName("reports")} onClick={generateReport}>
+      <div
+        className={getItemClassName("generateReport")}
+        onClick={generateReport}
+      >
         <FaFile className="text-[30pt]" />
         <span>Reports</span>
       </div>
