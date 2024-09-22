@@ -26,7 +26,7 @@ export async function GET(request) {
       },
       include: {
         student: {
-          include: {
+          select: {
             student: {
               select: {
                 name: true,
@@ -36,12 +36,27 @@ export async function GET(request) {
           },
         },
         teacher: {
-          include: {
+          select: {
             teacher: {
               select: {
                 name: true,
               },
             },
+          },
+        },
+        counselor: {
+          select: {
+            counselor: {
+              select: {
+                name: true,
+                profilePicture: true,
+              },
+            },
+          },
+        },
+        appointment: {
+          select: {
+            date_time: true,
           },
         },
       },
@@ -63,6 +78,9 @@ export async function GET(request) {
       dateSubmitted: referral.dateSubmitted,
       status: referral.status,
       notes: referral.notes,
+      counselor_name: referral.counselor.counselor.name,
+      counselor_profilePicture: referral.counselor.counselor.profilePicture,
+      appointment_date_time: referral.appointment?.date_time || null,
     };
 
     return NextResponse.json({ referral: formattedReferral }, { status: 200 });

@@ -9,6 +9,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import { IoMdInformationCircle } from "react-icons/io";
+import Image from "next/image";
 
 const ViewReferralCounselor = ({ referralId, onClose }) => {
   const [referral, setReferral] = useState(null);
@@ -182,6 +183,44 @@ const ViewReferralCounselor = ({ referralId, onClose }) => {
                 <span className="font-semibold">Notes:</span>
                 <p className="mt-2 p-4 bg-gray-100 rounded">{referral.notes}</p>
               </div>
+
+              {(referral.status === "closed" ||
+                referral.status === "confirmed") && (
+                <>
+                  <div className="flex items-center mt-4">
+                    <Image
+                      src={
+                        referral.counselor_profilePicture ||
+                        "/default-avatar.png"
+                      }
+                      alt="Counselor"
+                      width={50}
+                      height={50}
+                      className="rounded-full mr-4"
+                    />
+                    <div>
+                      <p className="font-semibold">Counselor:</p>
+                      <p>{referral.counselor_name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="mr-2 text-purple-500" />
+                    <span className="font-semibold">Appointment:</span>
+                    <span className="ml-2">
+                      {referral.appointment_date_time
+                        ? `${formatDate(
+                            referral.appointment_date_time
+                          )} at ${new Date(
+                            referral.appointment_date_time
+                          ).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}`
+                        : "Not scheduled"}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
             {referral.status === "pending" && (
               <div className="mt-6 space-y-4">

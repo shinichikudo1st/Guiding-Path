@@ -96,6 +96,7 @@ model Appointments {
   notes           String
   status          String
   reason          String?
+  referral        Referrals? 
 }
 
 model Referrals {
@@ -110,6 +111,8 @@ model Referrals {
   counselor_id  String
   status        String
   dateSubmitted DateTime?
+  appointment   Appointments? @relation(fields: [appointment_id], references: [appointment_id])
+  appointment_id Int? @unique
 }
 
 model Teachers {

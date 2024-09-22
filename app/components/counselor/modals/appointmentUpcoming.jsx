@@ -2,7 +2,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiFillBook, AiFillEye } from "react-icons/ai";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
-import Upcoming from "./upcomingAppointmentSingle";
 import UpcomingAppointmentSingle from "./upcomingAppointmentSingle";
 
 const ShowAppointmentUpcoming = () => {
@@ -32,6 +31,7 @@ const ShowAppointmentUpcoming = () => {
       const result = await response.json();
       setAppointments(result.appointments);
       setTotalPages(result.totalPages);
+      console.log(result.totalPages);
     } catch (error) {
       console.error("Error fetching appointments:", error);
     }

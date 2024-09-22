@@ -30,13 +30,6 @@ export async function POST(request) {
       },
     });
 
-    if (!user) {
-      return NextResponse.json(
-        { message: "Invalid Credential" },
-        { status: 404 }
-      );
-    }
-
     const passwordMatched = await bcrypt.compare(password, user.hashedPassword);
 
     if (!passwordMatched) {

@@ -35,7 +35,7 @@ export async function POST(request) {
   const formatDate = new Date(date);
 
   try {
-    await prisma.appointments.create({
+    const appointment = await prisma.appointments.create({
       data: {
         student_id: id,
         counselor_id: sessionData.id,
@@ -55,6 +55,7 @@ export async function POST(request) {
         },
         data: {
           status: "confirmed",
+          appointment_id: appointment.appointment_id,
         },
       });
     }
