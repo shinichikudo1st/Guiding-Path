@@ -1,6 +1,8 @@
 "use client";
+import TeacherAppointment from "@/app/components/teacher/sidebar/appointment";
 import ProfileTeacher from "@/app/components/teacher/sidebar/profile";
 import TeacherReferral from "@/app/components/teacher/sidebar/referral";
+import TeacherResources from "@/app/components/teacher/sidebar/resources";
 import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import QuickView from "@/app/components/UI/quickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
@@ -29,7 +31,8 @@ const TeacherDashboard = () => {
       />
       {activeComponent === "profile" && <ProfileTeacher />}
       {activeComponent === "referral" && <TeacherReferral />}
-      {/* Add other components as needed */}
+      {activeComponent === "resources" && <TeacherResources />}
+      {activeComponent === "appointment" && <TeacherAppointment />}
     </main>
   );
 };

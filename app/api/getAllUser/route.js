@@ -22,6 +22,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
+  const role = url.searchParams.get("role");
   const pageSize = 10;
   const { sessionData } = await getSession();
 
@@ -34,10 +35,18 @@ export async function GET(request) {
   }
 
   try {
-    const totalUser = await prisma.users.count();
+    let whereClause = {};
+    if (role !== "allRoles") {
+      whereClause = { role: role };
+    }
+
+    const totalUser = await prisma.users.count({
+      where: whereClause,
+    });
     let users = await prisma.users.findMany({
       skip,
       take: limit,
+      where: whereClause,
     });
 
     return NextResponse.json(
