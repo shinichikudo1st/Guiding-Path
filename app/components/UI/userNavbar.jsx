@@ -1,4 +1,4 @@
-import { BsBellFill, BsGearFill } from "react-icons/bs";
+import { BsGearFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import OpenSettings from "../student/modals/openSettings";
@@ -25,7 +25,6 @@ const UserNavbar = () => {
     <nav className="absolute w-full h-[10vh] flex items-center justify-between px-5 2xl:h-[8vh]">
       <h1 className=" text-[#062341] font-bold text-[25pt]">Guiding Path</h1>
       <div className="flex w-[40%] h-[10vh] justify-center items-center gap-6 text-[#062341]">
-        <BsBellFill className={iconSize} />
         <BsGearFill
           className={iconSize}
           onClick={() => {

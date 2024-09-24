@@ -2,15 +2,15 @@
 import TeacherAppointment from "@/app/components/teacher/sidebar/appointment";
 import ProfileTeacher from "@/app/components/teacher/sidebar/profile";
 import TeacherReferral from "@/app/components/teacher/sidebar/referral";
-import TeacherResources from "@/app/components/teacher/sidebar/resources";
 import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import QuickView from "@/app/components/UI/quickView";
+import ResourceFeed from "@/app/components/UI/resources";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
 import { useState } from "react";
 
 const TeacherDashboard = () => {
-  const [activeComponent, setActiveComponent] = useState(null);
+  const [activeComponent, setActiveComponent] = useState("appointment");
 
   const toggleProfile = () => setActiveComponent("profile");
   const toggleAppointment = () => setActiveComponent("appointment");
@@ -31,7 +31,7 @@ const TeacherDashboard = () => {
       />
       {activeComponent === "profile" && <ProfileTeacher />}
       {activeComponent === "referral" && <TeacherReferral />}
-      {activeComponent === "resources" && <TeacherResources />}
+      {activeComponent === "resources" && <ResourceFeed />}
       {activeComponent === "appointment" && <TeacherAppointment />}
     </main>
   );

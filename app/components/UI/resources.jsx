@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import { FaHeart } from "react-icons/fa";
 
 const ResourceFeed = () => {
   const [resources, setResources] = useState([]);

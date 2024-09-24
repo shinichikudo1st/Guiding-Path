@@ -40,7 +40,7 @@ const StudentQuickView = () => {
   };
 
   return (
-    <aside className="fixed right-0 top-[75px] w-80 h-[calc(100vh-75px)] bg-[#E6F0F9] shadow-lg p-6 overflow-y-auto">
+    <aside className="fixed right-0 top-[75px] w-[20%] h-[calc(100vh-75px)] bg-[#E6F0F9] shadow-lg p-6 overflow-y-auto">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
         <FaCalendarAlt className="mr-2 text-blue-600" />
         Today's Schedule

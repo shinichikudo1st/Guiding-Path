@@ -16,13 +16,14 @@ const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPages] = useState(1);
   const [selectedRole, setSelectedRole] = useState("allRoles");
+  const [search, setSearch] = useState("");
 
   const retrieveUsers = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(
-        `/api/getAllUser?page=${currentPage}&role=${selectedRole}`
+        `/api/getAllUser?page=${currentPage}&role=${selectedRole}&search=${search}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
@@ -40,7 +41,12 @@ const UserManagement = () => {
 
   useEffect(() => {
     retrieveUsers();
-  }, [selectedRole, currentPage]);
+  }, [selectedRole, currentPage, search]);
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   const nextPage = () => {
     if (currentPage < totalPage) {
@@ -91,6 +97,8 @@ const UserManagement = () => {
                 type="search"
                 placeholder="Search users..."
                 className="pl-10 pr-4 py-2 border border-[#062341] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B]"
+                value={search}
+                onChange={handleSearch}
               />
               <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#062341]" />
             </div>

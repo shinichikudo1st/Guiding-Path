@@ -13,7 +13,7 @@ import Announcement from "@/app/components/student/sidebar/announcements";
 import ResourceFeed from "@/app/components/UI/resources";
 
 const StudentDashboard = () => {
-  const [activeComponent, setActiveComponent] = useState(null);
+  const [activeComponent, setActiveComponent] = useState("profile");
 
   const viewProfile = () => setActiveComponent("profile");
   const viewAppraisal = () => setActiveComponent("appraisal");

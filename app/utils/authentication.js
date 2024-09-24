@@ -42,3 +42,13 @@ export async function getSession() {
 
   return sessionData;
 }
+
+//refreshes the session token
+export async function refreshSession() {
+  const session = await getSession();
+  if (!session) return null;
+
+  const newSession = await encrypt(session);
+
+  return newSession;
+}

@@ -23,6 +23,7 @@ export async function GET(request) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
   const role = url.searchParams.get("role");
+  const search = url.searchParams.get("search");
   const pageSize = 10;
   const { sessionData } = await getSession();
 
@@ -38,6 +39,12 @@ export async function GET(request) {
     let whereClause = {};
     if (role !== "allRoles") {
       whereClause = { role: role };
+    }
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        name: { contains: search, mode: "insensitive" },
+      };
     }
 
     const totalUser = await prisma.users.count({
