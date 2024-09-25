@@ -8,15 +8,49 @@ const ManageAppointmentDate = ({
   initialRequests,
 }) => {
   const [date, setDate] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onChangeHandler = (event) => {
     setDate(event.target.value);
+    setError(null);
+  };
+
+  const isWeekend = (date) => {
+    const d = new Date(date);
+    return d.getDay() === 0 || d.getDay() === 6;
+  };
+
+  const isValidTime = (time) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const isMorningShift =
+      (hours === 8 && minutes >= 0) || (hours > 8 && hours < 12);
+    const isAfternoonShift =
+      (hours === 13 && minutes >= 0) || (hours > 13 && hours < 17);
+    return isMorningShift || isAfternoonShift;
   };
 
   const acceptRequest = async () => {
     if (!date) {
+      setError("Please select both date and time");
       return;
     }
+
+    const [selectedDate, selectedTime] = date.split("T");
+
+    if (isWeekend(selectedDate)) {
+      setError("Weekends are not available for appointments");
+      return;
+    }
+
+    if (!isValidTime(selectedTime)) {
+      setError(
+        "Please select a time between 8:00 AM and 5:00 PM, excluding 12:00 PM to 1:00 PM"
+      );
+      return;
+    }
+
+    setIsLoading(true);
 
     const data = {
       date: date,
@@ -36,16 +70,24 @@ const ManageAppointmentDate = ({
         body: JSON.stringify(data),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "An error occurred");
+      }
+
       await fetch(`/api/deleteRequest?id=${renderRequest.request_id}`, {
         method: "DELETE",
       });
 
-      const result = response.json();
+      const result = await response.json();
       console.log(result.message);
-    } catch (error) {}
-
-    initialRequests();
-    closeButton();
+      initialRequests();
+      closeButton();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -92,13 +134,20 @@ const ManageAppointmentDate = ({
               onChange={onChangeHandler}
               type="datetime-local"
               className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min={new Date().toISOString().slice(0, 16)}
             />
           </div>
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
           <button
             onClick={acceptRequest}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            disabled={isLoading}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
-            Schedule Appointment
+            {isLoading ? "Scheduling..." : "Schedule Appointment"}
           </button>
         </div>
       </div>

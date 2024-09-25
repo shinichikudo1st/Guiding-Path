@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AiFillBook, AiFillEye } from "react-icons/ai";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import UpcomingAppointmentSingle from "./upcomingAppointmentSingle";
+import RescheduleModal from "./RescheduleModal"; // Add this import
 
 const ShowAppointmentUpcoming = () => {
   const [appointments, setAppointments] = useState([]);
@@ -11,15 +12,27 @@ const ShowAppointmentUpcoming = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [singleAppointment, setSingleAppointment] = useState(null);
   const [viewAppointment, setViewAppointment] = useState(false);
+  const [rescheduleAppointmentId, setRescheduleAppointmentId] = useState(null);
 
   const specificAppointment = (id) => {
     const specific = appointments.find(
       (appointment) => appointment.appointment_id === id
     );
-
     setSingleAppointment(specific);
-
     setViewAppointment(true);
+  };
+
+  const openRescheduleModal = (id) => {
+    setRescheduleAppointmentId(id);
+  };
+
+  const closeRescheduleModal = () => {
+    setRescheduleAppointmentId(null);
+  };
+
+  const handleRescheduleSuccess = () => {
+    getAppointments(); // Fetch appointments again after successful reschedule
+    setRescheduleAppointmentId(null); // Close the reschedule modal
   };
 
   const getAppointments = async () => {
@@ -67,6 +80,13 @@ const ShowAppointmentUpcoming = () => {
           appointment={singleAppointment}
         />
       )}
+      {rescheduleAppointmentId && (
+        <RescheduleModal
+          appointmentId={rescheduleAppointmentId}
+          onClose={closeRescheduleModal}
+          onSuccess={handleRescheduleSuccess}
+        />
+      )}
       <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center w-full h-full">
@@ -112,7 +132,12 @@ const ShowAppointmentUpcoming = () => {
                       <AiFillEye className="mr-1" />
                       View
                     </button>
-                    <button className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-150">
+                    <button
+                      onClick={() =>
+                        openRescheduleModal(appointment.appointment_id)
+                      }
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-150"
+                    >
                       <AiFillBook className="mr-1" />
                       Reschedule
                     </button>
