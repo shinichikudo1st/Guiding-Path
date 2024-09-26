@@ -1,20 +1,40 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+
+const requestAppointmentSchema = z.object({
+  name: z.string().min(1),
+  grade: z.string().min(1),
+  reason: z.string().min(1),
+  urgency: z.string().min(1),
+  type: z.string().min(1),
+  contact: z.string().min(1),
+  notes: z.string().min(1),
+});
+
+/**
+ *
+ * @description Submit Request Appointment API Route
+ * @param   {Request} request
+ * @returns {Promise<NextResponse>}
+ */
 
 export async function POST(request) {
-  const { name, grade, reason, urgency, type, contact, notes } =
-    await request.json();
-
-  const { sessionData } = await getSession();
-
-  if (!sessionData) {
-    return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
-  }
-
-  const date = new Date();
-
   try {
+    const body = await request.json();
+
+    const { name, grade, reason, urgency, type, contact, notes } =
+      requestAppointmentSchema.parse(body);
+
+    const { sessionData } = await getSession();
+
+    if (!sessionData) {
+      return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    }
+
+    const date = new Date();
+
     await prisma.appointment_Requests.create({
       data: {
         student_id: sessionData.id,
@@ -35,6 +55,12 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: error.errors[0].message },
+        { status: 400 }
+      );
+    }
     console.error(error);
     return NextResponse.json(
       { message: "Internal Server Error" },

@@ -4,6 +4,7 @@ import ctuLogo from "@/public/ctuLogo.png";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import DOMPurify from "dompurify";
 
 const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
   const [error, setError] = useState(null);
@@ -29,8 +30,8 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
     setLogging(true);
 
     const formData = new FormData(e.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const email = DOMPurify.sanitize(formData.get("email"));
+    const password = DOMPurify.sanitize(formData.get("password"));
 
     if (!email || !password) {
       setError("Email and password are required");
@@ -79,10 +80,10 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
     setIsCreatingAccount(true);
 
     const formData = new FormData(e.target);
-    const id = formData.get("idNumber");
-    const email = formData.get("email");
-    const contact = formData.get("contact");
-    const password = formData.get("password");
+    const id = DOMPurify.sanitize(formData.get("idNumber"));
+    const email = DOMPurify.sanitize(formData.get("email"));
+    const contact = DOMPurify.sanitize(formData.get("contact"));
+    const password = DOMPurify.sanitize(formData.get("password"));
 
     if (!id || !email || !contact || !password) {
       setError("All fields are required");

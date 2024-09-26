@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
 import {
   FaUser,
   FaGraduationCap,
@@ -8,6 +9,7 @@ import {
   FaPhoneAlt,
   FaStickyNote,
   FaPaperPlane,
+  FaSpinner,
 } from "react-icons/fa";
 
 const AppointmentRequest = () => {
@@ -20,17 +22,43 @@ const AppointmentRequest = () => {
     contact: "",
     notes: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+        setSuccessMessage("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, successMessage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const sanitizedValue = DOMPurify.sanitize(value);
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: sanitizedValue,
     }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    // Final sanitization before submission
+    const sanitizedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key,
+        DOMPurify.sanitize(value),
+      ])
+    );
 
     try {
       const response = await fetch("/api/requestAppointment", {
@@ -38,9 +66,15 @@ const AppointmentRequest = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedFormData),
       });
       const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "An error occurred while submitting the request."
+        );
+      }
 
       setFormData({
         name: "",
@@ -51,9 +85,12 @@ const AppointmentRequest = () => {
         contact: "",
         notes: "",
       });
-      console.log(result.message);
+      setSuccessMessage(result.message);
     } catch (error) {
       console.error("Error submitting appointment request:", error);
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,6 +99,7 @@ const AppointmentRequest = () => {
       <form onSubmit={handleSubmit} className="p-8 space-y-8 w-full max-w-4xl">
         <div className="grid grid-cols-2 gap-8">
           <div className="space-y-6">
+            {/* Text input */}
             <div className="flex items-center space-x-4">
               <FaUser className="text-[#0B6EC9] text-xl" />
               <input
@@ -86,6 +124,7 @@ const AppointmentRequest = () => {
                 placeholder="Grade"
               />
             </div>
+            {/* Select input */}
             <div className="flex items-center space-x-4">
               <FaClipboardList className="text-[#0B6EC9] text-xl" />
               <select
@@ -139,6 +178,7 @@ const AppointmentRequest = () => {
             </div>
           </div>
           <div className="space-y-6">
+            {/* Textarea input */}
             <div className="flex items-start space-x-4">
               <FaStickyNote className="text-[#0B6EC9] text-xl mt-2" />
               <textarea
@@ -151,13 +191,28 @@ const AppointmentRequest = () => {
             </div>
           </div>
         </div>
+        {errorMessage && (
+          <div className="text-red-500 text-center font-semibold">
+            {errorMessage}
+          </div>
+        )}
+        {successMessage && (
+          <div className="text-green-500 text-center font-semibold">
+            {successMessage}
+          </div>
+        )}
         <div className="flex justify-center mt-8">
           <button
             type="submit"
-            className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#0B6EC9] to-[#1E90FF] text-white text-lg font-bold rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9]"
+            disabled={isSubmitting}
+            className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#0B6EC9] to-[#1E90FF] text-white text-lg font-bold rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FaPaperPlane className="mr-3 text-xl" />
-            Submit Request
+            {isSubmitting ? (
+              <FaSpinner className="animate-spin mr-3 text-xl" />
+            ) : (
+              <FaPaperPlane className="mr-3 text-xl" />
+            )}
+            {isSubmitting ? "Submitting..." : "Submit Request"}
           </button>
         </div>
       </form>
