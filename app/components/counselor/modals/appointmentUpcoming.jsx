@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AiFillBook, AiFillEye } from "react-icons/ai";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import UpcomingAppointmentSingle from "./upcomingAppointmentSingle";
-import RescheduleModal from "./RescheduleModal"; // Add this import
+import RescheduleAppointment from "./rescheduleModal";
 
 const ShowAppointmentUpcoming = () => {
   const [appointments, setAppointments] = useState([]);
@@ -81,7 +81,7 @@ const ShowAppointmentUpcoming = () => {
         />
       )}
       {rescheduleAppointmentId && (
-        <RescheduleModal
+        <RescheduleAppointment
           appointmentId={rescheduleAppointmentId}
           onClose={closeRescheduleModal}
           onSuccess={handleRescheduleSuccess}
