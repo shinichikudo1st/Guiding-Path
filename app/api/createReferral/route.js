@@ -1,6 +1,14 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+
+const referralSchema = z.object({
+  studentId: z.string().min(1),
+  teacherId: z.string().min(1),
+  reason: z.string().min(1),
+  additionalNotes: z.string().min(1),
+});
 
 /**
  * @function createReferral Creates a new referral record in the database
@@ -14,8 +22,9 @@ export async function POST(request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const body = await request.json();
   const { studentId, teacherId, reason, additionalNotes } =
-    await request.json();
+    referralSchema.parse(body);
 
   try {
     const newReferral = await prisma.referrals.create({

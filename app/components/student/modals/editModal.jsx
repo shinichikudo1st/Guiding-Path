@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   FaTimes,
   FaUser,
@@ -5,17 +6,22 @@ import {
   FaBook,
   FaPhone,
   FaSave,
+  FaSpinner,
 } from "react-icons/fa";
+import DOMPurify from "dompurify";
 
 const EditModal = ({ editButton, profileData, retrieveProfile }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData(event.target);
-    const newName = formData.get("name") || "";
-    const newYear = formData.get("year") || "";
-    const newCourse = formData.get("course") || "";
-    const contact = formData.get("contact") || "";
+    const newName = DOMPurify.sanitize(formData.get("name")) || "";
+    const newYear = DOMPurify.sanitize(formData.get("year")) || "";
+    const newCourse = DOMPurify.sanitize(formData.get("course")) || "";
+    const contact = DOMPurify.sanitize(formData.get("contact")) || "";
 
     const data = {
       name: newName,
@@ -41,10 +47,12 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
       const result = await response.json();
       console.log(result.message);
 
+      setIsLoading(false);
       retrieveProfile();
       editButton();
     } catch (error) {
       console.error("Error updating profile:", error);
+      setIsLoading(false);
       // TODO: Add user-friendly error handling
     }
   };
@@ -131,10 +139,24 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
         </div>
         <button
           type="submit"
-          className="w-full text-white bg-[#0B6EC9] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-300 flex items-center justify-center"
+          disabled={isLoading}
+          className={`w-full text-white ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#0B6EC9] hover:bg-blue-800"
+          } focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-300 flex items-center justify-center`}
         >
-          <FaSave className="mr-2" />
-          Save Changes
+          {isLoading ? (
+            <>
+              <FaSpinner className="animate-spin mr-2 h-5 w-5" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <FaSave className="mr-2" />
+              Save Changes
+            </>
+          )}
         </button>
       </form>
     </div>

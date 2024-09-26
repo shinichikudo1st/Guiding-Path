@@ -65,8 +65,6 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
       } else if (result.role === "teacher") {
         router.push("/pages/teacherDashboard");
       }
-
-      setLogging(false);
     } catch (error) {
       console.error(error);
       setError(error.message);

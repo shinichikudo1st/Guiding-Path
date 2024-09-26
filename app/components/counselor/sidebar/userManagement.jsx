@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import DOMPurify from "dompurify";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -23,7 +24,9 @@ const UserManagement = () => {
     setError(null);
     try {
       const response = await fetch(
-        `/api/getAllUser?page=${currentPage}&role=${selectedRole}&search=${search}`
+        `/api/getAllUser?page=${currentPage}&role=${selectedRole}&search=${DOMPurify.sanitize(
+          search
+        )}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch users");
@@ -60,7 +63,6 @@ const UserManagement = () => {
     }
   };
 
-  // Add this function to determine the role color
   const getRoleColor = (role) => {
     switch (role.toLowerCase()) {
       case "counselor":

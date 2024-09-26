@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { encrypt, decrypt } from "@/app/utils/security";
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -20,10 +21,11 @@ const PendingAppointment = () => {
 
       console.log(result.message);
       setAppointments(result.appointment);
-      sessionStorage.setItem(
-        "pendingAppointments",
-        JSON.stringify(result.appointment)
-      );
+
+      const encryptedAppointments = encrypt(result.appointment);
+      if (encryptedAppointments) {
+        sessionStorage.setItem("pendingAppointments", encryptedAppointments);
+      }
     } catch (error) {}
     setLoading(false);
   };
@@ -31,7 +33,13 @@ const PendingAppointment = () => {
   useEffect(() => {
     const sessionCache = sessionStorage.getItem("pendingAppointments");
     if (sessionCache) {
-      setAppointments(JSON.parse(sessionCache));
+      const decryptedAppointments = decrypt(sessionCache);
+      if (decryptedAppointments) {
+        setAppointments(decryptedAppointments);
+        setLoading(false);
+      } else {
+        retrievePendingAppointments();
+      }
     } else {
       retrievePendingAppointments();
     }

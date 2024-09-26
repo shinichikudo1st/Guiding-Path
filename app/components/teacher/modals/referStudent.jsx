@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DOMPurify from "dompurify";
 import {
   FaUser,
   FaChalkboardTeacher,
@@ -19,9 +20,10 @@ const ReferStudent = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const sanitizedValue = DOMPurify.sanitize(value);
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: sanitizedValue,
     }));
   };
 
@@ -34,12 +36,18 @@ const ReferStudent = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const sanitizedFormData = {
+        studentId: DOMPurify.sanitize(formData.studentId),
+        teacherId: DOMPurify.sanitize(formData.teacherId),
+        reason: DOMPurify.sanitize(formData.reason),
+        additionalNotes: DOMPurify.sanitize(formData.additionalNotes),
+      };
       const response = await fetch("/api/createReferral", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedFormData),
       });
       const result = await response.json();
       if (response.ok) {
