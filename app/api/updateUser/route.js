@@ -1,11 +1,20 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const isEmpty = (obj) => Object.keys(obj).length === 0;
 
+const updateUserSchema = z.object({
+  name: z.string().optional(),
+  grade_level: z.string().optional(),
+  program: z.string().optional(),
+  contact: z.string().optional(),
+});
+
 export async function POST(request) {
-  const { name, grade_level, program, contact } = await request.json();
+  const body = await request.json();
+  const { name, grade_level, program, contact } = updateUserSchema.parse(body);
 
   const { sessionData } = await getSession();
 
@@ -58,6 +67,12 @@ export async function POST(request) {
 
     return NextResponse.json({ message: "User Updated" }, { status: 200 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: error.errors[0].message },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { encrypt, decrypt } from "@/app/utils/security";
 import AppointmentSingleDashboard from "../modals/appointmentSingleDashboard";
 import {
   FaUserCircle,
@@ -44,10 +45,14 @@ const CounselorHome = () => {
 
       console.log(result.message);
 
-      sessionStorage.setItem(
-        "appointment_today_dashboard",
-        JSON.stringify(result.appointments)
-      );
+      const encryptedAppointments = encrypt(result.appointments);
+
+      if (encryptedAppointments) {
+        sessionStorage.setItem(
+          "appointment_today_dashboard",
+          encryptedAppointments
+        );
+      }
     } catch (error) {}
     setLoading(false);
   };
@@ -57,7 +62,12 @@ const CounselorHome = () => {
       "appointment_today_dashboard"
     );
     if (storedAppointment) {
-      setAppointments(JSON.parse(storedAppointment));
+      const decryptedAppointments = decrypt(storedAppointment);
+      if (decryptedAppointments) {
+        setAppointments(decryptedAppointments);
+      } else {
+        getAppointments();
+      }
     } else {
       getAppointments();
     }
