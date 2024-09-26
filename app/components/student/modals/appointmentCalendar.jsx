@@ -64,11 +64,17 @@ const AppointmentCalendar = () => {
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [currentDate]);
 
   const fetchAppointments = async () => {
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    const monthString = `${year}-${month}`;
+
     try {
-      const response = await fetch("/api/getStudentAppointments");
+      const response = await fetch(
+        `/api/getStudentAppointments?month=${monthString}`
+      );
       if (response.ok) {
         const data = await response.json();
         setAppointments(data.appointments);

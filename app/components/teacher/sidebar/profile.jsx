@@ -12,6 +12,7 @@ import UploadModal from "../../student/modals/uploadModal";
 import EditModalTeacher from "../modals/editModalTeacher";
 import LoadingSpinner from "../../UI/loadingSpinner";
 import UploadProfilePicture from "../../student/uploadProfilePicture";
+import { decrypt, encrypt } from "@/app/utils/security";
 
 const ProfileTeacher = () => {
   const [retrievingData, setRetrievingData] = useState(true);
@@ -102,7 +103,12 @@ const ProfileTeacher = () => {
       console.log(result.message);
       setProfileData(result.userInfo);
 
-      sessionStorage.setItem("profileData", JSON.stringify(result.userInfo));
+      const encryptedProfileData = encrypt(result.userInfo);
+      if (encryptedProfileData) {
+        sessionStorage.setItem("profileData", encryptedProfileData);
+        //console.log("Profile data encrypted and stored");
+      }
+
       setRetrievingData(false);
     } catch (error) {}
   };
@@ -110,8 +116,13 @@ const ProfileTeacher = () => {
   useEffect(() => {
     const storedProfile = sessionStorage.getItem("profileData");
     if (storedProfile) {
-      setProfileData(JSON.parse(storedProfile));
-      setRetrievingData(false);
+      const decryptedProfileData = decrypt(storedProfile);
+      if (decryptedProfileData) {
+        setProfileData(decryptedProfileData);
+        setRetrievingData(false);
+      } else {
+        retrieveProfile();
+      }
     } else {
       retrieveProfile();
     }

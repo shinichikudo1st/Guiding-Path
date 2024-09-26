@@ -11,6 +11,7 @@ import LoadingSpinner from "../../UI/loadingSpinner";
 import EditModalCounselor from "../modals/editModalCounselor";
 import UploadProfilePicture from "../../student/uploadProfilePicture";
 import UploadModal from "../../student/modals/uploadModal";
+import { decrypt, encrypt } from "@/app/utils/security";
 
 const ProfileCounselor = () => {
   const [retrievingData, setRetrievingData] = useState(true);
@@ -101,7 +102,11 @@ const ProfileCounselor = () => {
       console.log(result.message);
       setProfileData(result.userInfo);
 
-      sessionStorage.setItem("profileData", JSON.stringify(result.userInfo));
+      const encryptedProfileData = encrypt(result.userInfo);
+      if (encryptedProfileData) {
+        sessionStorage.setItem("profileData", encryptedProfileData);
+        //console.log("Profile data encrypted and stored");
+      }
       setRetrievingData(false);
     } catch (error) {}
   };
@@ -109,8 +114,13 @@ const ProfileCounselor = () => {
   useEffect(() => {
     const storedProfile = sessionStorage.getItem("profileData");
     if (storedProfile) {
-      setProfileData(JSON.parse(storedProfile));
-      setRetrievingData(false);
+      const decryptedProfileData = decrypt(storedProfile);
+      if (decryptedProfileData) {
+        setProfileData(decryptedProfileData);
+        setRetrievingData(false);
+      } else {
+        retrieveProfile();
+      }
     } else {
       retrieveProfile();
     }

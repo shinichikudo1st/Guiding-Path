@@ -12,24 +12,41 @@ import Image from "next/image";
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPages] = useState(1);
+  const [selectedRole, setSelectedRole] = useState("allRoles");
+  const [search, setSearch] = useState("");
 
   const retrieveUsers = async () => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch(`/api/getAllUser?page=${currentPage}`);
+      const response = await fetch(
+        `/api/getAllUser?page=${currentPage}&role=${selectedRole}&search=${search}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
       const result = await response.json();
 
       setUsers(result.users);
       setTotalPages(result.totalPages);
-    } catch (error) {}
+    } catch (error) {
+      setError(error.message);
+      setUsers([]);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
     retrieveUsers();
-  }, []);
+  }, [selectedRole, currentPage, search]);
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   const nextPage = () => {
     if (currentPage < totalPage) {
@@ -66,8 +83,11 @@ const UserManagement = () => {
             User Management
           </h1>
           <div className="flex items-center space-x-4">
-            <select className="bg-white text-[#062341] py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B] border border-[#062341]">
-              <option value="">All Roles</option>
+            <select
+              onChange={(e) => setSelectedRole(e.target.value)}
+              className="bg-white text-[#062341] py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B] border border-[#062341]"
+            >
+              <option value="allRoles">All Roles</option>
               <option value="counselor">Counselor</option>
               <option value="teacher">Teacher</option>
               <option value="student">Student</option>
@@ -77,6 +97,8 @@ const UserManagement = () => {
                 type="search"
                 placeholder="Search users..."
                 className="pl-10 pr-4 py-2 border border-[#062341] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1F5B9B]"
+                value={search}
+                onChange={handleSearch}
               />
               <IoMdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#062341]" />
             </div>
@@ -100,6 +122,18 @@ const UserManagement = () => {
                       <div className="animate-pulse text-[#1F5B9B]">
                         Loading users...
                       </div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-4 text-red-500">
+                      Error: {error}
+                    </td>
+                  </tr>
+                ) : users.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="text-center py-4">
+                      No users found.
                     </td>
                   </tr>
                 ) : (

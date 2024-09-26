@@ -3,10 +3,16 @@ import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import prisma from "@/app/utils/prisma";
+import { z } from "zod";
 
-/**
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(3), //change to 8 once change password is implemented
+});
+
+/**SANITIZED INPUTS
  *
- * user entering the right and existing credential are logged in and given a role
+ * @description user entering the right and existing credential are logged in and given a role
  *
  * @function loginUser
  *
@@ -21,21 +27,15 @@ import prisma from "@/app/utils/prisma";
  */
 
 export async function POST(request) {
-  const { email, password } = await request.json();
-
   try {
+    const body = await request.json();
+    const { email, password } = loginSchema.parse(body);
+
     const user = await prisma.users.findUnique({
       where: {
         email: email,
       },
     });
-
-    if (!user) {
-      return NextResponse.json(
-        { message: "Invalid Credential" },
-        { status: 404 }
-      );
-    }
 
     const passwordMatched = await bcrypt.compare(password, user.hashedPassword);
 
@@ -71,6 +71,12 @@ export async function POST(request) {
       { status: 200 }
     );
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: "Invalid email or password" },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

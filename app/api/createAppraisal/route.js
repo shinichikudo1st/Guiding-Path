@@ -61,15 +61,13 @@ export async function POST(request) {
       { name: "Career Path Exploration", score: career },
     ];
 
-    for (const area of areas) {
-      await prisma.evaluation_Areas.create({
-        data: {
-          appraisal_id: appraisal.appraisal_id,
-          area_name: area.name,
-          score: area.score,
-        },
-      });
-    }
+    await prisma.evaluation_Areas.createMany({
+      data: areas.map((area) => ({
+        appraisal_id: appraisal.appraisal_id,
+        area_name: area.name,
+        score: area.score,
+      })),
+    });
 
     await prisma.aggregate_Scores.create({
       data: {

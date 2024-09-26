@@ -24,9 +24,18 @@ export async function GET(request) {
   dateEndToday.setHours(23, 59, 59, 999);
 
   try {
-    const totalAppointments = await prisma.appointments.count();
+    let totalAppointments;
     let appointments;
+
     if (type === "today") {
+      totalAppointments = await prisma.appointments.count({
+        where: {
+          date_time: {
+            gt: dateStartToday,
+            lte: dateEndToday,
+          },
+        },
+      });
       appointments = await prisma.appointments.findMany({
         where: {
           date_time: {
@@ -41,7 +50,7 @@ export async function GET(request) {
           date_time: true,
           counsel_type: true,
           student: {
-            include: {
+            select: {
               student: {
                 select: {
                   name: true,
@@ -54,6 +63,13 @@ export async function GET(request) {
         },
       });
     } else if (type === "upcoming") {
+      totalAppointments = await prisma.appointments.count({
+        where: {
+          date_time: {
+            gt: dateEndToday,
+          },
+        },
+      });
       appointments = await prisma.appointments.findMany({
         skip,
         take: limit,
@@ -69,7 +85,7 @@ export async function GET(request) {
           date_time: true,
           counsel_type: true,
           student: {
-            include: {
+            select: {
               student: {
                 select: {
                   name: true,
@@ -101,7 +117,7 @@ export async function GET(request) {
 
     return NextResponse.json(
       {
-        message: "Appointment Date Retrieved",
+        message: "Appointment Data Retrieved",
         appointments: appointments,
         currentPage: pageNumber,
         totalPages: Math.ceil(totalAppointments / limit),

@@ -1,6 +1,7 @@
 "use client";
 
 import CounselorSidebar from "@/app/components/counselor/counselorSidebar";
+import QuickViewCounselor from "@/app/components/counselor/quickViewCounselor";
 import AppointmentCounselor from "@/app/components/counselor/sidebar/appointment";
 import CreateResources from "@/app/components/counselor/sidebar/createResources";
 import GenerateReport from "@/app/components/counselor/sidebar/generateReport";
@@ -8,7 +9,6 @@ import CounselorHome from "@/app/components/counselor/sidebar/homeDashboard";
 import ProfileCounselor from "@/app/components/counselor/sidebar/profile";
 import ReferralCounselor from "@/app/components/counselor/sidebar/referralCounselor";
 import UserManagement from "@/app/components/counselor/sidebar/userManagement";
-import StudentQuickView from "@/app/components/student/studentQuickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
 import { useState } from "react";
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
         referral={() => toggleComponent("referral")}
         activeComponent={activeComponent}
       />
-      <StudentQuickView />
+      <QuickViewCounselor />
       <ActiveComponent />
     </main>
   );

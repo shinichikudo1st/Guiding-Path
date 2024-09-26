@@ -1,32 +1,37 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/app/utils/prisma";
+import { z } from "zod";
 
-/**
+const createUserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  contact: z.string(),
+  password: z.string().min(8),
+});
+
+/**SANITIZED INPUTS
  *
- * @function createUser creates new record in the User schema with the provided inputs
+ * @description createUser creates new record in the User schema with the provided inputs
  *
  * @param {Request} request request object with a JSON body containing { id, name, contact }
  * @param {Object} request.body JSON body of the request
  * @param {string} request.body.id ID of the user
  * @param {string} request.body.email Email of the user
  * @param {string} request.body.contact Contact of the user
- *
+ * @param {string} request.body.password Password of the user
  * @returns {NextResponse}
  */
 
 export async function POST(request) {
-  console.log("Request received");
-  const { id, email, contact } = await request.json();
-
-  console.log(id, email, contact);
-
-  const password = "123";
-  const role = "student";
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   try {
+    const body = await request.json();
+    const { id, email, contact, password } = createUserSchema.parse(body);
+
+    const role = "student";
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const emailExists = await prisma.users.findUnique({
       where: {
         email: email,
@@ -34,7 +39,10 @@ export async function POST(request) {
     });
 
     if (emailExists) {
-      return NextResponse.json({ message: "Email Already Exists" });
+      return NextResponse.json(
+        { message: "Email Already Exists" },
+        { status: 400 }
+      );
     }
 
     const user = await prisma.users.create({
@@ -59,7 +67,15 @@ export async function POST(request) {
 
     return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {
-    console.error("Error creating user:", error);
+    //console.error("Server error:", error); (for debugging)
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        {
+          message: error.errors[0].message.replace("String", "Password"),
+        },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

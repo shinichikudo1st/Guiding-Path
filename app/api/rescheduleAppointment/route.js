@@ -1,27 +1,26 @@
-import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import { getSession } from "@/app/utils/authentication";
 
 /**
- *
- * @function AppointmentHandler create new appointment record in the database after accepting appointment request
- *
- * @param {Request} request request object with a JSON body containing id, role, notes
- * @param {Object} request.body JSON body of the request
- * @param {string} request.body.id student id
- * @param {string} request.body.role role of user eg: student, counselor, teacher
- * @param {string} request.body.notes additional information in the appointment request to support the reason of request
- *
- * @returns {NextResponse}
+ * @description check if date is available for setting appointment if there is an appointment already set then return error else return success
+ * @param {NextRequest} request
+ * @returns {Promise<NextResponse>}
  */
 
 export async function POST(request) {
-  const { date, id, role, notes, reason, counsel_type, referral_id } =
-    await request.json();
   const { sessionData } = await getSession();
-
   if (!sessionData) {
-    return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { date, id } = await request.json();
+
+  if (!date || !id) {
+    return NextResponse.json(
+      { error: "Missing required fields" },
+      { status: 400 }
+    );
   }
 
   const appointmentDate = new Date(date);
@@ -62,18 +61,13 @@ export async function POST(request) {
     );
   }
 
-  let submitType;
-
-  if (role === "student") {
-    submitType = "self-appoint";
-  } else if (role === "teacher") {
-    submitType = "referral";
-  }
-
   try {
     const existingAppointment = await prisma.appointments.findFirst({
       where: {
         date_time: appointmentDate,
+        NOT: {
+          appointment_id: id,
+        },
       },
     });
 
@@ -84,39 +78,31 @@ export async function POST(request) {
       );
     }
 
-    const appointment = await prisma.appointments.create({
-      data: {
-        student_id: id,
+    const updatedAppointment = await prisma.appointments.update({
+      where: {
+        appointment_id: id,
         counselor_id: sessionData.id,
+      },
+      data: {
         date_time: appointmentDate,
-        type: submitType,
-        notes: notes,
-        reason: reason,
-        counsel_type: counsel_type,
-        status: "pending",
       },
     });
 
-    if (role === "teacher") {
-      await prisma.referrals.update({
-        where: {
-          referral_id: referral_id,
-        },
-        data: {
-          status: "confirmed",
-          appointment_id: appointment.appointment_id,
-        },
-      });
+    if (!updatedAppointment) {
+      return NextResponse.json(
+        { error: "Failed to update appointment" },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json(
-      { message: "Appointment Created" },
-      { status: 201 }
+      { message: "Appointment schedule updated successfully" },
+      { status: 200 }
     );
   } catch (error) {
-    console.error(error);
+    console.error("Error updating appointment:", error);
     return NextResponse.json(
-      { message: "Internal Server Error" },
+      { error: "An error occurred while updating the appointment" },
       { status: 500 }
     );
   }

@@ -1,9 +1,7 @@
 import { FaEdit, FaFile, FaUserCircle, FaUserClock } from "react-icons/fa";
-import { FaGear } from "react-icons/fa6";
 import { MdGroups, MdManageAccounts } from "react-icons/md";
 
 const CounselorSidebar = ({
-  otherButton,
   userManagement,
   generateReport,
   appointment,
@@ -43,13 +41,12 @@ const CounselorSidebar = ({
         <FaEdit className="text-[30pt]" />
         <span>Create & Edit</span>
       </div>
-      <div className={getItemClassName("reports")} onClick={generateReport}>
+      <div
+        className={getItemClassName("generateReport")}
+        onClick={generateReport}
+      >
         <FaFile className="text-[30pt]" />
         <span>Reports</span>
-      </div>
-      <div className={getItemClassName("settings")} onClick={otherButton}>
-        <FaGear className="text-[30pt]" />
-        <span>System Settings</span>
       </div>
       <div className={getItemClassName("referral")} onClick={referral}>
         <MdGroups className="text-[30pt]" />

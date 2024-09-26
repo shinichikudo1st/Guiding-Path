@@ -40,7 +40,7 @@ export async function GET(request) {
       take: limit,
       include: {
         student: {
-          include: {
+          select: {
             student: {
               select: {
                 profilePicture: true,
