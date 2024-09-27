@@ -8,6 +8,28 @@ const UploadModal = ({
   setUploadModal,
   setIsFileSelected,
 }) => {
+  const validateFileType = (file) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/svg+xml",
+      "image/webp",
+      "image/gif",
+    ];
+    return allowedTypes.includes(file.type);
+  };
+
+  const handleFileChangeWithValidation = (event) => {
+    const file = event.target.files[0];
+    if (file && validateFileType(file)) {
+      handleFileChange(event);
+    } else {
+      event.target.value = null;
+      setIsFileSelected(false);
+      alert("Please select a valid image file (PNG, JPG, SVG, WEBP, or GIF).");
+    }
+  };
+
   return (
     <div className="h-[100vh] w-[2000px] absolute flex justify-center items-center">
       <div className="absolute bg-black opacity-75 h-[100%] w-[100%] z-10"></div>
@@ -20,15 +42,16 @@ const UploadModal = ({
             Set Profile Picture
           </label>
           <input
-            onChange={handleFileChange}
+            onChange={handleFileChangeWithValidation}
             name="file"
             ref={inputFileRef}
             type="file"
             required
+            accept="image/png, image/jpeg, image/svg+xml, image/webp, image/gif"
             className="w-full text-gray-400 font-semibold text-sm bg-white border file:cursor-pointer cursor-pointer file:border-0 file:py-3 file:px-4 file:mr-4 file:bg-gray-100 file:hover:bg-gray-200 file:text-[#062341] rounded"
           />
           <p className="text-xs text-gray-400 mt-2">
-            PNG, JPG SVG, WEBP, and GIF are Allowed.
+            Only PNG, JPG, SVG, WEBP, and GIF files are allowed.
           </p>
         </div>
         <div className="flex gap-[20%]">
