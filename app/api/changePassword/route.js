@@ -5,7 +5,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const changePasswordSchema = z.object({
-  password: z.string().min(8),
+  currentPassword: z.string(),
+  password: z.string(),
+  confirmPassword: z.string(),
 });
 
 /**
@@ -24,7 +26,8 @@ const changePasswordSchema = z.object({
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { password } = changePasswordSchema.parse(body);
+    const { currentPassword, password, confirmPassword } =
+      changePasswordSchema.parse(body);
 
     const { sessionData } = await getSession();
 
@@ -32,6 +35,34 @@ export async function POST(request) {
 
     if (!sessionData) {
       return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    }
+
+    const checkCurrentPassword = await prisma.users.findUnique({
+      where: {
+        user_id: sessionData.id,
+      },
+      select: {
+        hashedPassword: true,
+      },
+    });
+
+    const isMatch = await bcrypt.compare(
+      currentPassword,
+      checkCurrentPassword.hashedPassword
+    );
+
+    if (!isMatch) {
+      return NextResponse.json(
+        { message: "Incorrect Current Password" },
+        { status: 400 }
+      );
+    }
+
+    if (password !== confirmPassword) {
+      return NextResponse.json(
+        { message: "New Password and Confirm Password do not match" },
+        { status: 400 }
+      );
     }
 
     await prisma.users.update({
