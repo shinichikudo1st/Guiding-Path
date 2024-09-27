@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import LoadingSpinner from "../../UI/loadingSpinner";
+import LoadingSpinner from "../../../UI/loadingSpinner";
 import ViewScore from "./viewScore";
 
 const RecordedAppraisal = ({

@@ -1,8 +1,8 @@
 import { BsGearFill } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import OpenSettings from "../student/modals/openSettings";
-import OpenLogout from "../student/modals/openLogout";
+import OpenSettings from "./openSettings";
+import OpenLogout from "./openLogout";
 
 const UserNavbar = () => {
   const [isLogoutToggled, setIsLogoutToggled] = useState(false);

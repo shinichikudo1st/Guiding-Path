@@ -1,7 +1,7 @@
 import { useState } from "react";
-import CreateEvent from "../modals/createEvent";
-import CreateAnnouncement from "../modals/createAnnouncement";
-import CreateResource from "../modals/createResource";
+import CreateEvent from "../modals/create/createEvent";
+import CreateAnnouncement from "../modals/create/createAnnouncement";
+import CreateResource from "../modals/create/createResource";
 
 const CreateResources = () => {
   const [events, setEvents] = useState(false);

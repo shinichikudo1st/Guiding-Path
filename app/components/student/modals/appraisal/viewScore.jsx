@@ -4,7 +4,7 @@ import {
   evaluateCareer,
 } from "@/app/utils/evaluate";
 import { FaTimes, FaBook, FaSmile, FaBriefcase } from "react-icons/fa";
-import MeterBar from "../../UI/meterBar";
+import MeterBar from "../../../UI/meterBar";
 
 const ViewScore = ({ areaScores, close }) => {
   const academic = evaluateAcademic(areaScores.academic_score);

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { encrypt, decrypt } from "@/app/utils/security";
-import AppointmentSingleDashboard from "../modals/appointmentSingleDashboard";
+import AppointmentSingleDashboard from "../modals/appointment/appointmentSingleDashboard";
 import {
   FaUserCircle,
   FaEnvelope,

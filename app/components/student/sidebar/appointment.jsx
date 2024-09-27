@@ -1,7 +1,7 @@
 import { useState } from "react";
-import AppointmentRequest from "../modals/appointmentRequest";
-import PendingAppointment from "../modals/pendingAppointment";
-import AppointmentCalendar from "../modals/appointmentCalendar";
+import AppointmentRequest from "../modals/appointment/appointmentRequest";
+import PendingAppointment from "../modals/appointment/pendingAppointment";
+import AppointmentCalendar from "../modals/appointment/appointmentCalendar";
 
 const Appointment = () => {
   const [activeTab, setActiveTab] = useState("request");
