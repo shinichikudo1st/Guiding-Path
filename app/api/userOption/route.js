@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/app/utils/prisma";
 import { z } from "zod";
+import { getSession } from "@/app/utils/authentication";
 
 const createUserSchema = z.object({
   id: z.string(),
@@ -76,6 +77,91 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ message: "ID is required" }, { status: 400 });
+  }
+
+  const { sessionData } = await getSession();
+
+  const { counselorPassword } = request.json();
+
+  if (sessionData.role !== "counselor") {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const counselor = await prisma.users.findUnique({
+      where: {
+        user_id: sessionData.id,
+      },
+    });
+
+    const confirmPassword = await bcrypt.compare(
+      counselorPassword,
+      counselor.hashedPassword
+    );
+
+    if (!confirmPassword) {
+      return NextResponse.json(
+        { message: "Incorrect Password" },
+        { status: 401 }
+      );
+    }
+
+    await prisma.users.delete({
+      where: {
+        user_id: id,
+      },
+    });
+
+    return NextResponse.json({ message: "User Deleted" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ message: "ID is required" }, { status: 400 });
+  }
+
+  const { sessionData } = await getSession();
+
+  if (sessionData.role !== "counselor") {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const { role } = request.json();
+
+  try {
+    await prisma.users.update({
+      where: {
+        user_id: id,
+      },
+      data: {
+        role: role,
+      },
+    });
+
+    return NextResponse.json({ message: "User Updated" }, { status: 200 });
+  } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

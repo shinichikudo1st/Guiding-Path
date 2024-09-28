@@ -9,6 +9,8 @@ import {
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import DOMPurify from "dompurify";
+import ModifyUser from "../modals/userManagement/modifyUser";
+import DeleteUser from "../modals/userManagement/deleteUser";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +20,9 @@ const UserManagement = () => {
   const [totalPage, setTotalPages] = useState(1);
   const [selectedRole, setSelectedRole] = useState("allRoles");
   const [search, setSearch] = useState("");
+  const [isModifyUserModalOpen, setIsModifyUserModalOpen] = useState(false);
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const retrieveUsers = async () => {
     setLoading(true);
@@ -74,6 +79,26 @@ const UserManagement = () => {
       default:
         return "bg-gray-200 text-gray-800";
     }
+  };
+
+  const openModifyUserModal = (userId) => {
+    setSelectedUserId(userId);
+    setIsModifyUserModalOpen(true);
+  };
+
+  const closeModifyUserModal = () => {
+    setIsModifyUserModalOpen(false);
+    setSelectedUserId(null);
+  };
+
+  const openDeleteUserModal = (userId) => {
+    setSelectedUserId(userId);
+    setIsDeleteUserModalOpen(true);
+  };
+
+  const closeDeleteUserModal = () => {
+    setIsDeleteUserModalOpen(false);
+    setSelectedUserId(null);
   };
 
   return (
@@ -177,12 +202,14 @@ const UserManagement = () => {
                           <button
                             className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
                             title="Edit"
+                            onClick={() => openModifyUserModal(user.user_id)}
                           >
                             <FaUserEdit size={18} />
                           </button>
                           <button
                             className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
                             title="Remove"
+                            onClick={() => openDeleteUserModal(user.user_id)}
                           >
                             <FaUserMinus size={18} />
                           </button>
@@ -239,6 +266,14 @@ const UserManagement = () => {
           </div>
         </div>
       </div>
+
+      {isModifyUserModalOpen && (
+        <ModifyUser onClose={closeModifyUserModal} userID={selectedUserId} />
+      )}
+
+      {isDeleteUserModalOpen && (
+        <DeleteUser onClose={closeDeleteUserModal} userID={selectedUserId} />
+      )}
     </>
   );
 };
