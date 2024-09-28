@@ -6,6 +6,7 @@ import {
   FaLink,
   FaCheck,
   FaBullhorn,
+  FaFilter,
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
 
@@ -18,6 +19,7 @@ const StudentFeed = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [registrationCounts, setRegistrationCounts] = useState({});
+  const [filter, setFilter] = useState("all");
 
   const fetchFeedItems = async () => {
     if (loading || !hasMore) return;
@@ -141,6 +143,34 @@ const StudentFeed = () => {
 
   const isRegistered = (eventId) => registeredEvents.includes(eventId);
 
+  const filteredFeedItems = feedItems.filter((item) => {
+    if (filter === "all") return true;
+    return item.type === filter;
+  });
+
+  const renderFilterButtons = () => (
+    <div className="sticky top-0 z-10 bg-[#dfecf6] py-4 px-6 rounded-b-lg shadow-md">
+      <div className="flex justify-center space-x-2 max-w-md mx-auto">
+        {["all", "event", "announcement"].map((filterType) => (
+          <button
+            key={filterType}
+            className={`
+              flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
+              ${
+                filter === filterType
+                  ? "bg-[#0B6EC9] text-white shadow-lg transform scale-105"
+                  : "bg-[#dfecf6] text-gray-700 hover:bg-gray-100"
+              }
+            `}
+            onClick={() => setFilter(filterType)}
+          >
+            {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   const renderFeedItem = (item) => {
     if (item.type === "event") {
       const eventIsRegistered =
@@ -244,7 +274,7 @@ const StudentFeed = () => {
   return (
     <>
       <div
-        className="newsfeed absolute 2xl:w-[55%] 2xl:h-[85%] 2xl:translate-x-[41%] 2xl:translate-y-[13%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto bg-[#dfecf6]"
+        className="newsfeed absolute 2xl:w-[55%] 2xl:h-[85%] 2xl:translate-x-[41%] 2xl:translate-y-[13%] rounded-[20px] flex flex-col items-center overflow-y-auto bg-[#dfecf6] gap-2"
         onScroll={handleScroll}
         style={{
           scrollbarWidth: "thin",
@@ -267,15 +297,22 @@ const StudentFeed = () => {
             background: #062341;
           }
         `}</style>
-        <h1 className="text-3xl font-bold mb-6 text-[#0B6EC9]">Student Feed</h1>
-        {feedItems.length === 0 && !loading ? (
+        <h1 className="text-3xl font-bold mb-6 text-[#0B6EC9] mt-[5%]">
+          Student Feed
+        </h1>
+        {renderFilterButtons()}
+        {filteredFeedItems.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <FaCalendarAlt className="text-6xl text-gray-400 mb-4" />
-            <p className="text-xl text-gray-600">No items to display yet.</p>
-            <p className="text-gray-500">Check back later for updates!</p>
+            <FaFilter className="text-6xl text-gray-400 mb-4" />
+            <p className="text-xl text-gray-600">
+              No items to display for the selected filter.
+            </p>
+            <p className="text-gray-500">
+              Try changing the filter or check back later!
+            </p>
           </div>
         ) : (
-          feedItems.map(renderFeedItem)
+          filteredFeedItems.map(renderFeedItem)
         )}
         {loading && (
           <div className="flex justify-center items-center py-4">

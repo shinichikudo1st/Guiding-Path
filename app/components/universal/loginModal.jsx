@@ -92,7 +92,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
     const data = { id, email, contact, password };
 
     try {
-      const response = await fetch("/api/createUser", {
+      const response = await fetch("/api/userOption", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

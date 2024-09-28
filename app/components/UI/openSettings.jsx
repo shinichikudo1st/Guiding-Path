@@ -1,37 +1,9 @@
 import { useState } from "react";
 import { FiLock, FiBell } from "react-icons/fi";
+import ChangePassword from "./changePassword";
 
 const OpenSettings = () => {
-  const [loading, setLoading] = useState(false);
-
-  const changePassword = async (event) => {
-    event.preventDefault();
-
-    setLoading(true);
-
-    const formData = new FormData(event.target);
-    const formPassword = formData.get("password");
-
-    if (!formPassword) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch("", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formPassword }),
-      });
-
-      const result = await response.json();
-      console.log(result.message);
-    } catch (error) {}
-
-    setLoading(false);
-  };
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   return (
     <div className="absolute w-[250px] h-[300px] z-10 right-[10%] top-20 rounded-[10px] bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg flex flex-col items-center pt-[20px] text-[#062341]">
@@ -40,9 +12,7 @@ const OpenSettings = () => {
         <SettingItem
           icon={<FiLock className="text-blue-600" />}
           text="Change Password"
-          onClick={() => {
-            /* Add functionality */
-          }}
+          onClick={() => setShowChangePassword(true)}
         />
         <SettingItem
           icon={<FiBell className="text-blue-600" />}
@@ -52,6 +22,9 @@ const OpenSettings = () => {
           }}
         />
       </div>
+      {showChangePassword && (
+        <ChangePassword onClose={() => setShowChangePassword(false)} />
+      )}
     </div>
   );
 };

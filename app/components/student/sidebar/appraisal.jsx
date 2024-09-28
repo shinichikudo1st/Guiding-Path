@@ -1,6 +1,6 @@
 import { useState } from "react";
-import QuestionModal from "../modals/questionModal";
-import RecordedAppraisal from "../modals/recordedAppraisal";
+import QuestionModal from "../modals/appraisal/questionModal";
+import RecordedAppraisal from "../modals/appraisal/recordedAppraisal";
 import { FaArrowRight } from "react-icons/fa";
 
 const Appraisal = () => {

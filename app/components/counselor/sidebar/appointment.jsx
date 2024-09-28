@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ShowAppointmentRequest from "../modals/showRequest";
-import ShowAppointmentToday from "../modals/appointmentToday";
-import ShowAppointmentUpcoming from "../modals/appointmentUpcoming";
+import ShowAppointmentRequest from "../modals/appointment/showRequest";
+import ShowAppointmentToday from "../modals/appointment/appointmentToday";
+import ShowAppointmentUpcoming from "../modals/appointment/appointmentUpcoming";
 
 const AppointmentCounselor = () => {
   const [request, setToggleRequest] = useState(false);
