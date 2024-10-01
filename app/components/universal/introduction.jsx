@@ -2,7 +2,7 @@ const Introduction = ({ login, signup }) => {
   return (
     <>
       <div
-        className={` absolute invisible sm:visible flex flex-col 2xl:w-[40%] 2xl:h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold lg:translate-y-[20px] 2xl:translate-y-[-100px] text-[#f1f5fa] ${
+        className={` absolute invisible sm:visible flex flex-col 2xl:w-[40%] 2xl:h-[50vh] bottom-40 left-20 items-center justify-center gap-8 font-bold xl:translate-y-[-50px] 2xl:translate-y-[-100px] text-[#f1f5fa] ${
           login
             ? "translate-x-0 ease-in duration-[0.2s]"
             : "translate-x-[-500px] lg:translate-x-[-700px] ease-out duration-[0.2s]"

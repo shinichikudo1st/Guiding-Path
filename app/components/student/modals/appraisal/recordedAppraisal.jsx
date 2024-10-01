@@ -61,8 +61,8 @@ const RecordedAppraisal = ({
   return (
     <>
       {openScore && <ViewScore areaScores={areaScores} close={toggleResult} />}
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
-        <div className="flex text-[#062341] text-[20pt] font-extrabold w-[50%] justify-evenly">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
+        <div className="flex text-[#062341] xl:text-[15pt] 2xl:text-[20pt] font-extrabold w-[50%] justify-evenly">
           <span
             onClick={() => {
               setAppraisalModal(false);
@@ -86,7 +86,7 @@ const RecordedAppraisal = ({
             Start Appraisal
           </span>
         </div>
-        <div className="2xl:h-[80%] 2xl:w-[80%] bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="xl:h-[80%] xl:w-[80%] bg-white rounded-lg shadow-md overflow-hidden">
           {retrievingAppraisal ? (
             <div className="flex justify-center items-center h-full">
               <LoadingSpinner />

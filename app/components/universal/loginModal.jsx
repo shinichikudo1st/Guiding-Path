@@ -118,7 +118,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
   return (
     <>
       <div
-        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] 2xl:w-[33%] 2xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 lg:translate-y-[-20px] shadow-lg ${
+        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] xl:w-[33%] xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 lg:translate-y-[-20px] shadow-lg ${
           login
             ? "top-[20%] lg:top-[23%] translate-x-[140px] lg:translate-x-0  ease-in duration-[0.2s]"
             : "top-[20%] lg:top-[23%] translate-x-[500px] lg:translate-x-[1000px] ease-out duration-[0.2s]"
@@ -206,10 +206,10 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
       </div>
 
       <div
-        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] 2xl:w-[33%] 2xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg:translate-y-[-20px] shadow-lg ${
+        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] xl:w-[33%] xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg:translate-y-[-20px] shadow-lg ${
           signup
             ? "translate-x-[140px] top-[20%] lg:top-[23%] lg:translate-x-[-600px] 2xl:translate-x-[-900px] ease-in duration-[0.2s]"
-            : "translate-x-[-250px] top-[20%] lg:top-[23%] lg:translate-x-[-1300px] 2xl:translate-x-[-1800px] ease-out duration-[0.2s]"
+            : "translate-x-[-250px] top-[20%] lg:top-[23%] lg:translate-x-[-1300px] 2xl:translate-x-[-1900px] ease-out duration-[0.2s]"
         }`}
       >
         <Image
@@ -218,10 +218,10 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
           className="w-[50px] h-[50px] lg:w-[80px] lg:h-[80px]"
         />
         <div className="flex flex-col items-center">
-          <span className="text-[#062341] text-[10pt] lg:text-[20pt] font-bold">
+          <span className="text-[#062341] text-[10pt] lg:text-[15pt] font-bold">
             GUIDING PATH
           </span>
-          <span className="text-[#062341] text-[6pt] lg:text-[13pt]">
+          <span className="text-[#062341] text-[6pt] lg:text-[10pt]">
             Create an account
           </span>
         </div>
@@ -236,28 +236,28 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
         )}
         <form
           onSubmit={handleSignup}
-          className="flex flex-col items-center gap-4 w-full max-w-[300px] mt-[5%]"
+          className="flex flex-col items-center gap-4 w-full max-w-[300px] mt-[5%] lg:mt-[2%]"
         >
           <input
             type="text"
             placeholder="ID Number"
             name="idNumber"
             id="idNumber"
-            className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
+            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
           />
           <input
             type="email"
             placeholder="Email"
             name="email"
             id="emailSignup"
-            className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
+            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
           />
           <input
             type="text"
             placeholder="Contact No."
             name="contact"
             id="contact"
-            className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
+            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
           />
           <div className="relative w-full">
             <input
@@ -266,7 +266,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
               name="password"
               id="signupPassword"
               required
-              className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 pr-10 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
+              className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 pr-10 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
             />
             <button
               type="button"
@@ -295,7 +295,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             )}
           </button>
         </form>
-        <span className="text-[#818487] text-[7pt] lg:text-sm mt-1">
+        <span className="text-[#818487] text-[7pt] lg:text-sm mt-1 xl:mt-0">
           Already have an existing account?{" "}
           <button
             className="text-[#0A72D1] font-semibold hover:underline focus:outline-none"

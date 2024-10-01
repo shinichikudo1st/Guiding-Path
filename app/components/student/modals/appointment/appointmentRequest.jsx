@@ -107,7 +107,7 @@ const AppointmentRequest = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
                 type="text"
                 placeholder="Name"
               />
@@ -119,7 +119,7 @@ const AppointmentRequest = () => {
                 name="grade"
                 value={formData.grade}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
                 type="text"
                 placeholder="Grade"
               />
@@ -131,7 +131,7 @@ const AppointmentRequest = () => {
                 name="reason"
                 value={formData.reason}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
                 <option value="stress_management">Stress Management</option>
                 <option value="encouragement">Encouragement</option>
@@ -145,7 +145,7 @@ const AppointmentRequest = () => {
                 name="urgency"
                 value={formData.urgency}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
                 <option value="less">Less Urgent</option>
                 <option value="somewhat">Somewhat Urgent</option>
@@ -158,7 +158,7 @@ const AppointmentRequest = () => {
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
                 <option value="virtual">Virtual/Online</option>
                 <option value="inperson">In Person</option>
@@ -171,7 +171,7 @@ const AppointmentRequest = () => {
                 name="contact"
                 value={formData.contact}
                 onChange={handleChange}
-                className="flex-grow bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
                 type="text"
                 placeholder="Contact"
               />
@@ -185,7 +185,7 @@ const AppointmentRequest = () => {
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                className="flex-grow h-64 bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3"
+                className="flex-grow xl:h-60 2xl:h-64 xl:text-[10pt] 2xl:text-[12pt] h-64 bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
                 placeholder="Additional Notes"
               ></textarea>
             </div>
@@ -205,7 +205,7 @@ const AppointmentRequest = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#0B6EC9] to-[#1E90FF] text-white text-lg font-bold rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center xl:h-[40px] 2xl:h-[60px] justify-center px-8 py-4 bg-gradient-to-r from-[#0B6EC9] to-[#1E90FF] text-white text-lg font-bold rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <FaSpinner className="animate-spin mr-3 text-xl" />

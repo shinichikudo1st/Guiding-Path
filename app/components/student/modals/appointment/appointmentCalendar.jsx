@@ -248,7 +248,7 @@ const AppointmentCalendar = () => {
 
   return (
     <div className="absolute flex flex-col w-[90%] h-[80%] bg-[#E6F0F9] border-[1px] border-[#062341] mt-[6%] items-center justify-center p-8 rounded-lg shadow-2xl">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[80%] h-[80%] calendar-container">
+      <div className="bg-white rounded-lg shadow-lg p-6 xl:w-[100%] xl:h-[100%] 2xl:w-[80%] 2xl:h-[80%] calendar-container">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
@@ -266,17 +266,17 @@ const AppointmentCalendar = () => {
             onClick={prevMonth}
             className="text-[#0B6EC9] hover:text-[#094a86] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-full p-2"
           >
-            <FaChevronLeft className="h-6 w-6" />
+            <FaChevronLeft className="xl:h-4 xl:w-4 2xl:h-6 2xl:w-6" />
           </button>
           <div className="flex flex-col items-center relative">
             <div className="flex items-center">
               <div className="relative">
                 <button
                   onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-                  className="text-2xl font-extrabold text-[#062341] cursor-pointer bg-transparent border-none appearance-none pr-8 flex items-center focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
+                  className="xl:text-lg 2xl:text-2xl font-extrabold text-[#062341] cursor-pointer bg-transparent border-none appearance-none pr-8 flex items-center focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
                 >
                   {months[currentDate.getMonth()]}
-                  <FaChevronDown className="h-5 w-5 ml-2" />
+                  <FaChevronDown className="xl:h-4 xl:w-4 xl:ml-1 2xl:h-5 2xl:w-5 2xl:ml-2" />
                 </button>
                 {showMonthDropdown && (
                   <div className="absolute z-10 mt-1 w-48 bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
@@ -297,7 +297,7 @@ const AppointmentCalendar = () => {
                 )}
               </div>
               <h2
-                className="text-2xl font-extrabold text-[#062341] cursor-pointer ml-2 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
+                className="xl:text-lg 2xl:text-2xl font-extrabold text-[#062341] cursor-pointer ml-2 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
                 onClick={() => setShowYearSelector(!showYearSelector)}
               >
                 {currentDate.getFullYear()}
@@ -340,10 +340,10 @@ const AppointmentCalendar = () => {
             onClick={nextMonth}
             className="text-[#0B6EC9] hover:text-[#094a86] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-full p-2"
           >
-            <FaChevronRight className="h-6 w-6" />
+            <FaChevronRight className="xl:h-4 xl:w-4 2xl:h-6 2xl:w-6" />
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 xl:gap-0 2xl:gap-2">
           {weekdays.map((day, index) => (
             <div
               key={day}

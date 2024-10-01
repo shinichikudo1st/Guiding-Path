@@ -129,11 +129,11 @@ const QuestionModal = ({
   return (
     <>
       {thankyou && <ThankYouModal refresh={refresh} />}
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
         <div className="absolute text-[20pt] top-[1%] font-bold">{title}</div>
         <form
           ref={scrollableDiv}
-          className="flex flex-col h-[80%] w-[80%] pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#E5E7EB] scroll-smooth"
+          className="flex flex-col h-[80%] w-[80%] xl:mt-2 pl-[5%] pt-[5%] pb-[5%] overflow-auto gap-[10%] scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#E5E7EB] scroll-smooth"
         >
           {question && question.length > 0 ? (
             question.map((questionText, index) => (
@@ -141,10 +141,10 @@ const QuestionModal = ({
                 key={index}
                 className="flex flex-col gap-6 bg-white p-8 rounded-lg shadow-md"
               >
-                <p className="text-[20pt] text-[#1E40AF] font-bold leading-tight mb-4">
+                <p className="xl:text-[15pt] 2xl:text-[20pt] text-[#1E40AF] font-bold leading-tight mb-4">
                   {questionText}
                 </p>
-                <div className="flex text-[14pt] text-[#374151] gap-[5%] justify-between">
+                <div className="flex xl:text-[10pt] 2xl:text-[14pt] text-[#374151] gap-[5%] justify-between">
                   {[1, 2, 3, 4, 5].map((value) => (
                     <div key={value} className="flex flex-col items-center">
                       <input
