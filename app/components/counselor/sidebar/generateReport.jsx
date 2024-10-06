@@ -40,6 +40,7 @@ const GenerateReport = () => {
       const data = await response.json();
       setReportData(data.reportData);
       setShowReportResult(true);
+      console.log(data.reportData);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -139,20 +140,12 @@ const GenerateReport = () => {
         </button>
       </form>
       {error && <div className="text-red-500 mt-4">Error: {error}</div>}
-      {reportData && (
-        <div className="mt-8">
-          <h2 className="text-[24pt] text-[#062341] font-bold mb-4">
-            Generated Report
-          </h2>
-          <pre className="bg-white p-4 rounded-lg overflow-auto max-h-[400px]">
-            {JSON.stringify(reportData, null, 2)}
-          </pre>
-        </div>
-      )}
       {showReportResult && (
         <ReportResult
           reportData={reportData}
           onClose={handleCloseReportResult}
+          startDate={startDate}
+          endDate={endDate}
         />
       )}
     </div>

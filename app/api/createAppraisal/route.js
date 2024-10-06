@@ -34,16 +34,6 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const formattedDate = date.toLocaleString("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  const currentDate = String(formattedDate);
   const currentYear = String(date.getFullYear());
 
   try {
@@ -51,7 +41,7 @@ export async function POST(request) {
       data: {
         student_id: sessionData.id,
         date: currentYear,
-        date_of_submission: currentDate,
+        date_of_submission: date,
       },
     });
 

@@ -141,14 +141,15 @@ model User_Resources {
   user_id           String
   resource          Resources  @relation(fields: [resource_id], references: [resource_id])
   resource_id       Int
-  access_date       String
+  access_date       DateTime
+  liked             Boolean    @default(false)
   @@id([user_id, resource_id])
 }
 
 model Evaluation_Trends {
   student                     Students  @relation(fields: [student_id], references: [student_id])
   student_id                  String
-  date                        String
+  date                        DateTime
   academic_average            String
   socio_emotional_average     String
   career_exploration_average  String
@@ -161,7 +162,7 @@ model Appraisals {
   student               Students    @relation(fields: [student_id], references: [student_id])
   student_id            String
   date                  String
-  date_of_submission    String
+  date_of_submission    DateTime
   evaluationAreas       Evaluation_Areas[]
   aggregateScores       Aggregate_Scores?
 }
