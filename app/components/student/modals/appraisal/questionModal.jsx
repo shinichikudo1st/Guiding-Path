@@ -64,6 +64,10 @@ const QuestionModal = ({
         body: JSON.stringify(data),
       });
 
+      await fetch("/api/createEvaluationTrend", {
+        method: "POST",
+      });
+
       const result = await response.json();
       console.log(result.message);
     } catch (error) {

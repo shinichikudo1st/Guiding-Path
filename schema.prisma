@@ -150,10 +150,10 @@ model Evaluation_Trends {
   student                     Students  @relation(fields: [student_id], references: [student_id])
   student_id                  String
   date                        DateTime
-  academic_average            String
-  socio_emotional_average     String
-  career_exploration_average  String
-  overall_average             String
+  academic_average            Int
+  socio_emotional_average     Int
+  career_exploration_average  Int
+  overall_average             Int
   @@id([student_id, date])
 }
 
