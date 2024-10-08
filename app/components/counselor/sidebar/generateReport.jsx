@@ -61,7 +61,6 @@ const GenerateReport = () => {
     { id: "evaluationTrends", label: "Evaluation Trends" },
     { id: "eventRegistration", label: "Event Registration" },
     { id: "userManagement", label: "User Management" },
-    { id: "resourcePopularity", label: "Resource Popularity" },
   ];
 
   return (

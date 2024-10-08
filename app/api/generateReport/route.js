@@ -32,7 +32,6 @@ export async function POST(request) {
       evaluationTrends: getEvaluationTrendsReport,
       eventRegistration: getEventRegistrationReport,
       userManagement: getUserManagementReport,
-      resourcePopularity: getResourcePopularityReport,
     };
 
     const reportData = await Promise.all(
@@ -259,22 +258,6 @@ async function getResourceReport(startDate, endDate) {
       },
       take: 10,
     }),
-    prisma.resources.groupBy({
-      by: ["category"],
-      where: {
-        userResources: {
-          some: {
-            access_date: {
-              gte: formattedStartDate,
-              lte: formattedEndDate,
-            },
-          },
-        },
-      },
-      _count: {
-        category: true,
-      },
-    }),
     prisma.user_Resources.count({
       where: {
         liked: true,
@@ -298,7 +281,6 @@ async function getResourceReport(startDate, endDate) {
     name: "resource",
     totalResourceAccesses,
     popularResources,
-    resourcesByCategory,
     likedResources,
     newResources,
   };
@@ -308,109 +290,65 @@ async function getEvaluationTrendsReport(startDate, endDate) {
   const formattedStartDate = new Date(startDate);
   const formattedEndDate = new Date(endDate);
 
-  const [evaluationTrendsData, aggregateScores] = await Promise.all([
-    prisma.evaluation_Trends.findMany({
-      where: {
-        date: {
-          gte: formattedStartDate,
-          lte: formattedEndDate,
-        },
+  const evaluationTrendsData = await prisma.evaluation_Trends.findMany({
+    where: {
+      date: {
+        gte: formattedStartDate,
+        lte: formattedEndDate,
       },
-      orderBy: {
-        date: "asc",
-      },
-    }),
-    prisma.aggregate_Scores.findMany({
-      where: {
-        appraisal: {
-          date_of_submission: {
-            gte: formattedStartDate,
-            lte: formattedEndDate,
-          },
-        },
-      },
-      include: {
-        appraisal: {
-          select: {
-            date_of_submission: true,
-          },
-        },
-      },
-    }),
-  ]);
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
 
-  const processedData = evaluationTrendsData.map((trend) => ({
-    date: trend.date,
-    academic: {
-      score: parseFloat(trend.academic_average),
-      evaluation: evaluateAcademic(parseFloat(trend.academic_average)),
-    },
-    socioEmotional: {
-      score: parseFloat(trend.socio_emotional_average),
-      evaluation: evaluateSocioEmotional(
-        parseFloat(trend.socio_emotional_average)
-      ),
-    },
-    careerExploration: {
-      score: parseFloat(trend.career_exploration_average),
-      evaluation: evaluateCareer(parseFloat(trend.career_exploration_average)),
-    },
-    overallAverage: parseFloat(trend.overall_average),
-  }));
-
-  const aggregateScoresProcessed = aggregateScores.map((score) => ({
-    date: score.appraisal.date_of_submission,
-    academic: {
-      score: score.academic_score,
-      evaluation: evaluateAcademic(score.academic_score),
-    },
-    socioEmotional: {
-      score: score.socio_emotional_score,
-      evaluation: evaluateSocioEmotional(score.socio_emotional_score),
-    },
-    careerExploration: {
-      score: score.career_exploration_score,
-      evaluation: evaluateCareer(score.career_exploration_score),
-    },
-    overallAverage: score.overall_average,
-  }));
-
-  // Calculate overall averages
-  const overallAverages = aggregateScores.reduce(
-    (acc, score) => {
-      acc.academic += score.academic_score;
-      acc.socioEmotional += score.socio_emotional_score;
-      acc.careerExploration += score.career_exploration_score;
-      acc.overallAverage += score.overall_average;
-      return acc;
-    },
-    { academic: 0, socioEmotional: 0, careerExploration: 0, overallAverage: 0 }
-  );
-
-  const count = aggregateScores.length;
-  const averages = {
-    academic: {
-      score: overallAverages.academic / count,
-      evaluation: evaluateAcademic(overallAverages.academic / count),
-    },
-    socioEmotional: {
-      score: overallAverages.socioEmotional / count,
-      evaluation: evaluateSocioEmotional(
-        overallAverages.socioEmotional / count
-      ),
-    },
-    careerExploration: {
-      score: overallAverages.careerExploration / count,
-      evaluation: evaluateCareer(overallAverages.careerExploration / count),
-    },
-    overallAverage: overallAverages.overallAverage / count,
+  // Initialize category counters
+  const academicCategories = {
+    "Very Low Academic Performance": 0,
+    "Low Academic Performance": 0,
+    "Moderate Academic Performance": 0,
+    "High Academic Performance": 0,
+    "Very High Academic Performance": 0,
   };
+
+  const socioEmotionalCategories = {
+    "Depressed/Highly Anxious": 0,
+    "Stressed/Low Emotional Well-being": 0,
+    "Neutral/Stable": 0,
+    "Emotionally Well-balanced": 0,
+    "Highly Resilient/Emotionally Strong": 0,
+  };
+
+  const careerExplorationCategories = {
+    "Lack of Career Direction": 0,
+    "Uncertain Career Goals": 0,
+    "Moderate Career Clarity": 0,
+    "Clear Career Path": 0,
+    "Strong Career Focus and Direction": 0,
+  };
+
+  // Count evaluations for each category
+  evaluationTrendsData.forEach((evaluation) => {
+    const academicCategory = evaluateAcademic(evaluation.academic_average);
+    const socioEmotionalCategory = evaluateSocioEmotional(
+      evaluation.socio_emotional_average
+    );
+    const careerCategory = evaluateCareer(
+      evaluation.career_exploration_average
+    );
+
+    academicCategories[academicCategory.evaluation]++;
+    socioEmotionalCategories[socioEmotionalCategory.evaluation]++;
+    careerExplorationCategories[careerCategory.evaluation]++;
+  });
 
   return {
     name: "evaluationTrends",
-    trends: processedData,
-    aggregateScores: aggregateScoresProcessed,
-    averages: averages,
+    totalEvaluations: evaluationTrendsData.length,
+    academicCategories,
+    socioEmotionalCategories,
+    careerExplorationCategories,
+    evaluationTrendsData,
   };
 }
 
@@ -515,8 +453,112 @@ async function getEventRegistrationReport(startDate, endDate) {
   };
 }
 
-async function getUserManagementReport(startDate, endDate) {}
+async function getUserManagementReport(startDate, endDate) {
+  // const formattedStartDate = new Date(startDate);
+  // const formattedEndDate = new Date(endDate);
 
-async function getResourcePopularityReport(startDate, endDate) {}
+  const [
+    totalUsers,
+    usersByRole,
+    activeUsers,
+    studentsByGrade,
+    studentsByProgram,
+    counselorsByDepartment,
+    teachersByDepartment,
+    // newUsers,
+    // mostActiveUsers,
+    // resourceUsage,
+    eventParticipation,
+    appointmentStats,
+    referralStats,
+  ] = await Promise.all([
+    prisma.users.count(),
+    prisma.users.groupBy({
+      by: ["role"],
+      _count: true,
+    }),
+    prisma.users.count({
+      where: { status: "active" },
+    }),
+    prisma.students.groupBy({
+      by: ["grade_level"],
+      _count: true,
+    }),
+    prisma.students.groupBy({
+      by: ["program"],
+      _count: true,
+    }),
+    prisma.counselors.groupBy({
+      by: ["department"],
+      _count: true,
+    }),
+    prisma.teachers.groupBy({
+      by: ["department"],
+      _count: true,
+    }),
+    // prisma.users.count({
+    //   where: {
+    //     createdAt: {
+    //       gte: formattedStartDate,
+    //       lte: formattedEndDate,
+    //     },
+    //   },
+    // }),
+    // prisma.user_Resources.groupBy({
+    //   by: ["user_id"],
+    //   _count: true,
+    //   orderBy: {
+    //     _count: {
+    //       user_id: "desc",
+    //     },
+    //   },
+    //   take: 10,
+    // }),
+    // prisma.user_Resources.groupBy({
+    //   by: ["resource_id"],
+    //   _count: true,
+    //   orderBy: {
+    //     _count: {
+    //       resource_id: "desc",
+    //     },
+    //   },
+    //   take: 10,
+    // }),
+    prisma.event_Registration.groupBy({
+      by: ["student_id"],
+      _count: true,
+    }),
+    prisma.appointments.groupBy({
+      by: ["counselor_id"],
+      _count: true,
+    }),
+    prisma.referrals.groupBy({
+      by: ["teacher_id"],
+      _count: true,
+    }),
+  ]);
 
-async function getSystemUsageReport(startDate, endDate) {}
+  return {
+    name: "userManagement",
+    totalUsers,
+    usersByRole,
+    activeUsers,
+    studentsByGrade,
+    studentsByProgram,
+    counselorsByDepartment,
+    teachersByDepartment,
+    // newUsers,
+    // mostActiveUsers,
+    // resourceUsage,
+    eventParticipation,
+    appointmentStats,
+    referralStats,
+  };
+}
+
+async function getSystemUsageReport(startDate, endDate) {
+  return {
+    name: "systemUsage",
+    // No additional data needed as the frontend will display a "Coming Soon" message
+  };
+}

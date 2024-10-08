@@ -10,6 +10,11 @@ import {
   FaChartLine,
   FaCalendar,
   FaUsers,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaGraduationCap,
+  FaHeartbeat,
+  FaBriefcase,
 } from "react-icons/fa"; // Import icons
 import {
   Chart as ChartJS,
@@ -342,25 +347,12 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
                             <h4 className="text-xl font-medium text-gray-700 mb-4">
                               Popular Resources
                             </h4>
-                            <Bar
-                              data={getPopularResourcesChartData(
-                                report.popularResources
-                              )}
-                              options={popularResourcesChartOptions}
-                            />
-                          </div>
-                        )}
-                        {report.resourcesByCategory.length > 0 && (
-                          <div className="mt-8">
-                            <h4 className="text-xl font-medium text-gray-700 mb-4">
-                              Resources by Category
-                            </h4>
                             <div className="h-64">
-                              <Pie
-                                data={getResourcesByCategoryChartData(
-                                  report.resourcesByCategory
+                              <Bar
+                                data={getPopularResourcesChartData(
+                                  report.popularResources
                                 )}
-                                options={resourcesByCategoryChartOptions}
+                                options={popularResourcesChartOptions}
                               />
                             </div>
                           </div>
@@ -393,58 +385,54 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
                       <FaChartLine className="mr-3" />
                       Evaluation Trends Report
                     </h3>
-                    {report.trends.length === 0 ? (
+                    {report.totalEvaluations === 0 ? (
                       <p className="text-lg text-gray-600">
                         No evaluation trends data available for the selected
                         date range.
                       </p>
                     ) : (
                       <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                          <div className="bg-white p-6 rounded-lg shadow">
-                            <h4 className="text-xl font-medium text-indigo-800 mb-4">
-                              Overall Averages
-                            </h4>
-                            <ul className="list-disc list-inside">
-                              <li className="text-sm text-indigo-600">
-                                Academic:{" "}
-                                {report.averages.academic.score.toFixed(2)} (
-                                {report.averages.academic.evaluation})
-                              </li>
-                              <li className="text-sm text-indigo-600">
-                                Socio-Emotional:{" "}
-                                {report.averages.socioEmotional.score.toFixed(
-                                  2
-                                )}{" "}
-                                ({report.averages.socioEmotional.evaluation})
-                              </li>
-                              <li className="text-sm text-indigo-600">
-                                Career Exploration:{" "}
-                                {report.averages.careerExploration.score.toFixed(
-                                  2
-                                )}{" "}
-                                ({report.averages.careerExploration.evaluation})
-                              </li>
-                              <li className="text-sm text-indigo-600">
-                                Overall Average:{" "}
-                                {report.averages.overallAverage.toFixed(2)}
-                              </li>
-                            </ul>
-                          </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                          <EvaluationCategoryCard
+                            title="Academic Categories"
+                            icon={
+                              <FaGraduationCap className="text-3xl text-blue-500" />
+                            }
+                            categories={report.academicCategories}
+                            colorClass="bg-blue-100"
+                          />
+                          <EvaluationCategoryCard
+                            title="Socio-Emotional Categories"
+                            icon={
+                              <FaHeartbeat className="text-3xl text-red-500" />
+                            }
+                            categories={report.socioEmotionalCategories}
+                            colorClass="bg-red-100"
+                          />
+                          <EvaluationCategoryCard
+                            title="Career Exploration Categories"
+                            icon={
+                              <FaBriefcase className="text-3xl text-green-500" />
+                            }
+                            categories={report.careerExplorationCategories}
+                            colorClass="bg-green-100"
+                          />
                         </div>
-                        <div className="mt-8">
+                        <div className="mt-8 bg-white p-6 rounded-lg shadow">
                           <h4 className="text-xl font-medium text-gray-700 mb-4">
                             Evaluation Trends Over Time
                           </h4>
                           <Line
-                            data={getEvaluationTrendsChartData(report.trends)}
+                            data={getEvaluationTrendsChartData(
+                              report.evaluationTrendsData
+                            )}
                             options={evaluationTrendsChartOptions}
                           />
                         </div>
                       </>
                     )}
                   </div>
-                  {report.trends.length > 0 && (
+                  {report.totalEvaluations > 0 && (
                     <button
                       onClick={() =>
                         exportAsImage(evaluationTrendsRef, "evaluation_trends")
@@ -560,6 +548,138 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
                       Export Event Registration Report
                     </button>
                   )}
+                </div>
+              );
+            case "userManagement":
+              const userManagementRef = useRef(null);
+              return (
+                <div
+                  key={index}
+                  className="mb-12 pb-8 border-b-2 border-gray-200"
+                >
+                  <div
+                    ref={userManagementRef}
+                    className="bg-pink-50 p-6 rounded-lg shadow-md"
+                  >
+                    <h3 className="text-2xl font-semibold text-pink-800 mb-6 flex items-center">
+                      <FaUsers className="mr-3" />
+                      User Management Report
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-white p-6 rounded-lg shadow">
+                        <h4 className="text-xl font-medium text-pink-800 mb-2">
+                          User Overview
+                        </h4>
+                        <p className="text-4xl font-bold text-pink-600 mb-4">
+                          {report.totalUsers}
+                        </p>
+                        <p className="text-sm text-pink-600">
+                          Active Users: {report.activeUsers}
+                        </p>
+                      </div>
+                      <div className="bg-white p-6 rounded-lg shadow">
+                        <h4 className="text-xl font-medium text-pink-800 mb-2">
+                          Users by Role
+                        </h4>
+                        <Pie
+                          data={getUsersByRoleChartData(report.usersByRole)}
+                          options={usersByRoleChartOptions}
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-white p-6 rounded-lg shadow">
+                        <h4 className="text-xl font-medium text-pink-800 mb-2">
+                          <FaUserGraduate className="inline-block mr-2" />
+                          Students by Grade
+                        </h4>
+                        <Bar
+                          data={getStudentsByGradeChartData(
+                            report.studentsByGrade
+                          )}
+                          options={studentsByGradeChartOptions}
+                        />
+                      </div>
+                      <div className="bg-white p-6 rounded-lg shadow">
+                        <h4 className="text-xl font-medium text-pink-800 mb-2">
+                          <FaChalkboardTeacher className="inline-block mr-2" />
+                          Teachers by Department
+                        </h4>
+                        <Pie
+                          data={getTeachersByDepartmentChartData(
+                            report.teachersByDepartment
+                          )}
+                          options={teachersByDepartmentChartOptions}
+                        />
+                      </div>
+                      <div className="bg-white p-6 rounded-lg shadow">
+                        <h4 className="text-xl font-medium text-pink-800 mb-2">
+                          <FaUserTie className="inline-block mr-2" />
+                          Counselors by Department
+                        </h4>
+                        <Pie
+                          data={getCounselorsByDepartmentChartData(
+                            report.counselorsByDepartment
+                          )}
+                          options={counselorsByDepartmentChartOptions}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() =>
+                      exportAsImage(userManagementRef, "user_management")
+                    }
+                    className="mt-4 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
+                  >
+                    Export User Management Report
+                  </button>
+                </div>
+              );
+            case "systemUsage":
+              return (
+                <div
+                  key={index}
+                  className="mb-12 pb-8 border-b-2 border-gray-200"
+                >
+                  <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+                    <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                      <FaChartLine className="mr-3" />
+                      System Usage Report
+                    </h3>
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <svg
+                        className="animate-spin h-12 w-12 text-gray-400 mb-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <p className="text-xl font-semibold text-gray-600 mb-2">
+                        Coming Soon!
+                      </p>
+                      <p className="text-gray-500 text-center">
+                        We're working hard to bring you detailed system usage
+                        analytics.
+                        <br />
+                        Check back soon for insights on user engagement and
+                        platform utilization.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               );
             // Add more cases here for other report types
@@ -748,66 +868,32 @@ const popularResourcesChartOptions = {
   },
 };
 
-const getResourcesByCategoryChartData = (resourcesByCategory) => {
-  const labels = resourcesByCategory.map((item) => item.category);
-  const data = resourcesByCategory.map((item) => item._count.category);
-
-  return {
-    labels,
-    datasets: [
-      {
-        data,
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-          "rgba(255, 159, 64, 0.6)",
-        ],
-      },
-    ],
-  };
-};
-
-const resourcesByCategoryChartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "right",
-    },
-    title: {
-      display: true,
-      text: "Resources by Category",
-    },
-  },
-};
-
 const getEvaluationTrendsChartData = (trends) => {
-  const labels = trends.map((trend) => trend.date.toLocaleDateString());
+  const labels = trends.map((trend) =>
+    new Date(trend.date).toLocaleDateString()
+  );
   const datasets = [
     {
       label: "Academic",
-      data: trends.map((trend) => trend.academic.score),
+      data: trends.map((trend) => trend.academic_average),
       borderColor: "rgba(255, 99, 132, 1)",
       backgroundColor: "rgba(255, 99, 132, 0.2)",
     },
     {
       label: "Socio-Emotional",
-      data: trends.map((trend) => trend.socioEmotional.score),
+      data: trends.map((trend) => trend.socio_emotional_average),
       borderColor: "rgba(54, 162, 235, 1)",
       backgroundColor: "rgba(54, 162, 235, 0.2)",
     },
     {
       label: "Career Exploration",
-      data: trends.map((trend) => trend.careerExploration.score),
+      data: trends.map((trend) => trend.career_exploration_average),
       borderColor: "rgba(255, 206, 86, 1)",
       backgroundColor: "rgba(255, 206, 86, 0.2)",
     },
     {
       label: "Overall Average",
-      data: trends.map((trend) => trend.overallAverage),
+      data: trends.map((trend) => trend.overall_average),
       borderColor: "rgba(75, 192, 192, 1)",
       backgroundColor: "rgba(75, 192, 192, 0.2)",
     },
@@ -869,5 +955,157 @@ const popularEventsChartOptions = {
     },
   },
 };
+
+// Add these new functions at the end of the file
+const getUsersByRoleChartData = (usersByRole) => {
+  const labels = usersByRole.map((item) => item.role);
+  const data = usersByRole.map((item) => item._count);
+
+  return {
+    labels,
+    datasets: [
+      {
+        data,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+        ],
+      },
+    ],
+  };
+};
+
+const usersByRoleChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "right",
+    },
+    title: {
+      display: true,
+      text: "Users by Role",
+    },
+  },
+};
+
+const getStudentsByGradeChartData = (studentsByGrade) => {
+  const labels = studentsByGrade.map((item) => `Grade ${item.grade_level}`);
+  const data = studentsByGrade.map((item) => item._count);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Number of Students",
+        data,
+        backgroundColor: "rgba(255, 99, 132, 0.6)",
+      },
+    ],
+  };
+};
+
+const studentsByGradeChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    title: {
+      display: true,
+      text: "Students by Grade Level",
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+    },
+  },
+};
+
+const getTeachersByDepartmentChartData = (teachersByDepartment) => {
+  const labels = teachersByDepartment.map((item) => item.department);
+  const data = teachersByDepartment.map((item) => item._count);
+
+  return {
+    labels,
+    datasets: [
+      {
+        data,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+        ],
+      },
+    ],
+  };
+};
+
+const teachersByDepartmentChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "right",
+    },
+    title: {
+      display: true,
+      text: "Teachers by Department",
+    },
+  },
+};
+
+const getCounselorsByDepartmentChartData = (counselorsByDepartment) => {
+  const labels = counselorsByDepartment.map((item) => item.department);
+  const data = counselorsByDepartment.map((item) => item._count);
+
+  return {
+    labels,
+    datasets: [
+      {
+        data,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+        ],
+      },
+    ],
+  };
+};
+
+const counselorsByDepartmentChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "right",
+    },
+    title: {
+      display: true,
+      text: "Counselors by Department",
+    },
+  },
+};
+
+// Add this new component for the evaluation category cards
+const EvaluationCategoryCard = ({ title, icon, categories, colorClass }) => (
+  <div className={`p-6 rounded-lg shadow ${colorClass}`}>
+    <div className="flex items-center mb-4">
+      {icon}
+      <h4 className="text-xl font-medium text-gray-800 ml-3">{title}</h4>
+    </div>
+    <ul className="space-y-2">
+      {Object.entries(categories).map(([category, count]) => (
+        <li key={category} className="flex justify-between items-center">
+          <span className="text-sm text-gray-600">{category}</span>
+          <span className="text-sm font-semibold text-gray-800">{count}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
 export default ReportResult;

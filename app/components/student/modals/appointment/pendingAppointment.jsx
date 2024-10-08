@@ -53,8 +53,7 @@ const PendingAppointment = () => {
             Loading Appointments...
           </div>
         </div>
-      ) : (
-        appointments &&
+      ) : appointments.length > 0 ? (
         appointments.map((appointment) => (
           <div
             className="flex h-[45%] w-[100%] mt-[2%] bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
@@ -112,6 +111,12 @@ const PendingAppointment = () => {
             </div>
           </div>
         ))
+      ) : (
+        <div className="flex items-center justify-center w-full h-full">
+          <p className="text-[18pt] font-semibold text-gray-400">
+            There are no pending appointments.
+          </p>
+        </div>
       )}
     </div>
   );
