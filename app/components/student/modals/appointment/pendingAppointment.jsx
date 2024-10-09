@@ -53,8 +53,7 @@ const PendingAppointment = () => {
             Loading Appointments...
           </div>
         </div>
-      ) : (
-        appointments &&
+      ) : appointments.length > 0 ? (
         appointments.map((appointment) => (
           <div
             className="flex h-[45%] w-[100%] mt-[2%] bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
@@ -67,35 +66,35 @@ const PendingAppointment = () => {
                   src={appointment.counselor.counselor.profilePicture}
                   width={130}
                   height={130}
-                  className="w-[130px] h-[130px] rounded-full object-cover border-4 border-white shadow-lg"
+                  className="w-[50px] h-[50px] xl:w-[120px] xl:h-[120px] 2xl:w-[130px] 2xl:h-[130px] rounded-full object-cover border-4 border-white shadow-lg"
                 />
               </div>
               <div className="flex flex-col justify-center pl-[5%] gap-[8%] w-[65%] h-[100%] text-[#062341]">
-                <div className="flex items-center">
+                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
                   <FaUserMd className="text-[#0B6EC9] mr-2" />
                   <label className="font-bold">Counselor:</label>
                   <span className="ml-[2%] font-medium">
                     {appointment.counselor.counselor.name}
                   </span>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
                   <FaPhoneAlt className="text-[#0B6EC9] mr-2" />
                   <label className="font-bold">Contact Info:</label>
                   <span className="ml-[2%]">
                     {appointment.counselor.counselor.contact}
                   </span>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
                   <FaCalendarAlt className="text-[#0B6EC9] mr-2" />
                   <label className="font-bold">Date & Time:</label>
                   <span className="ml-[2%]">{appointment.date_time}</span>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
                   <FaMapMarkerAlt className="text-[#0B6EC9] mr-2" />
                   <label className="font-bold">Location:</label>
                   <span className="ml-[2%]">CTU-Admin Room 301A</span>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
                   <FaClipboardList className="text-[#0B6EC9] mr-2" />
                   <label className="font-bold">Type:</label>
                   <span className="ml-[2%]">{appointment.type}</span>
@@ -112,6 +111,12 @@ const PendingAppointment = () => {
             </div>
           </div>
         ))
+      ) : (
+        <div className="flex items-center justify-center w-full h-full">
+          <p className="text-[18pt] font-semibold text-gray-400">
+            There are no pending appointments.
+          </p>
+        </div>
       )}
     </div>
   );

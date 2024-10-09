@@ -1,44 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 
+// Always visible components - load normally
 import FullBackground from "@/app/components/universal/fullBackground";
 import StudentSidebar from "@/app/components/student/studentSidebar";
 import StudentQuickView from "@/app/components/student/studentQuickView";
-import Profile from "@/app/components/student/sidebar/profile";
-import Appraisal from "@/app/components/student/sidebar/appraisal";
 import UserNavbar from "@/app/components/UI/userNavbar";
-import Appointment from "@/app/components/student/sidebar/appointment";
-import Announcement from "@/app/components/student/sidebar/announcements";
-import ResourceFeed from "@/app/components/UI/resources";
+
+// Conditionally rendered components - lazy load these
+const Profile = lazy(() => import("@/app/components/student/sidebar/profile"));
+const Appraisal = lazy(() =>
+  import("@/app/components/student/sidebar/appraisal")
+);
+const Appointment = lazy(() =>
+  import("@/app/components/student/sidebar/appointment")
+);
+const Announcement = lazy(() =>
+  import("@/app/components/student/sidebar/announcements")
+);
+const ResourceFeed = lazy(() => import("@/app/components/UI/resources"));
 
 const StudentDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("profile");
 
-  const viewProfile = () => setActiveComponent("profile");
-  const viewAppraisal = () => setActiveComponent("appraisal");
-  const viewAppointment = () => setActiveComponent("appointment");
-  const viewAnnouncement = () => setActiveComponent("announcement");
-  const viewResources = () => setActiveComponent("resources");
+  const components = {
+    profile: Profile,
+    appraisal: Appraisal,
+    appointment: Appointment,
+    announcement: Announcement,
+    resources: ResourceFeed,
+  };
+
+  const toggleComponent = (componentName) => {
+    setActiveComponent(componentName);
+  };
+
+  const ActiveComponent = components[activeComponent];
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
       <UserNavbar />
       <StudentSidebar
-        viewProfile={viewProfile}
-        viewAppraisal={viewAppraisal}
-        viewAppointment={viewAppointment}
-        viewAnnouncement={viewAnnouncement}
-        viewResources={viewResources}
+        viewProfile={() => toggleComponent("profile")}
+        viewAppraisal={() => toggleComponent("appraisal")}
+        viewAppointment={() => toggleComponent("appointment")}
+        viewAnnouncement={() => toggleComponent("announcement")}
+        viewResources={() => toggleComponent("resources")}
         activeComponent={activeComponent}
       />
       <StudentQuickView />
-      {activeComponent === "profile" && <Profile />}
-      {activeComponent === "appraisal" && <Appraisal />}
-      {activeComponent === "appointment" && <Appointment />}
-      {activeComponent === "announcement" && <Announcement />}
-      {activeComponent === "resources" && <ResourceFeed />}
+      <Suspense>
+        <ActiveComponent />
+      </Suspense>
     </main>
   );
 };

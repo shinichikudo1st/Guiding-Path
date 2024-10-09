@@ -34,16 +34,6 @@ export async function POST(request) {
   }
 
   const date = new Date();
-  const formattedDate = date.toLocaleString("en-US", {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  const currentDate = String(formattedDate);
   const currentYear = String(date.getFullYear());
 
   try {
@@ -51,7 +41,7 @@ export async function POST(request) {
       data: {
         student_id: sessionData.id,
         date: currentYear,
-        date_of_submission: currentDate,
+        date_of_submission: date,
       },
     });
 
@@ -61,23 +51,24 @@ export async function POST(request) {
       { name: "Career Path Exploration", score: career },
     ];
 
-    await prisma.evaluation_Areas.createMany({
-      data: areas.map((area) => ({
-        appraisal_id: appraisal.appraisal_id,
-        area_name: area.name,
-        score: area.score,
-      })),
-    });
-
-    await prisma.aggregate_Scores.create({
-      data: {
-        appraisal_id: appraisal.appraisal_id,
-        academic_score: aggregateAcademic,
-        socio_emotional_score: aggregateSocio,
-        career_exploration_score: aggregateCareer,
-        overall_average: overall_score,
-      },
-    });
+    await Promise.all([
+      await prisma.evaluation_Areas.createMany({
+        data: areas.map((area) => ({
+          appraisal_id: appraisal.appraisal_id,
+          area_name: area.name,
+          score: area.score,
+        })),
+      }),
+      await prisma.aggregate_Scores.create({
+        data: {
+          appraisal_id: appraisal.appraisal_id,
+          academic_score: aggregateAcademic,
+          socio_emotional_score: aggregateSocio,
+          career_exploration_score: aggregateCareer,
+          overall_average: overall_score,
+        },
+      }),
+    ]);
 
     return NextResponse.json(
       { message: "Appraisal Submitted" },

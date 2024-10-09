@@ -5,15 +5,15 @@ const ThankYouModal = ({ refresh }) => {
     <div className="absolute w-screen h-screen flex justify-center items-center z-10 font-sans">
       <div className="absolute w-[100%] h-[100%] bg-black opacity-90 z-20"></div>
       <div className="bg-[#dfecf6] h-[50%] w-[50%] z-30 rounded-[20px] flex flex-col items-center py-[5%] gap-[20%]">
-        <GiPartyFlags className="text-[#1A5590] text-[50pt] absolute mr-[40%]" />
-        <GiPartyFlags className="text-[#1A5590] text-[50pt] absolute ml-[40%]" />
-        <GiPartyPopper className="text-[#1A5590] text-[50pt] absolute mr-[40%] mt-[15%]" />
-        <GiPartyPopper className="text-[#1A5590] text-[50pt] absolute ml-[40%] mt-[15%] transform -scale-x-[1]" />
+        <GiPartyFlags className="text-[#1A5590] xl:text-[30pt] 2xl:text-[50pt] absolute mr-[40%]" />
+        <GiPartyFlags className="text-[#1A5590] xl:text-[30pt] 2xl:text-[50pt] absolute ml-[40%]" />
+        <GiPartyPopper className="text-[#1A5590] xl:text-[30pt] 2xl:text-[50pt] absolute mr-[40%] mt-[15%]" />
+        <GiPartyPopper className="text-[#1A5590] xl:text-[30pt] 2xl:text-[50pt] absolute ml-[40%] mt-[15%] transform -scale-x-[1]" />
 
-        <span className="text-[25pt] font-bold">
+        <span className="xl:text-[20pt] 2xl:text-[25pt] font-bold">
           Thank You for completing the Appraisal!
         </span>
-        <p className=" mx-[10%] text-justify text-[15pt] leading-loose font-semibold">
+        <p className=" mx-[10%] text-justify xl:text-[12pt] 2xl:text-[15pt] leading-loose font-semibold">
           Your answers will help assess various areas and provide insights for
           counselors. Our goal is to support you in creating a comfortable
           environment at Cebu Technological University and assist with your

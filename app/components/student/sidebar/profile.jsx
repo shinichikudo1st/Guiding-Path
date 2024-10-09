@@ -146,7 +146,7 @@ const Profile = () => {
           setIsFileSelected={setIsFileSelected}
         />
       )}
-      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
+      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
         {editModal && (
           <EditModal
             editButton={editButton}
@@ -158,7 +158,7 @@ const Profile = () => {
           <LoadingSpinner />
         ) : (
           profileData && (
-            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] gap-[50px]">
+            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] xl:gap-[40px] 2xl:gap-[50px]">
               <UploadProfilePicture
                 toggleUploadModal={toggleUploadModal}
                 picture={
@@ -167,43 +167,68 @@ const Profile = () => {
                     : null
                 }
               />
-              <span className="text-[28pt] font-bold text-[#062341]">
+              <span className="xl:text-[20pt] 2xl:text-[28pt] font-bold text-[#062341]">
                 MY PROFILE
               </span>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaUser className="text-[#0B6EC9] text-xl" />
-                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
+                >
                   Name:
                 </label>
-                <span className="font-medium">{profileData.name}</span>
+                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
+                  {profileData.name}
+                </span>
               </div>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaGraduationCap className="text-[#0B6EC9] text-xl" />
-                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
+                >
                   Year:
                 </label>
-                <span className="font-medium">{profileData.year}</span>
+                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
+                  {profileData.year}
+                </span>
               </div>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaBook className="text-[#0B6EC9] text-xl" />
-                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
+                >
                   Course:
                 </label>
-                <span className="font-medium">{profileData.course}</span>
+                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
+                  {profileData.course}
+                </span>
               </div>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaIdCard className="text-[#0B6EC9] text-xl" />
-                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
+                >
                   ID Number:
                 </label>
-                <span className="font-medium">{profileData.idNumber}</span>
+                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
+                  {profileData.idNumber}
+                </span>
               </div>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaPhone className="text-[#0B6EC9] text-xl" />
-                <label htmlFor="name" className="font-semibold 2xl:w-[25%]">
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[13pt] 2xl:text-[16pt]"
+                >
                   Contact:
                 </label>
-                <span className="font-medium">{profileData.contact}</span>
+                <span className="font-medium xl:text-[13pt] 2xl:text-[16pt]">
+                  {profileData.contact}
+                </span>
               </div>
               <div className="flex gap-[10%] 2xl:mt-[10%]">
                 <button

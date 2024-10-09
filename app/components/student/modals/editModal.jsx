@@ -67,7 +67,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
       </button>
       <form
         onSubmit={handleSubmit}
-        className="max-w-sm mx-auto absolute space-y-6"
+        className="max-w-sm mx-auto absolute space-y-6 xl:translate-y-[-10%] 2xl:translate-y-0"
       >
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
         <div>

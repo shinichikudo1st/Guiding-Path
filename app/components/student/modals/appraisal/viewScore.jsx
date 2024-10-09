@@ -18,7 +18,7 @@ const ViewScore = ({ areaScores, close }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
       <div className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"></div>
-      <div className="relative bg-white w-[40%] max-h-[90%] rounded-lg shadow-lg z-50 overflow-y-auto transform transition-transform duration-300 scale-95 hover:scale-100">
+      <div className="relative bg-white w-[40%] max-h-[90%] rounded-lg shadow-lg z-50 overflow-y-auto transform transition-transform duration-300 scale-95 hover:scale-100 scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#E5E7EB] scroll-smooth">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-800">
             Evaluation Area Scores

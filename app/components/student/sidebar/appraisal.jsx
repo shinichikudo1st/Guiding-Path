@@ -34,8 +34,8 @@ const Appraisal = () => {
   return (
     <>
       {appraisalModal ? (
-        <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
-          <div className="flex text-[20pt] font-extrabold w-[50%] justify-evenly">
+        <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
+          <div className="flex xl:text-[15pt] 2xl:text-[20pt] font-extrabold w-[50%] justify-evenly">
             <span
               onClick={() => {
                 setAppraisalModal(false);
@@ -59,7 +59,7 @@ const Appraisal = () => {
               Start Appraisal
             </span>
           </div>
-          <div className="intro flex flex-col text-[#1a365d] text-[15pt] font-semibold justify-center w-[70%] h-[70%] gap-[10%]">
+          <div className="intro flex flex-col text-[#1a365d] xl:text-[10pt] 2xl:text-[15pt] font-semibold justify-center w-[70%] h-[70%] gap-[10%]">
             <div className="flex flex-col justify-center items-center bg-white shadow-md rounded-lg p-6 transition-all duration-300 hover:shadow-lg">
               <span className="text-[#2c5282] mb-2">
                 Academic Self Assessment
@@ -85,10 +85,10 @@ const Appraisal = () => {
           </div>
           <button
             onClick={startAppraisal}
-            className="w-[25%] h-[10%] px-8 py-3 min-w-[150px] text-center text-[#EAF1F9] font-semibold bg-[#265E99] border-2 border-[#265E99] rounded-[15px] shadow-md transition-all duration-300 active:scale-95 hover:bg-[#1a4a7c] hover:border-[#1a4a7c] focus:outline-none focus:ring-2 focus:ring-[#265E99] focus:ring-opacity-50"
+            className="xl:h-[8%] 2xl:w-[25%] 2xl:h-[10%] px-8 xl:px-2 2xl:py-3 min-w-[150px] text-center text-[#EAF1F9] font-semibold bg-[#265E99] border-2 border-[#265E99] rounded-[15px] shadow-md transition-all duration-300 active:scale-95 hover:bg-[#1a4a7c] hover:border-[#1a4a7c] focus:outline-none focus:ring-2 focus:ring-[#265E99] focus:ring-opacity-50"
           >
             <span className="mr-2">Start Appraisal</span>
-            <FaArrowRight className="inline-block h-5 w-5" />
+            <FaArrowRight className="inline-block xl:h-3 xl:w-3 2xl:h-5 2xl:w-5" />
           </button>
         </div>
       ) : recentAppraisal ? (

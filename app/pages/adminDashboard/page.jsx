@@ -1,17 +1,33 @@
 "use client";
 
+import { useState, lazy, Suspense } from "react";
 import CounselorSidebar from "@/app/components/counselor/counselorSidebar";
 import QuickViewCounselor from "@/app/components/counselor/quickViewCounselor";
-import AppointmentCounselor from "@/app/components/counselor/sidebar/appointment";
-import CreateResources from "@/app/components/counselor/sidebar/createResources";
-import GenerateReport from "@/app/components/counselor/sidebar/generateReport";
-import CounselorHome from "@/app/components/counselor/sidebar/homeDashboard";
-import ProfileCounselor from "@/app/components/counselor/sidebar/profile";
-import ReferralCounselor from "@/app/components/counselor/sidebar/referralCounselor";
-import UserManagement from "@/app/components/counselor/sidebar/userManagement";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
-import { useState } from "react";
+
+// Lazy load components
+const ProfileCounselor = lazy(() =>
+  import("@/app/components/counselor/sidebar/profile")
+);
+const UserManagement = lazy(() =>
+  import("@/app/components/counselor/sidebar/userManagement")
+);
+const GenerateReport = lazy(() =>
+  import("@/app/components/counselor/sidebar/generateReport")
+);
+const AppointmentCounselor = lazy(() =>
+  import("@/app/components/counselor/sidebar/appointment")
+);
+const CreateResources = lazy(() =>
+  import("@/app/components/counselor/sidebar/createResources")
+);
+const CounselorHome = lazy(() =>
+  import("@/app/components/counselor/sidebar/homeDashboard")
+);
+const ReferralCounselor = lazy(() =>
+  import("@/app/components/counselor/sidebar/referralCounselor")
+);
 
 const AdminDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("otherButton");
@@ -47,7 +63,9 @@ const AdminDashboard = () => {
         activeComponent={activeComponent}
       />
       <QuickViewCounselor />
-      <ActiveComponent />
+      <Suspense>
+        <ActiveComponent />
+      </Suspense>
     </main>
   );
 };
