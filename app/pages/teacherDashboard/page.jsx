@@ -1,21 +1,39 @@
 "use client";
-import TeacherAppointment from "@/app/components/teacher/sidebar/appointment";
-import ProfileTeacher from "@/app/components/teacher/sidebar/profile";
-import TeacherReferral from "@/app/components/teacher/sidebar/referral";
+import { useState, lazy, Suspense } from "react";
+
+// Always visible components - load normally
 import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import QuickView from "@/app/components/UI/quickView";
-import ResourceFeed from "@/app/components/UI/resources";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
-import { useState } from "react";
+
+// Conditionally rendered components - lazy load these
+const ProfileTeacher = lazy(() =>
+  import("@/app/components/teacher/sidebar/profile")
+);
+const TeacherAppointment = lazy(() =>
+  import("@/app/components/teacher/sidebar/appointment")
+);
+const TeacherReferral = lazy(() =>
+  import("@/app/components/teacher/sidebar/referral")
+);
+const ResourceFeed = lazy(() => import("@/app/components/UI/resources"));
 
 const TeacherDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("appointment");
 
-  const toggleProfile = () => setActiveComponent("profile");
-  const toggleAppointment = () => setActiveComponent("appointment");
-  const toggleReferral = () => setActiveComponent("referral");
-  const toggleResources = () => setActiveComponent("resources");
+  const components = {
+    profile: ProfileTeacher,
+    appointment: TeacherAppointment,
+    referral: TeacherReferral,
+    resources: ResourceFeed,
+  };
+
+  const toggleComponent = (componentName) => {
+    setActiveComponent(componentName);
+  };
+
+  const ActiveComponent = components[activeComponent];
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
@@ -23,16 +41,15 @@ const TeacherDashboard = () => {
       <UserNavbar />
       <QuickView />
       <TeacherSidebar
-        profile={toggleProfile}
-        appointment={toggleAppointment}
-        referral={toggleReferral}
-        resource={toggleResources}
+        profile={() => toggleComponent("profile")}
+        appointment={() => toggleComponent("appointment")}
+        referral={() => toggleComponent("referral")}
+        resource={() => toggleComponent("resources")}
         activeComponent={activeComponent}
       />
-      {activeComponent === "profile" && <ProfileTeacher />}
-      {activeComponent === "referral" && <TeacherReferral />}
-      {activeComponent === "resources" && <ResourceFeed />}
-      {activeComponent === "appointment" && <TeacherAppointment />}
+      <Suspense>
+        <ActiveComponent />
+      </Suspense>
     </main>
   );
 };
