@@ -21,15 +21,25 @@ export async function POST(request) {
 
     const formatDate = new Date(date_time);
 
-    await prisma.events.create({
-      data: {
-        title,
-        description,
-        date_time: formatDate,
-        location,
-        link: link || null,
-      },
-    });
+    await Promise.all([
+      prisma.events.create({
+        data: {
+          title,
+          description,
+          date_time: formatDate,
+          location,
+          link: link || null,
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: "000",
+          title: "New Event",
+          content: `${sessionData.name} has created a new event: ${title}`,
+          date: new Date(),
+        },
+      }),
+    ]);
 
     return NextResponse.json({ message: "New Event Created" }, { status: 201 });
   } catch (error) {

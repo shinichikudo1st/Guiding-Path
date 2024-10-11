@@ -23,6 +23,7 @@ model Users {
   counselor           Counselors?
   teacher             Teachers?
   userResources       User_Resources[]
+  notification        Notifications[]
 }
 
 model Students {
@@ -183,4 +184,15 @@ model Aggregate_Scores {
   socio_emotional_score Int
   career_exploration_score  Int
   overall_average Int
+}
+
+model Notifications {
+  notification_id     Int         @id @default(autoincrement())
+  user                Users       @relation(fields: [user_id], references: [user_id])
+  user_id             String
+  title               String
+  content             String
+  date                DateTime
+  isRead              Boolean     @default(false)
+  createdAt           DateTime    @default(now())
 }

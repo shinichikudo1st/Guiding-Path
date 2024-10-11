@@ -62,20 +62,43 @@ export async function POST(request) {
     );
   }
 
-  let submitType;
-
-  if (role === "student") {
-    submitType = "self-appoint";
-  } else if (role === "teacher") {
-    submitType = "referral";
-  }
-
   try {
-    const existingAppointment = await prisma.appointments.findFirst({
-      where: {
-        date_time: appointmentDate,
-      },
-    });
+    const [existingAppointment, referralTeacher] = await Promise.all([
+      prisma.appointments.findFirst({
+        where: {
+          date_time: appointmentDate,
+        },
+      }),
+      prisma.referrals.findUnique({
+        where: {
+          referral_id: referral_id,
+        },
+        select: {
+          teacher_id: true,
+          teacher: {
+            select: {
+              teacher: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+    ]);
+
+    let submitType, title, content;
+
+    if (role === "student") {
+      submitType = "self-appoint";
+      title = "Appointment Request";
+      content = "Your appointment request has been accepted";
+    } else if (role === "teacher") {
+      submitType = "referral";
+      title = "Referred Appointment";
+      content = `You have been referred by ${referralTeacher.teacher.teacher.name} for a counseling appointment`;
+    }
 
     if (existingAppointment) {
       return NextResponse.json(
@@ -84,29 +107,49 @@ export async function POST(request) {
       );
     }
 
-    const appointment = await prisma.appointments.create({
-      data: {
-        student_id: id,
-        counselor_id: sessionData.id,
-        date_time: appointmentDate,
-        type: submitType,
-        notes: notes,
-        reason: reason,
-        counsel_type: counsel_type,
-        status: "pending",
-      },
-    });
+    const [appointment] = await Promise.all([
+      prisma.appointments.create({
+        data: {
+          student_id: id,
+          counselor_id: sessionData.id,
+          date_time: appointmentDate,
+          type: submitType,
+          notes: notes,
+          reason: reason,
+          counsel_type: counsel_type,
+          status: "pending",
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: id,
+          title: title,
+          content: content,
+          date: appointmentDate,
+        },
+      }),
+    ]);
 
     if (role === "teacher") {
-      await prisma.referrals.update({
-        where: {
-          referral_id: referral_id,
-        },
-        data: {
-          status: "confirmed",
-          appointment_id: appointment.appointment_id,
-        },
-      });
+      await Promise.all([
+        prisma.notifications.create({
+          data: {
+            user_id: referralTeacher.teacher_id,
+            title: "Referral Request Accepted",
+            content: "Your referral request has been accepted",
+            date: appointmentDate,
+          },
+        }),
+        prisma.referrals.update({
+          where: {
+            referral_id: referral_id,
+          },
+          data: {
+            status: "confirmed",
+            appointment_id: appointment.appointment_id,
+          },
+        }),
+      ]);
     }
 
     return NextResponse.json(
