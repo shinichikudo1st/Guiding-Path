@@ -55,6 +55,10 @@ const UserNavbar = () => {
   const iconSize =
     "text-[20pt] cursor-pointer 2xl:translate-x-[130px] hover:scale-110 hover:text-[#0B6EC9] hover:duration-[0.3s]";
 
+  const handleNotificationChange = () => {
+    fetchUnreadCount();
+  };
+
   return (
     <nav className="absolute w-full h-[10vh] flex items-center justify-between px-5 2xl:h-[8vh]">
       <h1 className=" text-[#062341] font-bold text-[25pt]">Guiding Path</h1>
@@ -74,7 +78,7 @@ const UserNavbar = () => {
           <Notifications
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
-            onNotificationChange={fetchUnreadCount}
+            onNotificationChange={handleNotificationChange}
           />
         </div>
         <BsGearFill

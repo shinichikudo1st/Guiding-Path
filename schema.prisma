@@ -46,6 +46,7 @@ model Events {
   date_time         DateTime
   location          String
   link              String?
+  img_path          String?
 
   eventRegistrations Event_Registration[] 
 }

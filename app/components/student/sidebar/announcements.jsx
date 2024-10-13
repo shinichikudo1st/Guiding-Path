@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -7,8 +7,11 @@ import {
   FaCheck,
   FaBullhorn,
   FaFilter,
+  FaClock,
+  FaChevronDown,
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
+import ProgressiveImage from "../../UI/progressiveImage";
 
 const StudentFeed = () => {
   const [feedItems, setFeedItems] = useState([]);
@@ -20,8 +23,9 @@ const StudentFeed = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [registrationCounts, setRegistrationCounts] = useState({});
   const [filter, setFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
 
-  const fetchFeedItems = async () => {
+  const fetchFeedItems = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
     try {
@@ -32,19 +36,33 @@ const StudentFeed = () => {
       const eventsData = await eventsResponse.json();
       const announcementsData = await announcementsResponse.json();
 
-      const combinedItems = [
-        ...eventsData.events.map((event) => ({ ...event, type: "event" })),
-        ...announcementsData.announcements.map((announcement) => ({
+      const newEvents = eventsData.events.map((event) => ({
+        ...event,
+        type: "event",
+        createdAt: event.date_time,
+      }));
+      const newAnnouncements = announcementsData.announcements.map(
+        (announcement) => ({
           ...announcement,
           type: "announcement",
-        })),
-      ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        })
+      );
 
-      if (page === 1) {
-        setFeedItems(combinedItems);
-      } else {
-        setFeedItems((prevItems) => [...prevItems, ...combinedItems]);
-      }
+      setFeedItems((prevItems) => {
+        const combinedItems = [...prevItems, ...newEvents, ...newAnnouncements];
+        const uniqueItems = Array.from(
+          new Map(
+            combinedItems.map((item) => [
+              item.type === "event" ? item.event_id : item.resource_id,
+              item,
+            ])
+          ).values()
+        );
+        return uniqueItems.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      });
+
       setPage((prevPage) => prevPage + 1);
       setHasMore(
         eventsData.currentPage < eventsData.totalPages ||
@@ -56,7 +74,12 @@ const StudentFeed = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading, hasMore, page]);
+
+  useEffect(() => {
+    fetchFeedItems();
+    fetchRegisteredEvents();
+  }, []);
 
   const fetchRegisteredEvents = async () => {
     try {
@@ -88,11 +111,6 @@ const StudentFeed = () => {
     }
   };
 
-  useEffect(() => {
-    fetchFeedItems();
-    fetchRegisteredEvents();
-  }, []);
-
   const handleScroll = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (scrollHeight - scrollTop <= clientHeight + 1) {
@@ -112,61 +130,115 @@ const StudentFeed = () => {
 
   const handleConfirmRegistration = async (eventId) => {
     try {
-      const response = await fetch("/api/registerEvent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ event_id: eventId }),
-      });
-
-      if (response.ok) {
-        setRegisteredEvents((prev) => [...prev, eventId]);
-        setRegistrationCounts((prev) => ({
-          ...prev,
-          [eventId]: (prev[eventId] || 0) + 1,
-        }));
-        // Update the specific event in the feedItems
-        setFeedItems((prevItems) =>
-          prevItems.map((item) =>
-            item.event_id === eventId ? { ...item, isRegistered: true } : item
-          )
-        );
-      } else {
-        console.error("Failed to register for event");
-      }
+      setRegisteredEvents((prev) => [...prev, eventId]);
+      setRegistrationCounts((prev) => ({
+        ...prev,
+        [eventId]: (prev[eventId] || 0) + 1,
+      }));
+      // Update the specific event in the feedItems
+      setFeedItems((prevItems) =>
+        prevItems.map((item) =>
+          item.event_id === eventId ? { ...item, isRegistered: true } : item
+        )
+      );
     } catch (error) {
       console.error("Error registering for event:", error);
     }
-    handleCloseModal();
   };
 
   const isRegistered = (eventId) => registeredEvents.includes(eventId);
 
+  const isEventPassed = (eventDateTime) => {
+    return new Date(eventDateTime) < new Date();
+  };
+
+  const isWithinDateRange = (date) => {
+    const eventDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    switch (dateFilter) {
+      case "today":
+        return (
+          eventDate >= today &&
+          eventDate < new Date(today.getTime() + 24 * 60 * 60 * 1000)
+        );
+      case "week":
+        const weekStart = new Date(
+          today.setDate(today.getDate() - today.getDay())
+        );
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 7);
+        return eventDate >= weekStart && eventDate < weekEnd;
+      case "month":
+        return (
+          eventDate.getMonth() === today.getMonth() &&
+          eventDate.getFullYear() === today.getFullYear()
+        );
+      default:
+        return true;
+    }
+  };
+
   const filteredFeedItems = feedItems.filter((item) => {
-    if (filter === "all") return true;
-    return item.type === filter;
+    if (filter !== "all" && item.type !== filter) return false;
+    if (item.type === "event" && !isWithinDateRange(item.date_time))
+      return false;
+    return true;
   });
 
   const renderFilterButtons = () => (
     <div className="sticky top-0 z-10 bg-[#dfecf6] py-4 px-6 rounded-b-lg shadow-md">
-      <div className="flex justify-center space-x-2 max-w-md mx-auto">
-        {["all", "event", "announcement"].map((filterType) => (
-          <button
-            key={filterType}
-            className={`
-              flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
-              ${
-                filter === filterType
-                  ? "bg-[#0B6EC9] text-white shadow-lg transform scale-105"
-                  : "bg-[#dfecf6] text-gray-700 hover:bg-gray-100"
-              }
-            `}
-            onClick={() => setFilter(filterType)}
-          >
-            {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row justify-between max-w-3xl mx-auto mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Filter by Type
+          </h3>
+          <div className="flex justify-center space-x-2">
+            {["all", "event", "announcement"].map((filterType) => (
+              <button
+                key={filterType}
+                className={`
+                  flex-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
+                  ${
+                    filter === filterType
+                      ? "bg-[#0B6EC9] text-white shadow-lg transform scale-105"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }
+                `}
+                onClick={() => setFilter(filterType)}
+              >
+                {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Filter by Date
+          </h3>
+          <div className="flex justify-center">
+            {["all", "today", "week", "month"].map((option) => (
+              <button
+                key={option}
+                className={`
+                  flex-1 px-4 py-2 text-sm font-medium transition-all duration-300
+                  ${
+                    dateFilter === option
+                      ? "bg-[#0B6EC9] text-white shadow-lg"
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }
+                  ${option === "all" ? "rounded-l-full" : ""}
+                  ${option === "month" ? "rounded-r-full" : ""}
+                `}
+                onClick={() => setDateFilter(option)}
+              >
+                {option.charAt(0).toUpperCase() + option.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -175,14 +247,20 @@ const StudentFeed = () => {
     if (item.type === "event") {
       const eventIsRegistered =
         isRegistered(item.event_id) || item.isRegistered;
+      const eventPassed = isEventPassed(item.date_time);
       return (
         <div
           key={item.event_id}
           className="w-[90%] bg-white rounded-lg shadow-md p-6 mb-6 transition-all duration-300 hover:shadow-lg"
         >
-          <h2 className="text-2xl font-bold mb-3 text-[#0B6EC9]">
-            {item.title}
-          </h2>
+          <div className="flex justify-between items-start mb-3">
+            <h2 className="text-2xl font-bold text-[#0B6EC9]">{item.title}</h2>
+            {eventPassed && (
+              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                Closed
+              </span>
+            )}
+          </div>
           <div className="flex items-center text-gray-600 mb-3">
             <FaCalendarAlt className="mr-2" />
             <p>
@@ -202,6 +280,15 @@ const StudentFeed = () => {
             </div>
           )}
           <p className="text-gray-700 mb-4">{item.description}</p>
+          {item.img_path && (
+            <div className="mb-4">
+              <ProgressiveImage
+                src={item.img_path}
+                alt={item.title}
+                className="w-full h-auto max-h-[300px] object-cover rounded-lg shadow-md"
+              />
+            </div>
+          )}
           {item.link && (
             <div className="flex items-center text-[#0B6EC9] mb-4 hover:underline">
               <FaLink className="mr-2" />
@@ -222,6 +309,14 @@ const StudentFeed = () => {
               >
                 <FaCheck className="mr-2" />
                 Registered
+              </button>
+            ) : eventPassed ? (
+              <button
+                className="bg-gray-400 text-white px-6 py-2 rounded-lg shadow-md cursor-not-allowed flex items-center"
+                disabled
+              >
+                <FaClock className="mr-2" />
+                Event Closed
               </button>
             ) : (
               <button
@@ -248,7 +343,7 @@ const StudentFeed = () => {
           <p className="text-gray-700 mb-4">{item.description}</p>
           {item.img_path && (
             <div className="mb-4">
-              <img
+              <ProgressiveImage
                 src={item.img_path}
                 alt={item.title}
                 className="w-full h-auto max-h-[300px] object-cover rounded-lg shadow-md"
@@ -305,10 +400,10 @@ const StudentFeed = () => {
           <div className="flex flex-col items-center justify-center h-full">
             <FaFilter className="text-6xl text-gray-400 mb-4" />
             <p className="text-xl text-gray-600">
-              No items to display for the selected filter.
+              No items to display for the selected filters.
             </p>
             <p className="text-gray-500">
-              Try changing the filter or check back later!
+              Try changing the filters or check back later!
             </p>
           </div>
         ) : (

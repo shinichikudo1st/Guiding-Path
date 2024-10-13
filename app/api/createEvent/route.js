@@ -1,15 +1,27 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import { put } from "@vercel/blob";
 
 export async function POST(request) {
   try {
-    const { title, description, date_time, location, link } =
-      await request.json();
+    const formData = await request.formData();
+    const title = formData.get("title");
+    const description = formData.get("description");
+    const date_time = formData.get("date_time");
+    const location = formData.get("location");
+    const link = formData.get("link");
+    const image = formData.get("image");
     const { sessionData } = await getSession();
 
     if (!sessionData) {
       return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
+    }
+
+    let img_path = null;
+    if (image) {
+      const blob = await put(image.name, image, { access: "public" });
+      img_path = blob.url;
     }
 
     if (!title || !description || !date_time || !location) {
@@ -29,6 +41,7 @@ export async function POST(request) {
           date_time: formatDate,
           location,
           link: link || null,
+          img_path,
         },
       }),
       prisma.notifications.create({

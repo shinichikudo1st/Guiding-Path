@@ -19,6 +19,9 @@ export async function DELETE(request) {
       where: {
         resource_id: resource_id,
       },
+      select: {
+        img_path: true,
+      },
     });
 
     // If there's an image associated with the announcement, delete it from Vercel Blob storage
@@ -65,6 +68,9 @@ export async function PUT(request) {
     const currentAnnouncement = await prisma.resources.findUnique({
       where: {
         resource_id: resource_id,
+      },
+      select: {
+        img_path: true,
       },
     });
 

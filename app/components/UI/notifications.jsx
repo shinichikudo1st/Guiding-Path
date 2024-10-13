@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BsCheckCircle, BsTrash } from "react-icons/bs";
 
-const Notifications = ({ isOpen }) => {
+const Notifications = ({ isOpen, onNotificationChange }) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const Notifications = ({ isOpen }) => {
     if (response.ok) {
       const data = await response.json();
       setNotifications(data.notifications);
-      console.log(data.notifications);
+      onNotificationChange(); // Call this to update the unread count in UserNavbar
     }
   };
 
