@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import AvailableAppointmentSlot from "./availableAppointmentSlot";
 
 const ManageAppointmentDate = ({
   renderRequest,
@@ -7,53 +8,25 @@ const ManageAppointmentDate = ({
   closeButtonDate,
   initialRequests,
 }) => {
-  const [date, setDate] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onChangeHandler = (event) => {
-    setDate(event.target.value);
+  const handleSelectSlot = (dateTime) => {
+    setSelectedDateTime(dateTime);
     setError(null);
   };
 
-  const isWeekend = (date) => {
-    const d = new Date(date);
-    return d.getDay() === 0 || d.getDay() === 6;
-  };
-
-  const isValidTime = (time) => {
-    const [hours, minutes] = time.split(":").map(Number);
-    const isMorningShift =
-      (hours === 8 && minutes >= 0) || (hours > 8 && hours < 12);
-    const isAfternoonShift =
-      (hours === 13 && minutes >= 0) || (hours > 13 && hours < 17);
-    return isMorningShift || isAfternoonShift;
-  };
-
   const acceptRequest = async () => {
-    if (!date) {
-      setError("Please select both date and time");
-      return;
-    }
-
-    const [selectedDate, selectedTime] = date.split("T");
-
-    if (isWeekend(selectedDate)) {
-      setError("Weekends are not available for appointments");
-      return;
-    }
-
-    if (!isValidTime(selectedTime)) {
-      setError(
-        "Please select a time between 8:00 AM and 5:00 PM, excluding 12:00 PM to 1:00 PM"
-      );
+    if (!selectedDateTime) {
+      setError("Please select an appointment slot");
       return;
     }
 
     setIsLoading(true);
 
     const data = {
-      date: date,
+      date: selectedDateTime.toISOString(),
       id: renderRequest.student_id,
       role: renderRequest.role,
       notes: renderRequest.notes,
@@ -97,7 +70,7 @@ const ManageAppointmentDate = ({
       exit={{ opacity: 0, scale: 0.9 }}
       className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-[20px] z-50"
     >
-      <div className="bg-white w-full max-w-md rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-white w-full max-w-3xl rounded-lg shadow-lg overflow-hidden">
         <div className="flex justify-between items-center p-4 bg-gray-50">
           <h2 className="text-xl font-semibold text-gray-800">
             Schedule Appointment
@@ -122,30 +95,16 @@ const ManageAppointmentDate = ({
           </button>
         </div>
         <div className="p-6">
-          <div className="mb-6">
-            <label
-              htmlFor="appointment-date"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Pick an appointment date:
-            </label>
-            <input
-              id="appointment-date"
-              onChange={onChangeHandler}
-              type="datetime-local"
-              className="w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min={new Date().toISOString().slice(0, 16)}
-            />
-          </div>
+          <AvailableAppointmentSlot onSelectSlot={handleSelectSlot} />
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
             </div>
           )}
           <button
             onClick={acceptRequest}
-            disabled={isLoading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            disabled={isLoading || !selectedDateTime}
+            className="mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
           >
             {isLoading ? "Scheduling..." : "Schedule Appointment"}
           </button>
