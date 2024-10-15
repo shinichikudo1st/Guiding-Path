@@ -97,7 +97,7 @@ const ResourceFeed = () => {
           onClose={closeResourceModal}
         />
       )}
-      <div className="resourceContainer absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto">
+      <div className="resourceContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6]">
         <h2 className="text-3xl font-bold mb-6 text-[#062341]">Resources</h2>
         {error && (
           <p className="text-red-500 bg-red-100 p-3 rounded-lg mb-4 w-[90%] text-center">

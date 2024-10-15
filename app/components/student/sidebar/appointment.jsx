@@ -14,15 +14,15 @@ const Appointment = () => {
 
   return (
     <>
-      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col pt-[2%] items-center">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col pt-[2%] items-center">
         <div className="flex w-[80%] justify-evenly select-none">
           {tabs.map((tab) => (
             <span
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`xl:text-[12pt] 2xl:text-[16pt] w-[33%] cursor-pointer transition-all duration-300 ease-in-out text-center font-bold
+              className={`xl:text-[10pt] 2xl:text-[16pt] w-[33%] cursor-pointer transition-all duration-300 ease-in-out text-center font-bold
                 ${activeTab === tab.id ? "text-[#0B6EC9]" : "text-[#818487]"}
-                hover:text-[#0B6EC9] xl:hover:text-[13pt] 2xl:hover:text-[17pt]
+                hover:text-[#0B6EC9] xl:hover:text-[11pt] 2xl:hover:text-[17pt]
                 relative after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-full after:h-[3px] after:bg-[#0B6EC9]
                 after:transform after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out
                 ${activeTab === tab.id ? "after:scale-x-100" : ""}

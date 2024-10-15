@@ -31,7 +31,7 @@ const UploadModal = ({
   };
 
   return (
-    <div className="h-[100vh] w-[2000px] absolute flex justify-center items-center">
+    <div className="h-screen w-screen absolute flex justify-center items-center">
       <div className="absolute bg-black opacity-75 h-[100%] w-[100%] z-10"></div>
       <form
         onSubmit={uploadImage}

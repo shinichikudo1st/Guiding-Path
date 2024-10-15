@@ -146,7 +146,7 @@ const Profile = () => {
           setIsFileSelected={setIsFileSelected}
         />
       )}
-      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
+      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
         {editModal && (
           <EditModal
             editButton={editButton}

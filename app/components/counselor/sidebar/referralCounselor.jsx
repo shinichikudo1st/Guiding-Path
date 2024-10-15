@@ -56,7 +56,7 @@ const ReferralCounselor = () => {
 
   if (isLoading) {
     return (
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex items-center justify-center">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -64,7 +64,7 @@ const ReferralCounselor = () => {
 
   if (error) {
     return (
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex items-center justify-center">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex items-center justify-center">
         <p className="text-xl text-red-500 font-semibold">{error}</p>
       </div>
     );
@@ -72,7 +72,7 @@ const ReferralCounselor = () => {
 
   return (
     <>
-      <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center p-8 overflow-hidden shadow-lg">
+      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center p-8 overflow-hidden shadow-lg">
         <h2 className="text-3xl font-bold text-[#062341]">
           {filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}{" "}
           Referrals

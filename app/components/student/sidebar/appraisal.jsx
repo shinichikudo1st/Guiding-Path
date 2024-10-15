@@ -34,7 +34,7 @@ const Appraisal = () => {
   return (
     <>
       {appraisalModal ? (
-        <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
+        <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%]">
           <div className="flex xl:text-[15pt] 2xl:text-[20pt] font-extrabold w-[50%] justify-evenly">
             <span
               onClick={() => {

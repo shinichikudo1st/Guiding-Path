@@ -71,7 +71,7 @@ const UserNavbar = () => {
             onClick={toggleNotifications}
           />
           {unreadCount > 0 && (
-            <span className="absolute -top-2 translate-x-[140px] bg-red-500 text-[#E6F0F9] rounded-full w-5 h-5 flex items-center justify-center text-xs">
+            <span className="absolute -top-2 xl:translate-x-[10px] 2xl:translate-x-[140px] bg-red-500 text-[#E6F0F9] rounded-full w-5 h-5 flex items-center justify-center text-xs">
               {unreadCount}
             </span>
           )}

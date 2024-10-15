@@ -42,14 +42,14 @@ const Notifications = ({ isOpen, onNotificationChange }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-[3vh] mt-2 w-80 h-[50vh] bg-[#e2eefe] rounded-md shadow-lg overflow-hidden z-20">
+    <div className="absolute top-[3vh] mt-2 w-80 h-[50vh] xl:translate-x-[-50px] bg-[#e2eefe] rounded-md shadow-lg z-20">
       <div className="sticky top-0 bg-[#e2eefe] px-4 py-3 flex items-center justify-between">
         <h3 className="text-lg text-[#0b6ec9] font-semibold">Notifications</h3>
         <span className="text-sm text-gray-600">
           {notifications?.filter((n) => !n.isRead).length || 0} unread
         </span>
       </div>
-      <div className="max-h-[calc(80vh-60px)] overflow-y-auto">
+      <div className="max-h-[calc(60vh-60px)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#e2eefe]">
         {!notifications ? (
           <p className="px-4 py-8 text-center text-gray-500">
             Loading notifications...

@@ -369,7 +369,7 @@ const StudentFeed = () => {
   return (
     <>
       <div
-        className="newsfeed absolute 2xl:w-[55%] 2xl:h-[85%] 2xl:translate-x-[41%] 2xl:translate-y-[13%] rounded-[20px] flex flex-col items-center overflow-y-auto bg-[#dfecf6] gap-2"
+        className="newsfeed absolute xl:w-[55%] xl:h-[85%] xl:translate-x-[41%] xl:translate-y-[15%] 2xl:translate-y-[13%] rounded-[20px] flex flex-col items-center overflow-y-auto bg-[#dfecf6] gap-2"
         onScroll={handleScroll}
         style={{
           scrollbarWidth: "thin",
