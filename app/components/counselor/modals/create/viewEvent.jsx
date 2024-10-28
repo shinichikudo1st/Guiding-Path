@@ -11,6 +11,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [link, setLink] = useState(event.link);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(event.img_path);
+  const [department, setDepartment] = useState(event.forDepartment);
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -20,6 +21,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     setLocation(event.location);
     setLink(event.link);
     setPreviewImage(event.img_path);
+    setDepartment(event.forDepartment);
   }, [event]);
 
   const handleEdit = async () => {
@@ -30,6 +32,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     formData.append("date_time", dateTime);
     formData.append("location", location);
     formData.append("link", link);
+    formData.append("forDepartment", department);
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
@@ -172,6 +175,38 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
               )}
             </p>
           )}
+          <p className="text-xl text-[#818487]">
+            <strong>Department Access:</strong>{" "}
+            {isEditing ? (
+              <select
+                value={department || ""}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">All Departments</option>
+                <option value="College of Education">
+                  College of Education
+                </option>
+                <option value="College of Technology">
+                  College of Technology
+                </option>
+                <option value="College of Engineering">
+                  College of Engineering
+                </option>
+                <option value="College of Arts and Sciences">
+                  College of Arts and Sciences
+                </option>
+                <option value="College of Management">
+                  College of Management and Entrepreneurship
+                </option>
+                <option value="College of CICT">
+                  College of Computer Information and Communications Technology
+                </option>
+              </select>
+            ) : (
+              currentEvent.forDepartment || "All Departments"
+            )}
+          </p>
           <div>
             <label
               htmlFor="image"

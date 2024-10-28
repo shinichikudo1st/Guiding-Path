@@ -65,6 +65,7 @@ export async function PUT(request) {
   const location = formData.get("location");
   const link = formData.get("link");
   const image = formData.get("image");
+  const forDepartment = formData.get("forDepartment");
 
   const { sessionData } = await getSession();
 
@@ -76,7 +77,7 @@ export async function PUT(request) {
     // Fetch the current event to get the old image path
     const currentEvent = await prisma.events.findUnique({
       where: {
-        resource_id: event_id,
+        event_id: event_id,
       },
       select: {
         img_path: true,
@@ -107,6 +108,7 @@ export async function PUT(request) {
         location: location,
         link: link,
         img_path: img_path,
+        forDepartment: forDepartment || null,
       },
     });
 
