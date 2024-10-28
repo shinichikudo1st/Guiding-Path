@@ -1,21 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BsCheckCircle, BsTrash } from "react-icons/bs";
 
 const Notifications = ({ isOpen, onNotificationChange }) => {
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  // Demo-friendly polling interval
+  const DEMO_POLLING_INTERVAL = 2000; // 2 seconds for snappy demo updates
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     const response = await fetch("/api/notificationOption");
     if (response.ok) {
       const data = await response.json();
       setNotifications(data.notifications);
-      onNotificationChange(); // Call this to update the unread count in UserNavbar
+      onNotificationChange();
     }
-  };
+  }, [onNotificationChange]);
+
+  useEffect(() => {
+    fetchNotifications(); // Initial fetch
+
+    // Aggressive polling for demo purposes
+    const interval = setInterval(fetchNotifications, DEMO_POLLING_INTERVAL);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
 
   const markAsRead = async (id) => {
     const response = await fetch("/api/notificationOption", {
