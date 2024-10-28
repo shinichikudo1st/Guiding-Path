@@ -31,6 +31,7 @@ model Students {
   student_id        String     @id 
   grade_level       String?  
   program           String?
+  department        String?
   eventRegistrations Event_Registration[]
   referral          Referrals[]
   appointment       Appointments[]
