@@ -10,6 +10,7 @@ const EventModal = ({ closeButton }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [forDepartment, setForDepartment] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +21,7 @@ const EventModal = ({ closeButton }) => {
     formData.append("date_time", dateTime);
     formData.append("location", location);
     formData.append("link", link);
+    formData.append("forDepartment", forDepartment);
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
@@ -53,7 +55,7 @@ const EventModal = ({ closeButton }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen translate-x-[-22.55%] translate-y-[-16%]"></div>
+      <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen xl:translate-x-[-22.55%] xl:translate-y-[-16%] 2xl:translate-y-[-12.8%] 2xl:translate-x-[-22.55%]"></div>
       <div className="relative bg-white w-full max-w-2xl mx-auto p-12 rounded-lg shadow-2xl z-50 max-h-[90vh] overflow-y-auto">
         <button
           onClick={closeButton}
@@ -102,6 +104,38 @@ const EventModal = ({ closeButton }) => {
             onChange={(e) => setLink(e.target.value)}
             className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div>
+            <label
+              htmlFor="department"
+              className="block text-lg font-medium text-gray-700 mb-2"
+            >
+              Department Access (optional)
+            </label>
+            <select
+              id="department"
+              value={forDepartment}
+              onChange={(e) => setForDepartment(e.target.value)}
+              className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Departments</option>
+              <option value="College of Education">College of Education</option>
+              <option value="College of Technology">
+                College of Technology
+              </option>
+              <option value="College of Engineering">
+                College of Engineering
+              </option>
+              <option value="College of Arts and Sciences">
+                College of Arts and Sciences
+              </option>
+              <option value="College of Management">
+                College of Management and Entrepreneurship
+              </option>
+              <option value="College of CICT">
+                College of Computer Information and Communications Technology
+              </option>
+            </select>
+          </div>
           <div>
             <label
               htmlFor="image"

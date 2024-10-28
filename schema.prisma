@@ -48,6 +48,7 @@ model Events {
   location          String
   link              String?
   img_path          String?
+  forDepartment     String?
 
   eventRegistrations Event_Registration[] 
 }

@@ -12,6 +12,7 @@ export async function POST(request) {
     const location = formData.get("location");
     const link = formData.get("link");
     const image = formData.get("image");
+    const forDepartment = formData.get("forDepartment");
     const { sessionData } = await getSession();
 
     if (!sessionData) {
@@ -42,6 +43,7 @@ export async function POST(request) {
           location,
           link: link || null,
           img_path,
+          forDepartment,
         },
       }),
       prisma.notifications.create({
