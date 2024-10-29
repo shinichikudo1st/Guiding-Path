@@ -4,6 +4,7 @@ import { AiFillBook, AiFillEye } from "react-icons/ai";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import UpcomingAppointmentSingle from "./upcomingAppointmentSingle";
 import RescheduleAppointment from "./rescheduleModal";
+import { FaSpinner } from "react-icons/fa";
 
 const ShowAppointmentUpcoming = () => {
   const [appointments, setAppointments] = useState([]);
@@ -43,7 +44,7 @@ const ShowAppointmentUpcoming = () => {
       );
       const result = await response.json();
       setAppointments(result.appointments);
-      setTotalPages(result.totalPages);
+      setTotalPages(result.totalPages === 0 ? 1 : result.totalPages);
       console.log(result.totalPages);
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -89,10 +90,11 @@ const ShowAppointmentUpcoming = () => {
       )}
       <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
         {loading ? (
-          <div className="flex items-center justify-center w-full h-full">
-            <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse">
+          <div className="flex items-center justify-center h-full">
+            <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
+            <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
               Loading Appointments...
-            </div>
+            </p>
           </div>
         ) : appointments.length > 0 ? (
           <div className="space-y-4 p-4 overflow-auto h-full">
@@ -202,7 +204,7 @@ const ShowAppointmentUpcoming = () => {
                 </button>
                 <button
                   onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage >= totalPages}
                   className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Next</span>

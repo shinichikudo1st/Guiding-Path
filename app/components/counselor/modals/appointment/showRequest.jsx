@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import ManageRequest from "./manageRequest";
-import { AiOutlineCalendar, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaUserGraduate, FaEnvelope, FaClipboardList } from "react-icons/fa";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { FaUserGraduate, FaClipboardList, FaSpinner } from "react-icons/fa";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
 const ShowAppointmentRequest = () => {
@@ -63,11 +63,11 @@ const ShowAppointmentRequest = () => {
       )}
       <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
         {loading ? (
-          <div className="flex items-center justify-center w-full h-full">
-            <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse flex items-center">
-              <AiOutlineLoading3Quarters className="animate-spin mr-2" />
+          <div className="flex items-center justify-center h-full">
+            <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
+            <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
               Loading Requests...
-            </div>
+            </p>
           </div>
         ) : requests.length > 0 ? (
           <div className="space-y-4 p-4 overflow-auto h-full">

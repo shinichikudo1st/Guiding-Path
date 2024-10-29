@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AiFillBook, AiFillEye } from "react-icons/ai";
+import { FaSpinner } from "react-icons/fa";
 import TodayAppointmentSingle from "./todayAppointmentSingle";
 
 const ShowAppointmentToday = () => {
@@ -52,10 +53,11 @@ const ShowAppointmentToday = () => {
       )}
       <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center w-full h-full">
-            <div className="px-4 py-2 text-lg font-medium text-blue-600 bg-blue-100 rounded-full animate-pulse">
+          <div className="flex items-center justify-center h-full">
+            <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
+            <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
               Loading Appointments...
-            </div>
+            </p>
           </div>
         ) : appointments.length > 0 ? (
           <div className="space-y-4 p-4">
