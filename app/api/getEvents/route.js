@@ -15,16 +15,33 @@ export async function GET(request) {
     const pageSize = 10;
     const skip = (page - 1) * pageSize;
 
-    const events = await prisma.events.findMany({
-      skip,
-      take: pageSize,
-    });
+    const [events, student] = await Promise.all([
+      prisma.events.findMany({
+        skip,
+        take: pageSize,
+      }),
+      prisma.students.findUnique({
+        where: {
+          student_id: sessionData.id,
+        },
+        select: {
+          department: true,
+        },
+      }),
+    ]);
+
+    const eventsWithAccess = events.map((event) => ({
+      ...event,
+      userDepartment: student.department,
+      canRegister:
+        !event.forDepartment || event.forDepartment === student.department,
+    }));
 
     const totalEvents = await prisma.events.count();
     const totalPages = Math.ceil(totalEvents / pageSize);
 
     return NextResponse.json(
-      { events, totalPages, currentPage: page },
+      { events: eventsWithAccess, totalPages, currentPage: page },
       { status: 200 }
     );
   } catch (error) {

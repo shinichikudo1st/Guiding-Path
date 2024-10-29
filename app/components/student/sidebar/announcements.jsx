@@ -8,7 +8,7 @@ import {
   FaBullhorn,
   FaFilter,
   FaClock,
-  FaChevronDown,
+  FaLock,
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
 import ProgressiveImage from "../../UI/progressiveImage";
@@ -255,11 +255,18 @@ const StudentFeed = () => {
         >
           <div className="flex justify-between items-start mb-3">
             <h2 className="text-2xl font-bold text-[#0B6EC9]">{item.title}</h2>
-            {eventPassed && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                Closed
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {item.forDepartment && (
+                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                  {item.forDepartment} Only
+                </span>
+              )}
+              {eventPassed && (
+                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                  Closed
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center text-gray-600 mb-3">
             <FaCalendarAlt className="mr-2" />
@@ -317,6 +324,14 @@ const StudentFeed = () => {
               >
                 <FaClock className="mr-2" />
                 Event Closed
+              </button>
+            ) : !item.canRegister ? (
+              <button
+                className="bg-gray-400 text-white px-6 py-2 rounded-lg shadow-md cursor-not-allowed flex items-center"
+                disabled
+              >
+                <FaLock className="mr-2" />
+                Department Restricted
               </button>
             ) : (
               <button

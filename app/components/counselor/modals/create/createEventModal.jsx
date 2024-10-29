@@ -131,7 +131,7 @@ const EventModal = ({ closeButton }) => {
               <option value="College of Management">
                 College of Management and Entrepreneurship
               </option>
-              <option value="College of CICT">
+              <option value="College of CCICT">
                 College of Computer Information and Communications Technology
               </option>
             </select>
