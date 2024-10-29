@@ -49,9 +49,6 @@ const SkeletonLoading = () => {
               <div className="h-2 bg-slate-700 rounded"></div>
             </div>
           </div>
-          <h1 className="text-[20pt] font-bold text-center mt-8 text-[#062341]">
-            UNDER CONSTRUCTION!!!!
-          </h1>
         </div>
       </div>
     </>
