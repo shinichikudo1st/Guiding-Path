@@ -18,7 +18,9 @@ const CreateEvent = () => {
   const fetchEvents = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/getEvents?page=${currentPage}`);
+      const response = await fetch(
+        `/api/getEventsCounselor?page=${currentPage}`
+      );
       const data = await response.json();
       if (response.ok) {
         setEvents(data.events);
