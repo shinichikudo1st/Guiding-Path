@@ -7,6 +7,7 @@ import FullBackground from "@/app/components/universal/fullBackground";
 import StudentSidebar from "@/app/components/student/studentSidebar";
 import StudentQuickView from "@/app/components/student/studentQuickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
+import SkeletonLoading from "@/app/components/universal/skeletonLoading";
 
 // Conditionally rendered components - lazy load these
 const Profile = lazy(() => import("@/app/components/student/sidebar/profile"));
@@ -51,7 +52,7 @@ const StudentDashboard = () => {
         activeComponent={activeComponent}
       />
       <StudentQuickView />
-      <Suspense>
+      <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
     </main>

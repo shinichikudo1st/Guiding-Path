@@ -9,12 +9,14 @@ const updateUserSchema = z.object({
   name: z.string().optional(),
   grade_level: z.string().optional(),
   program: z.string().optional(),
+  department: z.string().optional(),
   contact: z.string().optional(),
 });
 
 export async function POST(request) {
   const body = await request.json();
-  const { name, grade_level, program, contact } = updateUserSchema.parse(body);
+  const { name, grade_level, program, department, contact } =
+    updateUserSchema.parse(body);
 
   const { sessionData } = await getSession();
 
@@ -40,6 +42,10 @@ export async function POST(request) {
 
   if (program !== "") {
     studentData.program = program;
+  }
+
+  if (department !== "") {
+    studentData.department = department;
   }
 
   try {

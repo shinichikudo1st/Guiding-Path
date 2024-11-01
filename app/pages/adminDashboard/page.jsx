@@ -5,6 +5,7 @@ import CounselorSidebar from "@/app/components/counselor/counselorSidebar";
 import QuickViewCounselor from "@/app/components/counselor/quickViewCounselor";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
+import SkeletonLoading from "@/app/components/universal/skeletonLoading";
 
 // Lazy load components
 const ProfileCounselor = lazy(() =>
@@ -63,7 +64,7 @@ const AdminDashboard = () => {
         activeComponent={activeComponent}
       />
       <QuickViewCounselor />
-      <Suspense>
+      <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
     </main>

@@ -23,6 +23,7 @@ export async function GET() {
               student_id: true,
               grade_level: true,
               program: true,
+              department: true,
             },
           },
         },
@@ -30,12 +31,13 @@ export async function GET() {
 
       const { name, user_id, contact, student, profilePicture } =
         userWithStudentDetails;
-      const { grade_level, program } = student || {};
+      const { grade_level, program, department } = student || {};
 
       data = {
         name: name,
         year: grade_level,
         course: program,
+        department: department,
         idNumber: user_id,
         contact: contact,
         profilePicture: profilePicture,

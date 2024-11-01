@@ -76,7 +76,7 @@ const ReferStudent = () => {
   };
 
   return (
-    <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto relative">
+    <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto relative scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#e2eefe]">
       <h2 className="text-3xl font-bold text-[#062341] mb-6">
         Student Referral Form
       </h2>

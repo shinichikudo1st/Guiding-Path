@@ -6,6 +6,7 @@ import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import QuickView from "@/app/components/UI/quickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import FullBackground from "@/app/components/universal/fullBackground";
+import SkeletonLoading from "@/app/components/universal/skeletonLoading";
 
 // Conditionally rendered components - lazy load these
 const ProfileTeacher = lazy(() =>
@@ -47,7 +48,7 @@ const TeacherDashboard = () => {
         resource={() => toggleComponent("resources")}
         activeComponent={activeComponent}
       />
-      <Suspense>
+      <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
     </main>

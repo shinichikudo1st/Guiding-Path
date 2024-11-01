@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Guiding Path
+
+Guiding Path is a Next.js project designed to provide support and guidance services for students.
 
 ## Getting Started
 
@@ -20,17 +22,41 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## Features
+
+- Student dashboard
+- Counselor interface
+- Appointment scheduling
+- Resource sharing
+- User profile management
+
+## Technologies Used
+
+- Next.js
+- React
+- Tailwind CSS
+- Prisma
+- PostgreSQL
+
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used in this project, check out the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://reactjs.org/docs/getting-started.html)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Prisma Documentation](https://www.prisma.io/docs/)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+This project can be easily deployed on the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)

@@ -64,11 +64,13 @@ const GenerateReport = () => {
   ];
 
   return (
-    <div className="generateReportContainer absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col px-[4%] pt-[3%] gap-[5%]">
-      <h1 className="text-[30pt] text-[#062341] font-bold">Generate Report</h1>
+    <div className="generateReportContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col px-[4%] pt-[3%] xl:gap-[2%] 2xl:gap-[5%]">
+      <h1 className="xl:text-[20pt] 2xl:text-[30pt] text-[#062341] font-bold">
+        Generate Report
+      </h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="bg-[#F0F7FF] rounded-lg p-6 shadow-md">
-          <h2 className="text-[18pt] text-[#062341] font-semibold mb-4">
+          <h2 className="xl:text-[12pt] 2xl:text-[18pt] text-[#062341] font-semibold mb-4">
             Select related reports to generate:
           </h2>
           <div className="grid grid-cols-2 gap-4">
@@ -83,7 +85,7 @@ const GenerateReport = () => {
                 />
                 <label
                   htmlFor={option.id}
-                  className="ml-2 text-[14pt] font-medium text-[#565B60]"
+                  className="ml-2 xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60]"
                 >
                   {option.label}
                 </label>
@@ -92,14 +94,14 @@ const GenerateReport = () => {
           </div>
         </div>
         <div className="bg-[#F0F7FF] rounded-lg p-6 shadow-md">
-          <h2 className="text-[18pt] text-[#062341] font-semibold mb-4">
+          <h2 className="xl:text-[12pt] 2xl:text-[18pt] text-[#062341] font-semibold mb-4">
             Select report date range:
           </h2>
           <div className="flex justify-between">
             <div className="flex flex-col w-[45%]">
               <label
                 htmlFor="startDate"
-                className="text-[14pt] font-medium text-[#565B60] mb-2"
+                className="xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60] mb-2"
               >
                 Start Date:
               </label>
@@ -114,7 +116,7 @@ const GenerateReport = () => {
             <div className="flex flex-col w-[45%]">
               <label
                 htmlFor="endDate"
-                className="text-[14pt] font-medium text-[#565B60] mb-2"
+                className="xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60] mb-2"
               >
                 End Date:
               </label>

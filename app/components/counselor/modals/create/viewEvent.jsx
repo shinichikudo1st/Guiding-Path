@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FaImage } from "react-icons/fa";
 
 const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -8,6 +9,9 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [dateTime, setDateTime] = useState(event.date_time);
   const [location, setLocation] = useState(event.location);
   const [link, setLink] = useState(event.link);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(event.img_path);
+  const [department, setDepartment] = useState(event.forDepartment);
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -16,35 +20,33 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     setDateTime(event.date_time);
     setLocation(event.location);
     setLink(event.link);
+    setPreviewImage(event.img_path);
+    setDepartment(event.forDepartment);
   }, [event]);
 
   const handleEdit = async () => {
+    const formData = new FormData();
+    formData.append("event_id", currentEvent.event_id);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("date_time", dateTime);
+    formData.append("location", location);
+    formData.append("link", link);
+    formData.append("forDepartment", department);
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
+
     const response = await fetch(`/api/eventOption`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        event_id: currentEvent.event_id,
-        title,
-        description,
-        date_time: dateTime,
-        location,
-        link,
-      }),
+      body: formData,
     });
 
     if (response.ok) {
       setIsEditing(false);
-      const updatedEvent = {
-        ...currentEvent,
-        title,
-        description,
-        date_time: dateTime,
-        location,
-        link,
-      };
+      const updatedEvent = await response.json();
       setCurrentEvent(updatedEvent);
+      setPreviewImage(updatedEvent.img_path);
       if (typeof onEventChange === "function") {
         onEventChange(updatedEvent);
       }
@@ -68,6 +70,14 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
       closeButton();
     } else {
       alert("Failed to delete event");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImage(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
@@ -165,6 +175,80 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
               )}
             </p>
           )}
+          <p className="text-xl text-[#818487]">
+            <strong>Department Access:</strong>{" "}
+            {isEditing ? (
+              <select
+                value={department || ""}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">All Departments</option>
+                <option value="College of Education">
+                  College of Education
+                </option>
+                <option value="College of Technology">
+                  College of Technology
+                </option>
+                <option value="College of Engineering">
+                  College of Engineering
+                </option>
+                <option value="College of Arts and Sciences">
+                  College of Arts and Sciences
+                </option>
+                <option value="College of Management">
+                  College of Management and Entrepreneurship
+                </option>
+                <option value="College of CCICT">
+                  College of Computer Information and Communications Technology
+                </option>
+              </select>
+            ) : (
+              currentEvent.forDepartment || "All Departments"
+            )}
+          </p>
+          <div>
+            <label
+              htmlFor="image"
+              className="block text-lg font-medium text-gray-700 mb-2"
+            >
+              Image
+            </label>
+            <div className="flex items-center justify-center w-full">
+              <label
+                htmlFor="image"
+                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300"
+              >
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Event"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <FaImage className="w-10 h-10 mb-3 text-gray-400" />
+                    <p className="mb-2 text-sm text-gray-500">
+                      <span className="font-semibold">Click to upload</span> or
+                      drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG or GIF (MAX. 800x400px)
+                    </p>
+                  </div>
+                )}
+                {isEditing && (
+                  <input
+                    type="file"
+                    id="image"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                )}
+              </label>
+            </div>
+          </div>
         </div>
         <div className="flex justify-end mt-8 space-x-4">
           {isEditing ? (

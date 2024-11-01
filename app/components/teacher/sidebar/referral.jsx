@@ -10,7 +10,7 @@ const TeacherReferral = () => {
   };
 
   return (
-    <div className="absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center px-[4%] pt-[3%] gap-[5%]">
+    <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center px-[4%] pt-[3%] gap-[5%]">
       <div className="flex w-[100%] justify-evenly select-none bg-[#E6F0F9] rounded-full p-1">
         <button
           onClick={() => toggleTab("viewReferrals")}

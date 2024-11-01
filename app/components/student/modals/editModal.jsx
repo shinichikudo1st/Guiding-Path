@@ -21,12 +21,14 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
     const newName = DOMPurify.sanitize(formData.get("name")) || "";
     const newYear = DOMPurify.sanitize(formData.get("year")) || "";
     const newCourse = DOMPurify.sanitize(formData.get("course")) || "";
+    const newDepartment = DOMPurify.sanitize(formData.get("department")) || "";
     const contact = DOMPurify.sanitize(formData.get("contact")) || "";
 
     const data = {
       name: newName,
       grade_level: newYear,
       program: newCourse,
+      department: newDepartment,
       contact: contact,
     };
 
@@ -67,7 +69,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
       </button>
       <form
         onSubmit={handleSubmit}
-        className="max-w-sm mx-auto absolute space-y-6 xl:translate-y-[-10%] 2xl:translate-y-0"
+        className="max-w-sm mx-auto absolute xl:space-y-4 2xl:space-y-6 xl:translate-y-[-10%] 2xl:translate-y-0"
       >
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
         <div>
@@ -119,6 +121,40 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
             placeholder={profileData.course}
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="department"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            <FaBook className="inline-block mr-2" />
+            Department
+          </label>
+          <select
+            id="department"
+            name="department"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
+            defaultValue={profileData.department || ""}
+          >
+            <option value="" disabled>
+              Select Department
+            </option>
+            <option value="College of Education">College of Education</option>
+            <option value="College of Technology">College of Technology</option>
+            <option value="College of Engineering">
+              College of Engineering
+            </option>
+            <option value="College of Arts and Sciences">
+              College of Arts and Sciences
+            </option>
+            <option value="College of Management">
+              College of Management and Entrepreneurship
+            </option>
+            <option value="College of CCICT">
+              College of Computer Information and Communications Technology
+            </option>
+          </select>
         </div>
 
         <div>

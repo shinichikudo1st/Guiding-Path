@@ -10,6 +10,7 @@ const ResourceFeed = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [selectedResource, setSelectedResource] = useState(null);
+  const [likedResources, setLikedResources] = useState(new Set());
 
   const observer = useRef();
   const lastResourceElementRef = useCallback(
@@ -56,7 +57,21 @@ const ResourceFeed = () => {
 
   useEffect(() => {
     fetchResources(page);
+    fetchLikedResources();
   }, [page]);
+
+  const fetchLikedResources = async () => {
+    try {
+      const response = await fetch("/api/updateUserResources");
+      if (!response.ok) {
+        throw new Error("Failed to fetch liked resources");
+      }
+      const data = await response.json();
+      setLikedResources(new Set(data.likedResources.map((r) => r.resource_id)));
+    } catch (error) {
+      console.error("Error fetching liked resources:", error);
+    }
+  };
 
   const loadMoreResources = () => {
     setPage((prevPage) => prevPage + 1);
@@ -89,6 +104,31 @@ const ResourceFeed = () => {
     setSelectedResource(null);
   };
 
+  const toggleLike = async (resourceId) => {
+    try {
+      const response = await fetch(
+        `/api/updateUserResources?resourceId=${resourceId}`,
+        {
+          method: "PUT",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to update resource");
+      }
+      setLikedResources((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(resourceId)) {
+          newSet.delete(resourceId);
+        } else {
+          newSet.add(resourceId);
+        }
+        return newSet;
+      });
+    } catch (error) {
+      console.error("Error updating resource:", error);
+    }
+  };
+
   return (
     <>
       {selectedResource && (
@@ -97,7 +137,7 @@ const ResourceFeed = () => {
           onClose={closeResourceModal}
         />
       )}
-      <div className="resourceContainer absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto">
+      <div className="resourceContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6]">
         <h2 className="text-3xl font-bold mb-6 text-[#062341]">Resources</h2>
         {error && (
           <p className="text-red-500 bg-red-100 p-3 rounded-lg mb-4 w-[90%] text-center">
@@ -113,9 +153,16 @@ const ResourceFeed = () => {
               }
               className="bg-white p-6 rounded-xl shadow-lg w-full mb-6 transition-all duration-300 hover:shadow-xl relative"
             >
-              <button className="absolute top-4 right-4 p-3 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-110">
+              <button
+                onClick={() => toggleLike(resource.resource_id)}
+                className="absolute top-4 right-4 p-3 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-110"
+              >
                 <FaHeart
-                  className="text-red-400 hover:text-red-600 transition-colors duration-200"
+                  className={`${
+                    likedResources.has(resource.resource_id)
+                      ? "text-red-600"
+                      : "text-red-400"
+                  } hover:text-red-600 transition-colors duration-200`}
                   size={24}
                 />
               </button>

@@ -103,9 +103,9 @@ const UserManagement = () => {
 
   return (
     <>
-      <div className="userContainer absolute bg-[#dfecf6] 2xl:w-[55%] 2xl:h-[80%] 2xl:translate-x-[41%] 2xl:translate-y-[20%] rounded-[20px] flex flex-col items-center">
+      <div className="userContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center">
         <div className="flex items-center justify-between w-full h-[15%] px-6">
-          <h1 className="text-3xl font-bold text-[#062341] flex items-center">
+          <h1 className="xl:text-xl 2xl:text-3xl font-bold text-[#062341] flex items-center">
             <FaUsersCog className="mr-3" />
             User Management
           </h1>
@@ -132,7 +132,7 @@ const UserManagement = () => {
           </div>
         </div>
 
-        <div className="w-full px-6 mt-4 flex-grow overflow-auto">
+        <div className="w-full px-6 mt-4 flex-grow overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6]">
           <div className="bg-white rounded-lg shadow-md">
             <table className="w-full">
               <thead className="bg-[#1F5B9B] text-white">

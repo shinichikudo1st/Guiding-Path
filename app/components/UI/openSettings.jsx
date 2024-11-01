@@ -1,25 +1,18 @@
 import { useState } from "react";
-import { FiLock, FiBell } from "react-icons/fi";
+import { FiLock } from "react-icons/fi";
 import ChangePassword from "./changePassword";
 
 const OpenSettings = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
 
   return (
-    <div className="absolute w-[250px] h-[300px] z-10 right-[10%] top-20 rounded-[10px] bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg flex flex-col items-center pt-[20px] text-[#062341]">
-      <h2 className="text-xl font-bold mb-6 text-blue-800">Settings</h2>
+    <div className="absolute w-[250px] h-[300px] z-10 right-[10%] top-16 rounded-[10px] bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg flex flex-col items-center pt-[20px] text-[#062341]">
+      <h2 className="text-xl font-bold mb-6 text-[#0b6ec9]">Settings</h2>
       <div className="w-full px-6 space-y-4">
         <SettingItem
           icon={<FiLock className="text-blue-600" />}
           text="Change Password"
           onClick={() => setShowChangePassword(true)}
-        />
-        <SettingItem
-          icon={<FiBell className="text-blue-600" />}
-          text="Notifications"
-          onClick={() => {
-            /* Add functionality */
-          }}
         />
       </div>
       {showChangePassword && (

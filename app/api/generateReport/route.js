@@ -163,14 +163,48 @@ async function getReferralReport(startDate, endDate) {
         _count: {
           teacher_id: true,
         },
+        orderBy: {
+          _count: {
+            teacher_id: "desc",
+          },
+        },
       }),
     ]);
+
+  // Fetch teacher names separately
+  const teacherIds = referralByTeacher.map((item) => item.teacher_id);
+  const teachers = await prisma.teachers.findMany({
+    where: {
+      teacher_id: {
+        in: teacherIds,
+      },
+    },
+    select: {
+      teacher_id: true,
+      teacher: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  // Create a map of teacher_id to teacher name
+  const teacherNameMap = Object.fromEntries(
+    teachers.map((teacher) => [teacher.teacher_id, teacher.teacher.name])
+  );
+
+  // Add teacher names to referralByTeacher
+  const referralByTeacherWithNames = referralByTeacher.map((item) => ({
+    ...item,
+    teacher_name: teacherNameMap[item.teacher_id] || "Unknown",
+  }));
 
   return {
     name: "referral",
     referralByDate,
     referralByReason,
-    referralByTeacher,
+    referralByTeacher: referralByTeacherWithNames,
   };
 }
 
@@ -228,7 +262,6 @@ async function getResourceReport(startDate, endDate) {
   const [
     totalResourceAccesses,
     popularResources,
-    resourcesByCategory,
     likedResources,
     newResources,
   ] = await Promise.all([

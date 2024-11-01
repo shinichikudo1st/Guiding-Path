@@ -9,7 +9,7 @@ import {
   FaExclamationCircle,
 } from "react-icons/fa";
 
-const RegisterEvent = ({ event, onClose }) => {
+const RegisterEvent = ({ event, onClose, onRegister }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [registrationStatus, setRegistrationStatus] = useState(null);
 
@@ -26,9 +26,10 @@ const RegisterEvent = ({ event, onClose }) => {
 
       if (response.ok) {
         setRegistrationStatus("success");
+        onRegister(event.event_id); // Call the onRegister callback with the event ID
         setTimeout(() => {
           onClose();
-        }, 2000);
+        }, 1000);
       } else {
         const errorData = await response.json();
         setRegistrationStatus("error");

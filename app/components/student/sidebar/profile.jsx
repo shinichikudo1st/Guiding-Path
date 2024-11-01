@@ -146,7 +146,7 @@ const Profile = () => {
           setIsFileSelected={setIsFileSelected}
         />
       )}
-      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
+      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
         {editModal && (
           <EditModal
             editButton={editButton}
@@ -158,7 +158,7 @@ const Profile = () => {
           <LoadingSpinner />
         ) : (
           profileData && (
-            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] xl:gap-[40px] 2xl:gap-[50px]">
+            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] xl:gap-[35px] 2xl:gap-[50px]">
               <UploadProfilePicture
                 toggleUploadModal={toggleUploadModal}
                 picture={
@@ -207,6 +207,18 @@ const Profile = () => {
                 </span>
               </div>
               <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
+                <FaBook className="text-[#0B6EC9] text-xl" />
+                <label
+                  htmlFor="name"
+                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
+                >
+                  Department:
+                </label>
+                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
+                  {profileData.department}
+                </span>
+              </div>
+              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
                 <FaIdCard className="text-[#0B6EC9] text-xl" />
                 <label
                   htmlFor="name"
@@ -230,7 +242,7 @@ const Profile = () => {
                   {profileData.contact}
                 </span>
               </div>
-              <div className="flex gap-[10%] 2xl:mt-[10%]">
+              <div className="flex gap-[10%] 2xl:mt-[5%]">
                 <button
                   onClick={editButton}
                   className="text-white bg-[#0B6EC9] hover:bg-[#095396] focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px] transition duration-300 ease-in-out flex items-center justify-center"
