@@ -17,7 +17,7 @@ const DeleteUser = ({ onClose, userID }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ counselorPassword: password }),
+        body: JSON.stringify({ counselorPassword: password, userID: userID }),
       });
 
       if (response.ok) {
