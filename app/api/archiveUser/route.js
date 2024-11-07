@@ -19,13 +19,20 @@ export async function POST(request) {
     );
   }
 
-  const counselor = await prisma.users.findUnique({
-    where: {
-      user_id: sessionData.id,
-    },
-  });
+  const [counselor, user] = await Promise.all([
+    await prisma.users.findUnique({
+      where: {
+        user_id: sessionData.id,
+      },
+    }),
+    await prisma.users.findUnique({
+      where: {
+        user_id: userID,
+      },
+    }),
+  ]);
 
-  if (counselor.role === "counselor") {
+  if (user.role === "counselor") {
     return NextResponse.json(
       { message: "Counselors cannot archive other counselors" },
       { status: 400 }

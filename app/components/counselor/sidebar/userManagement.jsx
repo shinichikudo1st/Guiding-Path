@@ -5,6 +5,7 @@ import {
   FaUserMinus,
   FaChevronLeft,
   FaChevronRight,
+  FaTrash,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -23,13 +24,18 @@ const UserManagement = () => {
   const [isModifyUserModalOpen, setIsModifyUserModalOpen] = useState(false);
   const [isArchiveUserModalOpen, setIsArchiveUserModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showArchived, setShowArchived] = useState(false);
+  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
 
   const retrieveUsers = async () => {
     setLoading(true);
     setError(null);
     try {
+      const endpoint = showArchived
+        ? "/api/getAllArchivedUser"
+        : "/api/getAllUser";
       const response = await fetch(
-        `/api/getAllUser?page=${currentPage}&role=${selectedRole}&search=${DOMPurify.sanitize(
+        `${endpoint}?page=${currentPage}&role=${selectedRole}&search=${DOMPurify.sanitize(
           search
         )}`
       );
@@ -49,7 +55,7 @@ const UserManagement = () => {
 
   useEffect(() => {
     retrieveUsers();
-  }, [selectedRole, currentPage, search]);
+  }, [selectedRole, currentPage, search, showArchived]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -101,18 +107,122 @@ const UserManagement = () => {
     setSelectedUserId(null);
   };
 
+  const openDeleteUserModal = (userId) => {
+    setSelectedUserId(userId);
+    setIsDeleteUserModalOpen(true);
+  };
+
+  const closeDeleteUserModal = () => {
+    setIsDeleteUserModalOpen(false);
+    setSelectedUserId(null);
+  };
+
   const handleArchiveSuccess = () => {
     retrieveUsers(); // Fetch updated user list
   };
+
+  const toggleArchived = () => {
+    setShowArchived(!showArchived);
+    setCurrentPage(1); // Reset to first page when switching views
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (
+      window.confirm(
+        "Are you sure you want to permanently delete this user? This action cannot be undone."
+      )
+    ) {
+      // Implement your delete API call here
+      // After successful deletion:
+      retrieveUsers();
+    }
+  };
+
+  const renderTableRow = (user) => (
+    <tr
+      key={user.user_id}
+      className={`border-b border-gray-200 hover:bg-gray-50 ${
+        showArchived ? "opacity-75" : ""
+      }`}
+    >
+      <td className="py-3 px-4">
+        <div className="flex items-center space-x-3">
+          <Image
+            alt="Profile"
+            src={user.profilePicture}
+            width={40}
+            height={40}
+            className={`rounded-full ${showArchived ? "grayscale" : ""}`}
+          />
+          <div>
+            <p className="font-semibold text-[#062341]">{user.name}</p>
+            <p className="text-sm text-gray-500">{user.email}</p>
+          </div>
+        </div>
+      </td>
+      <td className="py-3 px-4 text-center">
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleColor(
+            user.role
+          )}`}
+        >
+          {user.role}
+        </span>
+      </td>
+      <td className="py-3 px-4">
+        <div className="flex justify-center space-x-2">
+          {!showArchived && (
+            <>
+              <button
+                className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
+                title="Edit"
+                onClick={() => openModifyUserModal(user.user_id)}
+              >
+                <FaUserEdit size={18} />
+              </button>
+              <button
+                className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
+                title="Archive"
+                onClick={() => openArchiveUserModal(user.user_id)}
+              >
+                <FaUserMinus size={18} />
+              </button>
+            </>
+          )}
+          {showArchived && (
+            <button
+              className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
+              title="Delete Permanently"
+              onClick={() => handleDeleteUser(user.user_id)}
+            >
+              <FaTrash size={18} />
+            </button>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 
   return (
     <>
       <div className="userContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center">
         <div className="flex items-center justify-between w-full h-[15%] px-6">
-          <h1 className="xl:text-xl 2xl:text-3xl font-bold text-[#062341] flex items-center">
-            <FaUsersCog className="mr-3" />
-            User Management
-          </h1>
+          <div className="flex items-center space-x-4">
+            <h1 className="xl:text-xl 2xl:text-3xl font-bold text-[#062341] flex items-center">
+              <FaUsersCog className="mr-3" />
+              User Management
+            </h1>
+            <button
+              onClick={toggleArchived}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                showArchived
+                  ? "bg-gray-600 text-white hover:bg-gray-700"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+            >
+              {showArchived ? "Show Active Users" : "Show Archived Users"}
+            </button>
+          </div>
           <div className="flex items-center space-x-4">
             <select
               onChange={(e) => setSelectedRole(e.target.value)}
@@ -168,59 +278,7 @@ const UserManagement = () => {
                     </td>
                   </tr>
                 ) : (
-                  users.map((user) => (
-                    <tr
-                      key={user.user_id}
-                      className="border-b border-gray-200 hover:bg-gray-50"
-                    >
-                      <td className="py-3 px-4">
-                        <div className="flex items-center space-x-3">
-                          <Image
-                            alt="Profile"
-                            src={user.profilePicture}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                          />
-                          <div>
-                            <p className="font-semibold text-[#062341]">
-                              {user.name}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {user.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleColor(
-                            user.role
-                          )}`}
-                        >
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex justify-center space-x-2">
-                          <button
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-full transition-colors"
-                            title="Edit"
-                            onClick={() => openModifyUserModal(user.user_id)}
-                          >
-                            <FaUserEdit size={18} />
-                          </button>
-                          <button
-                            className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
-                            title="Remove"
-                            onClick={() => openArchiveUserModal(user.user_id)}
-                          >
-                            <FaUserMinus size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
+                  users.map(renderTableRow)
                 )}
               </tbody>
             </table>
