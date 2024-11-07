@@ -36,10 +36,14 @@ export async function GET(request) {
   }
 
   try {
-    let whereClause = {};
+    let whereClause = {
+      status: "active",
+    };
+
     if (role !== "allRoles") {
-      whereClause = { role: role };
+      whereClause = { ...whereClause, role: role };
     }
+
     if (search) {
       whereClause = {
         ...whereClause,
@@ -50,6 +54,7 @@ export async function GET(request) {
     const totalUser = await prisma.users.count({
       where: whereClause,
     });
+
     let users = await prisma.users.findMany({
       skip,
       take: limit,

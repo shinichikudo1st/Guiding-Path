@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { FaTimes, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
 
-const DeleteUser = ({ onClose, userID }) => {
+const ArchiveUser = ({ onClose, userID, onSuccess }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleDelete = async (e) => {
+  const handleArchive = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch(``, {
-        method: "DELETE",
+      const response = await fetch(`/api/archiveUser`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -21,13 +21,14 @@ const DeleteUser = ({ onClose, userID }) => {
       });
 
       if (response.ok) {
+        onSuccess();
         onClose();
       } else {
         const data = await response.json();
-        setError(data.message || "Failed to delete user");
+        setError(data.message || "Failed to archive user");
       }
     } catch (error) {
-      setError("An error occurred while deleting the user");
+      setError("An error occurred while archiving the user");
     } finally {
       setIsLoading(false);
     }
@@ -45,13 +46,13 @@ const DeleteUser = ({ onClose, userID }) => {
         </button>
         <div className="flex items-center mb-6">
           <FaExclamationTriangle className="text-red-500 mr-4" size={32} />
-          <h2 className="text-3xl font-bold text-gray-800">Delete User</h2>
+          <h2 className="text-3xl font-bold text-gray-800">Archive User</h2>
         </div>
         <p className="text-gray-600 mb-6">
-          Are you sure you want to delete this user? This action cannot be
-          undone.
+          Are you sure you want to archive this user? This user will no longer
+          be able to access the system.
         </p>
-        <form onSubmit={handleDelete} className="space-y-4">
+        <form onSubmit={handleArchive} className="space-y-4">
           <div>
             <label
               htmlFor="password"
@@ -90,7 +91,7 @@ const DeleteUser = ({ onClose, userID }) => {
               {isLoading ? (
                 <FaSpinner className="animate-spin inline-block mr-2" />
               ) : null}
-              {isLoading ? "Deleting..." : "Delete User"}
+              {isLoading ? "Archiving..." : "Archive User"}
             </button>
           </div>
         </form>
@@ -99,4 +100,4 @@ const DeleteUser = ({ onClose, userID }) => {
   );
 };
 
-export default DeleteUser;
+export default ArchiveUser;

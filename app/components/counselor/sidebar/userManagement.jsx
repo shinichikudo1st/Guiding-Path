@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import DOMPurify from "dompurify";
 import ModifyUser from "../modals/userManagement/modifyUser";
-import DeleteUser from "../modals/userManagement/deleteUser";
+import ArchiveUser from "../modals/userManagement/archiveUser";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -21,7 +21,7 @@ const UserManagement = () => {
   const [selectedRole, setSelectedRole] = useState("allRoles");
   const [search, setSearch] = useState("");
   const [isModifyUserModalOpen, setIsModifyUserModalOpen] = useState(false);
-  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
+  const [isArchiveUserModalOpen, setIsArchiveUserModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const retrieveUsers = async () => {
@@ -91,14 +91,18 @@ const UserManagement = () => {
     setSelectedUserId(null);
   };
 
-  const openDeleteUserModal = (userId) => {
+  const openArchiveUserModal = (userId) => {
     setSelectedUserId(userId);
-    setIsDeleteUserModalOpen(true);
+    setIsArchiveUserModalOpen(true);
   };
 
-  const closeDeleteUserModal = () => {
-    setIsDeleteUserModalOpen(false);
+  const closeArchiveUserModal = () => {
+    setIsArchiveUserModalOpen(false);
     setSelectedUserId(null);
+  };
+
+  const handleArchiveSuccess = () => {
+    retrieveUsers(); // Fetch updated user list
   };
 
   return (
@@ -209,7 +213,7 @@ const UserManagement = () => {
                           <button
                             className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
                             title="Remove"
-                            onClick={() => openDeleteUserModal(user.user_id)}
+                            onClick={() => openArchiveUserModal(user.user_id)}
                           >
                             <FaUserMinus size={18} />
                           </button>
@@ -271,8 +275,12 @@ const UserManagement = () => {
         <ModifyUser onClose={closeModifyUserModal} userID={selectedUserId} />
       )}
 
-      {isDeleteUserModalOpen && (
-        <DeleteUser onClose={closeDeleteUserModal} userID={selectedUserId} />
+      {isArchiveUserModalOpen && (
+        <ArchiveUser
+          onClose={closeArchiveUserModal}
+          userID={selectedUserId}
+          onSuccess={handleArchiveSuccess}
+        />
       )}
     </>
   );
