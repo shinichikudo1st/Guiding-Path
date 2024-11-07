@@ -12,11 +12,25 @@ export async function POST(request) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  if (userID === sessionData.id) {
+    return NextResponse.json(
+      { message: "Cannot archive self" },
+      { status: 400 }
+    );
+  }
+
   const counselor = await prisma.users.findUnique({
     where: {
       user_id: sessionData.id,
     },
   });
+
+  if (counselor.role === "counselor") {
+    return NextResponse.json(
+      { message: "Counselors cannot archive other counselors" },
+      { status: 400 }
+    );
+  }
 
   const match = await bcrypt.compare(
     counselorPassword,
