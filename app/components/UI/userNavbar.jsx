@@ -5,15 +5,17 @@ import OpenSettings from "./openSettings";
 import OpenLogout from "./openLogout";
 import Notifications from "./notifications";
 
-const UserNavbar = () => {
+const UserNavbar = ({ profile }) => {
   const [isLogoutToggled, setIsLogoutToggled] = useState(false);
   const [isSettingsToggled, setIsSettingsToggled] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     fetchUnreadCount();
+    fetchUserInfo();
   }, []);
 
   const fetchUnreadCount = async () => {
@@ -21,6 +23,20 @@ const UserNavbar = () => {
     if (response.ok) {
       const data = await response.json();
       setUnreadCount(data.notifications.filter((n) => !n.isRead).length);
+    }
+  };
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await fetch("/api/navbarInfo");
+      if (response.ok) {
+        const data = await response.json();
+        setUserInfo(data.user);
+      } else {
+        console.error("Failed to fetch user info:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
     }
   };
 
@@ -61,7 +77,23 @@ const UserNavbar = () => {
 
   return (
     <nav className="absolute w-full h-[10vh] flex items-center justify-between px-5 2xl:h-[8vh]">
-      <h1 className=" text-[#062341] font-bold text-[25pt]">Guiding Path</h1>
+      <h1 className=" text-[#062341] font-bold text-[25pt] flex justify-center items-center gap-3">
+        Guiding Path
+        {userInfo && (
+          <div
+            onClick={profile}
+            className="flex items-center gap-3 bg-white/80 px-4 py-2 rounded-lg shadow-sm backdrop-blur-sm text-sm ml-3 cursor-pointer"
+          >
+            <div className="flex flex-col">
+              <h2 className="text-[#062341] font-semibold">{userInfo.name}</h2>
+              <span className="text-sm text-[#0B6EC9] capitalize">
+                {userInfo.role}
+              </span>
+            </div>
+          </div>
+        )}
+      </h1>
+
       <div className="flex w-[40%] h-[10vh] justify-center items-center gap-6 text-[#062341]">
         <div className="relative">
           <BsBellFill

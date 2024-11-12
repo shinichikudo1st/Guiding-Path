@@ -52,7 +52,7 @@ const AdminDashboard = () => {
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
-      <UserNavbar />
+      <UserNavbar profile={() => toggleComponent("profile")} />
       <CounselorSidebar
         otherButton={() => toggleComponent("otherButton")}
         userManagement={() => toggleComponent("userManagement")}
