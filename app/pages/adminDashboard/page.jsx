@@ -66,6 +66,7 @@ const AdminDashboard = () => {
       <QuickViewCounselor
         referral={() => toggleComponent("referral")}
         appointment={() => toggleComponent("appointment")}
+        todayAppointment={() => toggleComponent("otherButton")}
       />
       <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
