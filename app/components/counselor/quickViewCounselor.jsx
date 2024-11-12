@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaUserFriends, FaCalendarCheck } from "react-icons/fa";
 
-const QuickViewCounselor = () => {
+const QuickViewCounselor = ({ referral, appointment }) => {
   const [referralCount, setReferralCount] = useState(0);
   const [appointmentCount, setAppointmentCount] = useState(0);
 
@@ -34,7 +34,10 @@ const QuickViewCounselor = () => {
 
   return (
     <aside className="fixed right-0 top-[75px] w-[20%] h-[calc(100vh-75px)] bg-gradient-to-b from-[#E6F0F9] to-[#B3D4F2] shadow-lg p-6 overflow-y-auto transition-all duration-300 ease-in-out">
-      <div className="h-[30%] bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col justify-center items-center transform hover:scale-105 transition-transform duration-300">
+      <div
+        onClick={referral}
+        className="h-[30%] bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col justify-center items-center transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+      >
         <FaUserFriends className="text-4xl text-[#0B6EC9] mb-2" />
         <h2 className="text-2xl font-semibold text-[#062341] mb-2">
           Referral Requests
@@ -44,7 +47,10 @@ const QuickViewCounselor = () => {
           Pending referrals from teachers
         </p>
       </div>
-      <div className="h-[30%] bg-white rounded-lg shadow-md p-6 flex flex-col justify-center items-center transform hover:scale-105 transition-transform duration-300">
+      <div
+        onClick={appointment}
+        className="h-[30%] bg-white rounded-lg shadow-md p-6 flex flex-col justify-center items-center transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+      >
         <FaCalendarCheck className="text-4xl text-[#0B6EC9] mb-2" />
         <h2 className="text-2xl font-semibold text-[#062341] mb-2">
           Appointment Requests

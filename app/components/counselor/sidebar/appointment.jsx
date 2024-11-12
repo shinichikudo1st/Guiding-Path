@@ -4,8 +4,8 @@ import ShowAppointmentToday from "../modals/appointment/appointmentToday";
 import ShowAppointmentUpcoming from "../modals/appointment/appointmentUpcoming";
 
 const AppointmentCounselor = () => {
-  const [request, setToggleRequest] = useState(false);
-  const [today, setToggleToday] = useState(true);
+  const [request, setToggleRequest] = useState(true);
+  const [today, setToggleToday] = useState(false);
   const [upcoming, setToggleUpcoming] = useState(false);
 
   const toggleRequest = () => {

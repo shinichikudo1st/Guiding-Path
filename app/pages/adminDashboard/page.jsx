@@ -63,7 +63,10 @@ const AdminDashboard = () => {
         referral={() => toggleComponent("referral")}
         activeComponent={activeComponent}
       />
-      <QuickViewCounselor />
+      <QuickViewCounselor
+        referral={() => toggleComponent("referral")}
+        appointment={() => toggleComponent("appointment")}
+      />
       <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
