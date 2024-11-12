@@ -5,14 +5,13 @@ import { z } from "zod";
 
 const referralSchema = z.object({
   studentId: z.string().min(1),
-  teacherId: z.string().min(1),
   reason: z.string().min(1),
-  additionalNotes: z.string().min(1),
+  notes: z.string().min(1),
 });
 
 /**
  * @function createReferral Creates a new referral record in the database
- * @param {Request} request Request object with a JSON body containing studentId, teacherId, reason, and additionalNotes
+ * @param {Request} request Request object with a JSON body containing studentId, reason, and notes
  * @returns {NextResponse}
  */
 export async function POST(request) {
@@ -23,16 +22,15 @@ export async function POST(request) {
   }
 
   const body = await request.json();
-  const { studentId, teacherId, reason, additionalNotes } =
-    referralSchema.parse(body);
+  const { studentId, reason, notes } = referralSchema.parse(body);
 
   try {
     const newReferral = await prisma.referrals.create({
       data: {
         student_id: studentId,
-        teacher_id: teacherId,
+        teacher_id: sessionData.id,
         reason: reason,
-        notes: additionalNotes,
+        notes: notes,
         status: "pending",
         counselor_id: "332570",
         dateSubmitted: new Date(),
