@@ -14,7 +14,6 @@ import {
 
 const AppointmentRequest = () => {
   const [formData, setFormData] = useState({
-    name: "",
     grade: "",
     reason: "stress_management",
     urgency: "less",
@@ -77,7 +76,6 @@ const AppointmentRequest = () => {
       }
 
       setFormData({
-        name: "",
         grade: "",
         reason: "stress_management",
         urgency: "less",
@@ -100,18 +98,6 @@ const AppointmentRequest = () => {
         <div className="grid grid-cols-2 gap-8">
           <div className="space-y-6">
             {/* Text input */}
-            <div className="flex items-center space-x-4">
-              <FaUser className="text-[#0B6EC9] text-xl" />
-              <input
-                required
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-                type="text"
-                placeholder="Name"
-              />
-            </div>
             <div className="flex items-center space-x-4">
               <FaGraduationCap className="text-[#0B6EC9] text-xl" />
               <input
