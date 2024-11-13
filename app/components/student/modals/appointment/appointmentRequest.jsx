@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import DOMPurify from "dompurify";
 import {
-  FaUser,
   FaGraduationCap,
   FaClipboardList,
   FaExclamationTriangle,
@@ -15,9 +14,9 @@ import {
 const AppointmentRequest = () => {
   const [formData, setFormData] = useState({
     grade: "",
-    reason: "stress_management",
-    urgency: "less",
-    type: "virtual",
+    reason: "",
+    urgency: "",
+    type: "",
     contact: "",
     notes: "",
   });
@@ -77,9 +76,9 @@ const AppointmentRequest = () => {
 
       setFormData({
         grade: "",
-        reason: "stress_management",
-        urgency: "less",
-        type: "virtual",
+        reason: "",
+        urgency: "",
+        type: "",
         contact: "",
         notes: "",
       });
@@ -119,6 +118,9 @@ const AppointmentRequest = () => {
                 onChange={handleChange}
                 className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
+                <option value="" disabled>
+                  Select Reason
+                </option>
                 <option value="stress_management">Stress Management</option>
                 <option value="encouragement">Encouragement</option>
                 <option value="career_guidance">Career Guidance</option>
@@ -133,6 +135,9 @@ const AppointmentRequest = () => {
                 onChange={handleChange}
                 className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
+                <option value="" disabled>
+                  Select Urgency
+                </option>
                 <option value="less">Less Urgent</option>
                 <option value="somewhat">Somewhat Urgent</option>
                 <option value="very">Very Urgent</option>
@@ -146,6 +151,9 @@ const AppointmentRequest = () => {
                 onChange={handleChange}
                 className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
               >
+                <option value="" disabled>
+                  Select Type
+                </option>
                 <option value="virtual">Virtual/Online</option>
                 <option value="inperson">In Person</option>
               </select>
