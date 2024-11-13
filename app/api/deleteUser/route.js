@@ -34,6 +34,20 @@ export async function DELETE(request) {
       },
     });
 
+    if (userID === sessionData.id) {
+      return NextResponse.json(
+        { message: "Cannot delete your own account" },
+        { status: 400 }
+      );
+    }
+
+    if (!user || user.status !== "archived") {
+      return NextResponse.json(
+        { message: "User not found or is not archived" },
+        { status: 404 }
+      );
+    }
+
     // Common deletions for all user types
     const commonDeletions = [
       prisma.notifications.deleteMany({
@@ -89,6 +103,23 @@ export async function DELETE(request) {
         }),
       ],
     };
+
+    // Add after the user lookup
+    if (user.role === "counselor") {
+      const activeCounselors = await prisma.users.count({
+        where: {
+          role: "counselor",
+          status: "active",
+        },
+      });
+
+      if (activeCounselors <= 1) {
+        return NextResponse.json(
+          { message: "Cannot delete the last active counselor" },
+          { status: 400 }
+        );
+      }
+    }
 
     // Execute all relevant deletions
     await prisma.$transaction([

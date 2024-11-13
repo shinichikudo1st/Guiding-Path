@@ -12,6 +12,7 @@ import Image from "next/image";
 import DOMPurify from "dompurify";
 import ModifyUser from "../modals/userManagement/modifyUser";
 import ArchiveUser from "../modals/userManagement/archiveUser";
+import DeleteUser from "../modals/userManagement/deleteUser";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -126,16 +127,9 @@ const UserManagement = () => {
     setCurrentPage(1); // Reset to first page when switching views
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (
-      window.confirm(
-        "Are you sure you want to permanently delete this user? This action cannot be undone."
-      )
-    ) {
-      // Implement your delete API call here
-      // After successful deletion:
-      retrieveUsers();
-    }
+  const handleDeleteUser = async () => {
+    closeDeleteUserModal();
+    retrieveUsers();
   };
 
   const renderTableRow = (user) => (
@@ -193,7 +187,7 @@ const UserManagement = () => {
             <button
               className="p-2 text-red-600 hover:bg-red-100 rounded-full transition-colors"
               title="Delete Permanently"
-              onClick={() => handleDeleteUser(user.user_id)}
+              onClick={() => openDeleteUserModal(user.user_id)}
             >
               <FaTrash size={18} />
             </button>
@@ -338,6 +332,14 @@ const UserManagement = () => {
           onClose={closeArchiveUserModal}
           userID={selectedUserId}
           onSuccess={handleArchiveSuccess}
+        />
+      )}
+
+      {isDeleteUserModalOpen && (
+        <DeleteUser
+          onClose={closeDeleteUserModal}
+          userID={selectedUserId}
+          onSuccess={handleDeleteUser}
         />
       )}
     </>
