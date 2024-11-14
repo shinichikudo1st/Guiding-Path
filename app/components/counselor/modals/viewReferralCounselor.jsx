@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { IoMdInformationCircle } from "react-icons/io";
 import Image from "next/image";
+import AvailableAppointmentSlot from "./appointment/availableAppointmentSlot";
 
 const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   const [referral, setReferral] = useState(null);
@@ -20,6 +21,7 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   const [counselType, setCounselType] = useState("inperson");
   const [isCreatingAppointment, setIsCreatingAppointment] = useState(false);
   const [message, setMessage] = useState({ type: "", content: "" });
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
 
   useEffect(() => {
     const fetchReferral = async () => {
@@ -71,16 +73,15 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   };
 
   const handleCreateAppointment = async () => {
-    if (!selectedDate || !selectedTime) {
+    if (!selectedDateTime) {
       setMessage({
         type: "error",
-        content: "Please select both date and time for the appointment.",
+        content: "Please select an appointment slot.",
       });
       return;
     }
 
     setIsCreatingAppointment(true);
-    const appointmentDateTime = new Date(`${selectedDate}T${selectedTime}`);
 
     try {
       const response = await fetch("/api/createAppointment", {
@@ -90,7 +91,7 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
         },
         body: JSON.stringify({
           referral_id: referral.id,
-          date: appointmentDateTime.toISOString(),
+          date: selectedDateTime.toISOString(),
           id: referral.student_id,
           role: "teacher", // Since this is a referral
           notes: referral.notes,
@@ -145,30 +146,37 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
     }
   };
 
+  const handleSelectSlot = (dateTime) => {
+    setSelectedDateTime(dateTime);
+    setSelectedDate(dateTime.toISOString().split("T")[0]);
+    setSelectedTime(
+      dateTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      })
+    );
+  };
+
   return (
     <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-20">
       <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen z-30"></div>
-      <div className="relative bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl z-50 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4">Referral Details</h2>
-        {isLoading ? (
-          <div className="space-y-4">
-            <p className="text-lg font-semibold text-gray-600">
-              Loading referral...
-            </p>
-            <SkeletonLoading />
-          </div>
-        ) : error ? (
-          <div className="text-center">
-            <p className="text-xl text-red-500 font-semibold">{error}</p>
-            <button
-              onClick={onClose}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Close
-            </button>
-          </div>
-        ) : referral ? (
-          <>
+      <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-[90vw] z-50 max-h-[90vh] overflow-hidden flex">
+        {/* Left side - Referral Details */}
+        <div className="w-1/2 pr-6 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
+          <h2 className="text-2xl font-bold mb-4">Referral Details</h2>
+          {isLoading ? (
+            <div className="space-y-4">
+              <p className="text-lg font-semibold text-gray-600">
+                Loading referral...
+              </p>
+              <SkeletonLoading />
+            </div>
+          ) : error ? (
+            <div className="text-center">
+              <p className="text-xl text-red-500 font-semibold">{error}</p>
+            </div>
+          ) : referral ? (
             <div className="space-y-4">
               <div className="flex items-center">
                 <FaUser className="mr-2 text-blue-500" />
@@ -245,97 +253,87 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
                 </>
               )}
             </div>
-            {referral.status === "pending" && (
-              <div className="mt-6 space-y-4">
-                <h3 className="text-xl font-semibold">Schedule Appointment</h3>
-                <div className="flex items-center space-x-4">
-                  <FaCalendarAlt className="text-blue-500" />
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="border rounded px-2 py-1 flex-grow"
-                  />
-                </div>
-                <div className="flex items-center space-x-4">
-                  <FaClock className="text-blue-500" />
-                  <input
-                    type="time"
-                    value={selectedTime}
-                    onChange={(e) => setSelectedTime(e.target.value)}
-                    className="border rounded px-2 py-1 flex-grow"
-                  />
-                </div>
-                <div className="flex items-center space-x-4">
-                  <span className="font-semibold">Counsel Type:</span>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setCounselType("inperson")}
-                      className={`flex items-center px-3 py-1 rounded ${
-                        counselType === "inperson"
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200"
-                      }`}
-                    >
-                      <FaUserFriends className="mr-2" />
-                      In-person
-                    </button>
-                    <button
-                      onClick={() => setCounselType("virtual")}
-                      className={`flex items-center px-3 py-1 rounded ${
-                        counselType === "virtual"
-                          ? "bg-blue-500 text-white"
-                          : "bg-gray-200"
-                      }`}
-                    >
-                      <FaVideo className="mr-2" />
-                      Virtual
-                    </button>
-                  </div>
-                </div>
-                {message.content && (
-                  <div
-                    className={`p-2 rounded ${
-                      message.type === "error"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
-                  >
-                    {message.content}
-                  </div>
-                )}
-                <div className="flex space-x-4">
-                  <button
-                    onClick={handleCreateAppointment}
-                    disabled={isCreatingAppointment}
-                    className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-                  >
-                    {isCreatingAppointment ? (
-                      <>
-                        <FaSpinner className="animate-spin mr-2" />
-                        Creating...
-                      </>
-                    ) : (
-                      "Create Appointment"
-                    )}
-                  </button>
-                  <button
-                    onClick={handleRejectReferral}
-                    className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Reject Referral
-                  </button>
-                </div>
+          ) : null}
+        </div>
+
+        {/* Right side - Appointment Scheduling */}
+        {referral && referral.status === "pending" && (
+          <div className="w-1/2 pl-6 border-l overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
+            <h3 className="text-xl font-semibold mb-4">Schedule Appointment</h3>
+            <AvailableAppointmentSlot
+              onSelectSlot={handleSelectSlot}
+              initialDate={new Date()}
+            />
+            <div className="mt-4">
+              <span className="font-semibold block mb-2">Counsel Type:</span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setCounselType("inperson")}
+                  className={`flex-1 flex items-center justify-center px-3 py-2 rounded ${
+                    counselType === "inperson"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <FaUserFriends className="mr-2" />
+                  In-person
+                </button>
+                <button
+                  onClick={() => setCounselType("virtual")}
+                  className={`flex-1 flex items-center justify-center px-3 py-2 rounded ${
+                    counselType === "virtual"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  <FaVideo className="mr-2" />
+                  Virtual
+                </button>
+              </div>
+            </div>
+            {message.content && (
+              <div
+                className={`mt-4 p-2 rounded ${
+                  message.type === "error"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-green-100 text-green-700"
+                }`}
+              >
+                {message.content}
               </div>
             )}
-            <button
-              onClick={onClose}
-              className="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Close
-            </button>
-          </>
-        ) : null}
+            <div className="flex space-x-4 mt-4">
+              <button
+                onClick={handleCreateAppointment}
+                disabled={isCreatingAppointment}
+                className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isCreatingAppointment ? (
+                  <>
+                    <FaSpinner className="animate-spin mr-2" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Appointment"
+                )}
+              </button>
+              <button
+                onClick={handleRejectReferral}
+                className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Reject Referral
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Single Close button - Absolute positioned */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Close
+        </button>
       </div>
     </div>
   );
