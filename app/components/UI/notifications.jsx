@@ -69,7 +69,7 @@ const Notifications = ({ isOpen, onNotificationChange }) => {
           notifications.map((notification) => (
             <div
               key={notification.notification_id}
-              className={`px-4 py-3 border-b last:border-b-0 ${
+              className={`px-4 py-3 border-b last:border-b-0 cursor-pointer ${
                 notification.isRead
                   ? "bg-[#e2eefe]"
                   : "bg-blue-50 hover:bg-blue-100"

@@ -34,20 +34,30 @@ export async function POST(request) {
 
     const date = new Date();
 
-    await prisma.appointment_Requests.create({
-      data: {
-        student_id: sessionData.id,
-        name: sessionData.name,
-        grade: grade,
-        reason: reason,
-        urgency: urgency,
-        contact: contact,
-        notes: notes,
-        type: type,
-        role: sessionData.role,
-        request_date: date,
-      },
-    });
+    await Promise.all([
+      prisma.appointment_Requests.create({
+        data: {
+          student_id: sessionData.id,
+          name: sessionData.name,
+          grade: grade,
+          reason: reason,
+          urgency: urgency,
+          contact: contact,
+          notes: notes,
+          type: type,
+          role: sessionData.role,
+          request_date: date,
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: "332570",
+          title: "New Appointment Request",
+          content: "You have a new appointment request",
+          date: new Date(),
+        },
+      }),
+    ]);
 
     return NextResponse.json(
       { message: "Appointment Request Submitted" },
