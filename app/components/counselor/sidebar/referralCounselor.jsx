@@ -16,28 +16,28 @@ const ReferralCounselor = () => {
   const [filterStatus, setFilterStatus] = useState("pending");
   const [selectedReferralId, setSelectedReferralId] = useState(null);
 
-  useEffect(() => {
-    const fetchReferrals = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `/api/getStatusReferrals?status=${filterStatus}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setReferrals(data.referrals);
-          console.log(data.referrals);
-        } else {
-          throw new Error(`Failed to fetch ${filterStatus} referrals`);
-        }
-      } catch (error) {
-        console.error("Error fetching referrals:", error);
-        setError(error.message || `Error fetching ${filterStatus} referrals`);
-      } finally {
-        setIsLoading(false);
+  const fetchReferrals = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/getStatusReferrals?status=${filterStatus}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setReferrals(data.referrals);
+        console.log(data.referrals);
+      } else {
+        throw new Error(`Failed to fetch ${filterStatus} referrals`);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching referrals:", error);
+      setError(error.message || `Error fetching ${filterStatus} referrals`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchReferrals();
   }, [filterStatus]);
 
@@ -159,6 +159,7 @@ const ReferralCounselor = () => {
         <ViewReferralCounselor
           referralId={selectedReferralId}
           onClose={handleCloseModal}
+          onRefresh={fetchReferrals}
         />
       )}
     </>

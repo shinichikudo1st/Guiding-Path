@@ -11,7 +11,7 @@ import {
 import { IoMdInformationCircle } from "react-icons/io";
 import Image from "next/image";
 
-const ViewReferralCounselor = ({ referralId, onClose }) => {
+const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   const [referral, setReferral] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,6 +46,28 @@ const ViewReferralCounselor = ({ referralId, onClose }) => {
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const handleRejectReferral = async () => {
+    try {
+      const response = await fetch(`/api/rejectReferral?id=${referralId}`, {
+        method: "PUT",
+      });
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          content: "Referral rejected successfully!",
+        });
+        setTimeout(() => {
+          onClose();
+          onRefresh();
+        }, 2000);
+      } else {
+        throw new Error("Failed to reject referral");
+      }
+    } catch (error) {
+      setError("Error rejecting referral: " + error.message);
+    }
   };
 
   const handleCreateAppointment = async () => {
@@ -84,6 +106,7 @@ const ViewReferralCounselor = ({ referralId, onClose }) => {
         });
         setTimeout(() => {
           onClose();
+          onRefresh();
         }, 2000);
       } else {
         throw new Error("Failed to create appointment");
@@ -281,20 +304,28 @@ const ViewReferralCounselor = ({ referralId, onClose }) => {
                     {message.content}
                   </div>
                 )}
-                <button
-                  onClick={handleCreateAppointment}
-                  disabled={isCreatingAppointment}
-                  className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {isCreatingAppointment ? (
-                    <>
-                      <FaSpinner className="animate-spin mr-2" />
-                      Creating...
-                    </>
-                  ) : (
-                    "Create Appointment"
-                  )}
-                </button>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={handleCreateAppointment}
+                    disabled={isCreatingAppointment}
+                    className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    {isCreatingAppointment ? (
+                      <>
+                        <FaSpinner className="animate-spin mr-2" />
+                        Creating...
+                      </>
+                    ) : (
+                      "Create Appointment"
+                    )}
+                  </button>
+                  <button
+                    onClick={handleRejectReferral}
+                    className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Reject Referral
+                  </button>
+                </div>
               </div>
             )}
             <button
