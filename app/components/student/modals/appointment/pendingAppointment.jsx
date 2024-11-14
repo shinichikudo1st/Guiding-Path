@@ -12,6 +12,8 @@ import {
 const PendingAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
 
   const retrievePendingAppointments = async () => {
     setLoading(true);
@@ -44,6 +46,33 @@ const PendingAppointment = () => {
       retrievePendingAppointments();
     }
   }, []);
+
+  const handleCancelClick = (appointmentId) => {
+    setSelectedAppointmentId(appointmentId);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmCancel = async () => {
+    try {
+      const response = await fetch(`/api/cancelAppointment`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: selectedAppointmentId }),
+      });
+
+      if (response.ok) {
+        // Refresh appointments after successful cancellation
+        retrievePendingAppointments();
+      }
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedAppointmentId(null);
+    }
+  };
 
   return (
     <div className="absolute w-[90%] h-[80%] bg-gradient-to-br from-[#F0F8FF] to-[#E6F0F9] mt-[6%] rounded-lg shadow-lg overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
@@ -105,8 +134,11 @@ const PendingAppointment = () => {
               <div className="text-center font-medium mt-4">
                 <span>Please wait for the schedule</span>
               </div>
-              <button className="w-[80%] mb-4 bg-white text-[#0B6EC9] font-bold py-2 px-4 rounded-full transition-all duration-300 hover:bg-[#E6F0F9] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9]">
-                Reschedule
+              <button
+                onClick={() => handleCancelClick(appointment.appointment_id)}
+                className="w-[80%] mb-4 bg-white text-red-600 font-bold py-2 px-4 rounded-full transition-all duration-300 hover:bg-red-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Cancel
               </button>
             </div>
           </div>
@@ -116,6 +148,33 @@ const PendingAppointment = () => {
           <p className="text-[18pt] font-semibold text-gray-400">
             There are no pending appointments.
           </p>
+        </div>
+      )}
+
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Cancel Appointment
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to cancel this appointment?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+              >
+                No, Keep it
+              </button>
+              <button
+                onClick={handleConfirmCancel}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
