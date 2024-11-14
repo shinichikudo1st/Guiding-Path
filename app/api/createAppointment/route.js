@@ -63,30 +63,41 @@ export async function POST(request) {
   }
 
   try {
-    const [existingAppointment, referralTeacher] = await Promise.all([
+    // Conditionally create Promise.all array based on role
+    const queries = [
       prisma.appointments.findFirst({
         where: {
           date_time: appointmentDate,
         },
       }),
-      prisma.referrals.findUnique({
-        where: {
-          referral_id: referral_id,
-        },
-        select: {
-          teacher_id: true,
-          teacher: {
-            select: {
-              teacher: {
-                select: {
-                  name: true,
+    ];
+
+    // Only add referral query if role is teacher
+    if (role === "teacher") {
+      queries.push(
+        prisma.referrals.findUnique({
+          where: {
+            referral_id: referral_id,
+          },
+          select: {
+            teacher_id: true,
+            teacher: {
+              select: {
+                teacher: {
+                  select: {
+                    name: true,
+                  },
                 },
               },
             },
           },
-        },
-      }),
-    ]);
+        })
+      );
+    }
+
+    const results = await Promise.all(queries);
+    const existingAppointment = results[0];
+    const referralTeacher = role === "teacher" ? results[1] : null;
 
     let submitType, title, content;
 
