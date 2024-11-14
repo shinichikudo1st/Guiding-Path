@@ -14,6 +14,23 @@ const ManageRequest = ({
 }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
 
+  const handleRejectRequest = async () => {
+    try {
+      const response = await fetch(`/api/deleteRequest?id=${requestID}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        initialRequests();
+        closeButton();
+      } else {
+        throw new Error("Failed to reject request");
+      }
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+    }
+  };
+
   const renderRequest = requests.find(
     (request) => request.request_id === requestID
   );
@@ -74,12 +91,20 @@ const ManageRequest = ({
           </div>
         </div>
         <div className="p-4 bg-gray-50 border-t">
-          <button
-            onClick={() => setOpenDatePicker(true)}
-            className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-2 px-4 rounded-lg font-medium hover:from-cyan-600 hover:to-blue-600 transition-colors flex items-center justify-center"
-          >
-            <FaCalendarAlt className="mr-2" /> Accept Request
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setOpenDatePicker(true)}
+              className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-2 px-4 rounded-lg font-medium hover:from-cyan-600 hover:to-blue-600 transition-colors flex items-center justify-center"
+            >
+              <FaCalendarAlt className="mr-2" /> Accept Request
+            </button>
+            <button
+              onClick={handleRejectRequest}
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-colors flex items-center justify-center"
+            >
+              <IoClose className="mr-2" /> Reject Request
+            </button>
+          </div>
         </div>
       </div>
     </div>
