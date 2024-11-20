@@ -2,15 +2,22 @@ import Image from "next/image";
 import background from "@/public/background.png";
 
 const Background = () => {
-  const responsive =
-    "h-[50vh] top-[10%] lg:top-20 lg:h-[80vh] lg:translate-y-[-5px]";
-
   return (
-    <Image
-      alt="ctuBackground"
-      src={background}
-      className={`absolute w-full ${responsive}`}
-    />
+    <div
+      className="absolute inset-0 w-full h-full overflow-hidden"
+      style={{ zIndex: 0 }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-[#D9E7F3]/30 to-[#F8FAFC]/30" />
+      <Image
+        alt="ctuBackground"
+        src={background}
+        className="object-cover w-full h-full"
+        priority
+        fill
+        sizes="100vw"
+        quality={100}
+      />
+    </div>
   );
 };
 

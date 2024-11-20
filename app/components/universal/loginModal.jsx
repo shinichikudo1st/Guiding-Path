@@ -4,6 +4,7 @@ import ctuLogo from "@/public/ctuLogo.png";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";
 
 const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
@@ -115,197 +116,349 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
     }
   };
 
-  return (
-    <>
-      <div
-        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] xl:w-[33%] xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 lg:translate-y-[-20px] shadow-lg ${
-          login
-            ? "top-[20%] lg:top-[23%] translate-x-[140px] lg:translate-x-0  ease-in duration-[0.2s]"
-            : "top-[20%] lg:top-[23%] translate-x-[500px] lg:translate-x-[1000px] ease-out duration-[0.2s]"
-        }`}
-      >
-        <Image
-          src={ctuLogo}
-          alt="ctuLogo"
-          className="w-[50px] h-[50px] lg:w-[80px] lg:h-[80px]"
-        />
-        <div className="flex flex-col items-center mb-8">
-          <span className="text-[#062341] text-[10pt] lg:text-[20pt] font-bold">
-            GUIDING PATH
-          </span>
-          <span className="text-[#062341] text-[6pt] lg:text-[13pt]">
-            Login existing account
-          </span>
-        </div>
-        {error && (
-          <div
-            className="absolute bottom-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-b-[10px] transition-opacity duration-300"
-            role="alert"
-          >
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-        <form
-          onSubmit={handleLogin}
-          className="flex flex-col items-center gap-5 w-full max-w-[300px] mt-[10%]"
-        >
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Email"
-              name="email"
-              id="emailLogin"
-              required
-              className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
-            />
-          </div>
-          <div className="relative w-full">
-            <input
-              type={showLoginPassword ? "text" : "password"}
-              placeholder="Password"
-              name="password"
-              id="password"
-              required
-              className="w-full text-[10pt] lg:text-[12pt] h-[40px] 2xl:h-[50px] px-3 py-2 pr-10 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
-            />
-            <button
-              type="button"
-              onClick={() => setShowLoginPassword(!showLoginPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-            >
-              {showLoginPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          </div>
-          <button
-            disabled={logging}
-            type="submit"
-            className="bg-[#0B6EC9] w-full h-[40px] text-[10pt] lg:text-[12pt] rounded-md font-bold text-[#F3F8FC] hover:bg-[#095396] transition duration-200 flex justify-center items-center"
-          >
-            {logging ? (
-              <div className="flex space-x-2 justify-center items-center">
-                <span className="sr-only">Loading...</span>
-                <div className="h-2 w-2 bg-[#F3F8FC] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                <div className="h-2 w-2 bg-[#F3F8FC] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="h-2 w-2 bg-[#F3F8FC] rounded-full animate-bounce"></div>
-              </div>
-            ) : (
-              "Login"
-            )}
-          </button>
-        </form>
-        <span className="text-[#818487] text-[7pt] lg:text-sm mt-3">
-          Don't have an account?{" "}
-          <button
-            className="text-[#0A72D1] font-semibold hover:underline focus:outline-none"
-            onClick={toggleSignup}
-          >
-            Signup Now
-          </button>
-        </span>
-      </div>
+  const overlayVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 0.5 },
+    exit: { opacity: 0 },
+  };
 
-      <div
-        className={`absolute bottom-5 right-44 bg-[#F3F8FC] w-[80%] h-[65%] xl:w-[33%] xl:h-[75vh] rounded-[10px] flex flex-col items-center p-5 gap-5 lg:translate-y-[-20px] shadow-lg ${
-          signup
-            ? "translate-x-[140px] top-[20%] lg:top-[23%] lg:translate-x-[-600px] 2xl:translate-x-[-900px] ease-in duration-[0.2s]"
-            : "translate-x-[-250px] top-[20%] lg:top-[23%] lg:translate-x-[-1300px] 2xl:translate-x-[-1900px] ease-out duration-[0.2s]"
-        }`}
-      >
-        <Image
-          src={ctuLogo}
-          alt="ctuLogo"
-          className="w-[50px] h-[50px] lg:w-[80px] lg:h-[80px]"
-        />
-        <div className="flex flex-col items-center">
-          <span className="text-[#062341] text-[10pt] lg:text-[15pt] font-bold">
-            GUIDING PATH
-          </span>
-          <span className="text-[#062341] text-[6pt] lg:text-[10pt]">
-            Create an account
-          </span>
-        </div>
-        {error && (
-          <div
-            className="absolute bottom-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-b-[10px] transition-opacity duration-300"
-            role="alert"
-          >
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-        <form
-          onSubmit={handleSignup}
-          className="flex flex-col items-center gap-4 w-full max-w-[300px] mt-[5%] lg:mt-[2%]"
+  const modalVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      scale: 0.95,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        duration: 0.5,
+        bounce: 0.3,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      scale: 0.95,
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
+
+  return (
+    <AnimatePresence mode="wait">
+      {login && (
+        <div
+          className="fixed inset-0 flex items-center justify-center"
+          style={{ zIndex: 40 }}
         >
-          <input
-            type="text"
-            placeholder="ID Number"
-            name="idNumber"
-            id="idNumber"
-            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
+          <motion.div
+            className="absolute inset-0 bg-black"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{ zIndex: 41 }}
           />
-          <input
-            type="email"
-            placeholder="Email"
-            name="email"
-            id="emailSignup"
-            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
-          />
-          <input
-            type="text"
-            placeholder="Contact No."
-            name="contact"
-            id="contact"
-            className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
-          />
-          <div className="relative w-full">
-            <input
-              type={showSignupPassword ? "text" : "password"}
-              placeholder="Password"
-              name="password"
-              id="signupPassword"
-              required
-              className="w-full text-[10pt] xl:text-[10pt] 2xl:text-[12pt] h-[40px] xl:h-[35px] 2xl:h-[50px] px-3 py-2 pr-10 text-[#062341] bg-white border-2 border-[#0B6EC9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] focus:border-transparent transition duration-200"
-            />
-            <button
-              type="button"
-              onClick={() => setShowSignupPassword(!showSignupPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+          <motion.div
+            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative mx-4"
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{ zIndex: 42 }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
             >
-              {showSignupPassword ? <FaEye /> : <FaEyeSlash />}
-            </button>
-          </div>
-          <button
-            className={`w-full h-[40px] text-[10pt] lg:text-[12pt] rounded-md font-bold text-[#F3F8FC] transition duration-200 mt-2 ${
-              isCreatingAccount
-                ? "bg-[#0B6EC9] opacity-70 cursor-not-allowed"
-                : "bg-[#0B6EC9] hover:bg-[#095396]"
-            }`}
-            type="submit"
-            disabled={isCreatingAccount}
-          >
-            {isCreatingAccount ? (
-              <div className="flex items-center justify-center">
-                <div className="w-5 h-5 border-t-2 border-b-2 border-[#F3F8FC] rounded-full animate-spin mr-2"></div>
-                Creating...
-              </div>
-            ) : (
-              "Create Account"
+              <Image
+                src={ctuLogo}
+                alt="CTU Logo"
+                width={80}
+                height={80}
+                className="drop-shadow-lg"
+              />
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl font-bold text-center text-[#062341] mb-8"
+            >
+              Welcome Back
+            </motion.h2>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg"
+              >
+                {error}
+              </motion.div>
             )}
-          </button>
-        </form>
-        <span className="text-[#818487] text-[7pt] lg:text-sm mt-1 xl:mt-0">
-          Already have an existing account?{" "}
-          <button
-            className="text-[#0A72D1] font-semibold hover:underline focus:outline-none"
-            onClick={toggleLogin}
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <label className="block text-gray-700 text-sm font-semibold mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                <label className="block text-gray-700 text-sm font-semibold mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    name="password"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                  >
+                    {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </motion.div>
+
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                type="submit"
+                disabled={logging}
+                className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {logging ? (
+                  <div className="flex items-center justify-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    Signing in...
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
+              </motion.button>
+            </form>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="mt-6 text-center text-gray-600"
+            >
+              Don't have an account?{" "}
+              <button
+                onClick={toggleSignup}
+                className="text-[#0B6EC9] font-semibold hover:text-[#095396] transition-colors duration-200"
+              >
+                Sign Up
+              </button>
+            </motion.p>
+          </motion.div>
+        </div>
+      )}
+
+      {signup && (
+        <div
+          className="fixed inset-0 flex items-center justify-center"
+          style={{ zIndex: 40 }}
+        >
+          <motion.div
+            className="absolute inset-0 bg-black"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{ zIndex: 41 }}
+          />
+          <motion.div
+            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative mx-4"
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{ zIndex: 42 }}
           >
-            Login
-          </button>
-        </span>
-      </div>
-    </>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex justify-center mb-6"
+            >
+              <Image
+                src={ctuLogo}
+                alt="CTU Logo"
+                width={80}
+                height={80}
+                className="drop-shadow-lg"
+              />
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl font-bold text-center text-[#062341] mb-8"
+            >
+              Create Account
+            </motion.h2>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSignup} className="space-y-4">
+              {[
+                {
+                  label: "ID Number",
+                  name: "idNumber",
+                  type: "text",
+                  placeholder: "Enter your ID number",
+                },
+                {
+                  label: "Email Address",
+                  name: "email",
+                  type: "email",
+                  placeholder: "Enter your email",
+                },
+                {
+                  label: "Contact Number",
+                  name: "contact",
+                  type: "tel",
+                  placeholder: "Enter your contact number",
+                },
+                {
+                  label: "Password",
+                  name: "password",
+                  type: "password",
+                  placeholder: "Create a password",
+                },
+              ].map((field, index) => (
+                <motion.div
+                  key={field.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                >
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    {field.label}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={
+                        field.name === "password"
+                          ? showSignupPassword
+                            ? "text"
+                            : "password"
+                          : field.type
+                      }
+                      name={field.name}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder={field.placeholder}
+                      required
+                    />
+                    {field.name === "password" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowSignupPassword(!showSignupPassword)
+                        }
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                      >
+                        {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                type="submit"
+                disabled={isCreatingAccount}
+                className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {isCreatingAccount ? (
+                  <div className="flex items-center justify-center">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    Creating Account...
+                  </div>
+                ) : (
+                  "Create Account"
+                )}
+              </motion.button>
+            </form>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="mt-6 text-center text-gray-600"
+            >
+              Already have an account?{" "}
+              <button
+                onClick={toggleLogin}
+                className="text-[#0B6EC9] font-semibold hover:text-[#095396] transition-colors duration-200"
+              >
+                Sign In
+              </button>
+            </motion.p>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
 
