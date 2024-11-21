@@ -44,10 +44,10 @@ export async function GET(request) {
       whereClause = { ...whereClause, role: role };
     }
 
-    if (search) {
+    if (search && search.trim() !== "") {
       whereClause = {
         ...whereClause,
-        name: { contains: search, mode: "insensitive" },
+        name: { contains: search.trim(), mode: "insensitive" },
       };
     }
 
