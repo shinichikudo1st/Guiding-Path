@@ -5,6 +5,8 @@ import {
   IoCalendarOutline,
   IoDocumentTextOutline,
 } from "react-icons/io5";
+import { FaUserCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const AppointmentSingleDashboard = ({ closeButton, appointment }) => {
   const location =
@@ -13,71 +15,107 @@ const AppointmentSingleDashboard = ({ closeButton, appointment }) => {
       : "CTU-MAIN Admin Building Room 301A";
 
   return (
-    <div className="absolute w-screen h-screen flex justify-center z-10">
-      <div className="absolute w-full h-full  bg-black opacity-75 z-20"></div>
-      <div className="bg-white w-[90%] max-w-4xl max-h-[80vh] overflow-y-auto rounded-2xl shadow-2xl z-30 translate-y-[10%]">
-        <div className="relative p-8">
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 w-[95%] max-w-4xl max-h-[90vh] rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 relative">
+          <h2 className="text-2xl font-bold text-white text-center">
+            Appointment Details
+          </h2>
           <button
             onClick={closeButton}
-            className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition-colors"
           >
             <IoClose size={24} />
           </button>
+        </div>
 
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-5rem)]">
           {/* Student Information */}
-          <div className="flex flex-col md:flex-row items-center mb-8 border-b pb-6">
-            <Image
-              alt="profilePicture"
-              src={appointment.student.student.profilePicture}
-              height={120}
-              width={120}
-              className="rounded-full border-4 border-blue-200 shadow-md mb-4 md:mb-0"
-            />
-            <div className="md:ml-8 text-center md:text-left">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                {appointment.student.student.name}
-              </h2>
-              <p className="text-gray-600">
-                {appointment.student.student.email}
+          <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-[#0B6EC9]/10">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="flex-shrink-0">
+                {appointment.student.student.profilePicture ? (
+                  <Image
+                    alt="profilePicture"
+                    src={appointment.student.student.profilePicture}
+                    height={80}
+                    width={80}
+                    className="rounded-full border-2 border-[#0B6EC9]/20"
+                  />
+                ) : (
+                  <FaUserCircle className="text-[#0B6EC9] w-20 h-20" />
+                )}
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-xl font-bold text-[#062341] mb-1">
+                  {appointment.student.student.name}
+                </h3>
+                <p className="text-[#062341]/70 text-sm">
+                  {appointment.student.student.email}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Appointment Info */}
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-[#0B6EC9]/10">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#0B6EC9]/10 rounded-lg flex items-center justify-center">
+                  <IoCalendarOutline className="text-[#0B6EC9] text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-[#062341]/70">Date & Time</p>
+                  <p className="font-semibold text-[#062341]">
+                    {appointment.date_time}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#0B6EC9]/10 rounded-lg flex items-center justify-center">
+                  <IoLocationOutline className="text-[#0B6EC9] text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-[#062341]/70">Location</p>
+                  <p className="font-semibold text-[#062341]">{location}</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-[#0B6EC9]/10 rounded-lg flex items-center justify-center">
+                  <IoDocumentTextOutline className="text-[#0B6EC9] text-xl" />
+                </div>
+                <div>
+                  <p className="text-sm text-[#062341]/70">Reason</p>
+                  <p className="font-semibold text-[#062341]">
+                    {appointment.reason}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Notes */}
+          {appointment.notes && (
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#0B6EC9]/10">
+              <h3 className="text-lg font-semibold text-[#062341] mb-4">
+                Additional Notes
+              </h3>
+              <p className="text-[#062341]/70 whitespace-pre-wrap text-sm">
+                {appointment.notes}
               </p>
             </div>
-          </div>
-
-          {/* Appointment Details */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-8 shadow-inner">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">
-              Appointment Details
-            </h3>
-            <div className="flex items-center text-blue-800 mb-4">
-              <IoCalendarOutline size={24} className="mr-4 text-blue-600" />
-              <span className="text-xl font-semibold">
-                {appointment.date_time}
-              </span>
-            </div>
-            <div className="flex items-center text-gray-700 mb-4">
-              <IoLocationOutline size={24} className="mr-4 text-green-600" />
-              <span>{location}</span>
-            </div>
-            <div className="flex items-center text-gray-700">
-              <IoDocumentTextOutline
-                size={24}
-                className="mr-4 text-purple-600"
-              />
-              <span>{appointment.reason}</span>
-            </div>
-          </div>
-
-          {/* Additional Notes */}
-          <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">
-              Additional Notes
-            </h3>
-            <p className="text-gray-700 whitespace-pre-wrap">
-              {appointment.notes}
-            </p>
-          </div>
+          )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
