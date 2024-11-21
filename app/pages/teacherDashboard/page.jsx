@@ -5,8 +5,8 @@ import { useState, lazy, Suspense } from "react";
 import TeacherSidebar from "@/app/components/teacher/teacherSidebar";
 import QuickView from "@/app/components/UI/quickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
-import FullBackground from "@/app/components/universal/fullBackground";
 import SkeletonLoading from "@/app/components/universal/skeletonLoading";
+import Background from "@/app/components/universal/ctuBackground";
 
 // Conditionally rendered components - lazy load these
 const ProfileTeacher = lazy(() =>
@@ -38,7 +38,7 @@ const TeacherDashboard = () => {
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
-      <FullBackground />
+      <Background />
       <UserNavbar profile={() => toggleComponent("profile")} />
       <QuickView />
       <TeacherSidebar
