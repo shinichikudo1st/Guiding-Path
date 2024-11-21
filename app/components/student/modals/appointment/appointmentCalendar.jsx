@@ -4,11 +4,11 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaTimes,
-  FaClock,
   FaCalendarAlt,
-  FaInfoCircle,
 } from "react-icons/fa";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const AppointmentCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -186,178 +186,205 @@ const AppointmentCalendar = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 rounded-[20px] flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl max-w-xl w-[90%] p-4 relative max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
-          <button
-            onClick={onClose}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <FaTimes className="h-5 w-5" />
-          </button>
-          <h2 className="text-xl font-bold mb-4 text-[#062341]">
-            Appointments for {formatDate(new Date(appointments[0].date_time))}
-          </h2>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 w-full max-w-2xl overflow-hidden"
+        >
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 flex justify-between items-center">
+            <h2 className="text-xl font-bold text-white">
+              Appointments for {formatDate(new Date(appointments[0].date_time))}
+            </h2>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={onClose}
+              className="text-white hover:text-red-100 transition-colors"
+            >
+              <FaTimes className="h-6 w-6" />
+            </motion.button>
+          </div>
 
-          <div className="space-y-4">
+          {/* Content */}
+          <div className="max-h-[60vh] overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent">
             {appointments.map((appointment, index) => {
               const appointmentDate = new Date(appointment.date_time);
               return (
-                <div
+                <motion.div
                   key={index}
-                  className="border-b border-gray-200 pb-4 last:border-0"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 p-4"
                 >
-                  <div className="flex items-center mb-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden mr-3 border-2 border-[#0B6EC9]">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-shrink-0">
                       <Image
                         src={
                           appointment.counselor.counselor.profilePicture ||
                           "/default-profile.png"
                         }
                         alt="Counselor"
-                        width={48}
-                        height={48}
-                        className="object-cover"
+                        width={56}
+                        height={56}
+                        className="rounded-full object-cover border-2 border-[#0B6EC9]"
                       />
                     </div>
-                    <div>
-                      <p className="font-semibold text-base text-[#062341]">
+                    <div className="flex-grow">
+                      <h3 className="text-lg font-semibold text-[#062341]">
                         {appointment.counselor.counselor.name}
-                      </p>
-                      <p className="text-xs text-gray-600">
+                      </h3>
+                      <p className="text-sm text-[#062341]/70">
                         {appointment.counselor.counselor.email}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <p className="text-sm font-medium text-[#0B6EC9] bg-[#0B6EC9]/10 px-3 py-1 rounded-full">
+                        {formatTime(appointmentDate)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-[#E6F0F9] p-3 rounded-lg">
-                    <div className="flex items-center mb-2">
-                      <FaClock className="text-[#0B6EC9] mr-2 text-sm" />
-                      <p className="font-semibold text-sm">
-                        {formatTime(appointmentDate)}
-                      </p>
-                    </div>
-                    <div className="flex items-start">
-                      <FaInfoCircle className="text-[#0B6EC9] mr-2 mt-1 text-sm" />
-                      <p className="text-sm">
-                        <span className="font-semibold">Reason:</span>{" "}
-                        {appointment.reason}
-                      </p>
+                  <div className="mt-4 bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+                    <div className="flex items-start gap-3 text-[#062341]/80">
+                      <IoDocumentTextOutline className="text-[#0B6EC9] text-xl mt-0.5" />
+                      <span>{appointment.reason}</span>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-full mt-4 bg-[#0B6EC9] text-white px-4 py-2 rounded-lg hover:bg-[#094a86] transition-colors font-semibold text-base shadow-md hover:shadow-lg"
-          >
-            Close
-          </button>
-        </div>
-      </div>
+          {/* Footer */}
+          <div className="p-6 bg-white border-t border-[#0B6EC9]/10">
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={onClose}
+              className="w-full py-3 px-4 bg-gradient-to-r from-[#0B6EC9] to-[#095396] hover:from-[#095396] hover:to-[#084B87] text-white font-semibold rounded-xl shadow-md transition-all duration-300"
+            >
+              Close
+            </motion.button>
+          </div>
+        </motion.div>
+      </motion.div>
     );
   };
 
   return (
-    <div className="absolute flex flex-col w-[90%] h-[80%] bg-[#E6F0F9] border-[1px] border-[#062341] mt-[6%] items-center justify-center p-8 rounded-lg shadow-2xl">
-      <div className="bg-white rounded-lg shadow-lg p-6 xl:w-[100%] xl:h-[100%] 2xl:w-[80%] 2xl:h-[80%] calendar-container">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <div className="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
-              <span className="text-sm">Upcoming Appointment</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-4 h-4 bg-gray-400 rounded-full mr-2"></div>
-              <span className="text-sm">Past Appointment</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-between items-center mb-6">
+    <div className="bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
+      <div className="calendar-container p-6 space-y-6">
+        <div className="flex items-center justify-between">
           <button
             onClick={prevMonth}
             className="text-[#0B6EC9] hover:text-[#094a86] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-full p-2"
           >
-            <FaChevronLeft className="xl:h-4 xl:w-4 2xl:h-6 2xl:w-6" />
+            <FaChevronLeft className="h-5 w-5" />
           </button>
-          <div className="flex flex-col items-center relative">
-            <div className="flex items-center">
-              <div className="relative">
-                <button
-                  onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-                  className="xl:text-lg 2xl:text-2xl font-extrabold text-[#062341] cursor-pointer bg-transparent border-none appearance-none pr-8 flex items-center focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
+
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowMonthDropdown(!showMonthDropdown)}
+                className="flex items-center gap-2 px-3 py-1.5 text-base font-semibold text-[#062341] bg-white rounded-xl border border-[#0B6EC9]/10 hover:bg-[#F8FAFC] transition-all duration-300"
+              >
+                {months[currentDate.getMonth()]}
+                <FaChevronDown className="h-3.5 w-3.5 text-[#0B6EC9]" />
+              </motion.button>
+              {showMonthDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full mt-2 bg-white rounded-xl shadow-lg border border-[#0B6EC9]/10 p-2 z-10 w-48 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent"
                 >
-                  {months[currentDate.getMonth()]}
-                  <FaChevronDown className="xl:h-4 xl:w-4 xl:ml-1 2xl:h-5 2xl:w-5 2xl:ml-2" />
-                </button>
-                {showMonthDropdown && (
-                  <div className="absolute z-10 mt-1 w-48 bg-white shadow-lg max-h-56 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                    {months.map((month, index) => (
-                      <div
-                        key={month}
-                        className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-[#0B6EC9] hover:text-white ${
-                          currentDate.getMonth() === index
-                            ? "bg-[#E6F0F9] text-[#0B6EC9]"
-                            : "text-gray-900"
-                        }`}
-                        onClick={() => changeMonth(index)}
-                      >
-                        {month}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <h2
-                className="xl:text-lg 2xl:text-2xl font-extrabold text-[#062341] cursor-pointer ml-2 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-lg p-2"
+                  {months.map((month, index) => (
+                    <motion.div
+                      key={month}
+                      whileHover={{ scale: 1.02 }}
+                      className="cursor-pointer px-3 py-2 rounded-lg font-medium text-[#062341] hover:bg-[#0B6EC9]/10 transition-all duration-300"
+                      onClick={() => changeMonth(index)}
+                    >
+                      {month}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+
+            <div className="relative">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowYearSelector(!showYearSelector)}
+                className="flex items-center gap-2 px-3 py-1.5 text-base font-semibold text-[#062341] bg-white rounded-xl border border-[#0B6EC9]/10 hover:bg-[#F8FAFC] transition-all duration-300"
               >
                 {currentDate.getFullYear()}
-              </h2>
-            </div>
-            {showYearSelector && (
-              <div className="absolute mt-12 bg-white shadow-lg rounded-lg p-2 z-10">
-                <div className="flex items-center mb-2">
-                  <input
-                    type="text"
-                    value={yearInput}
-                    onChange={handleYearInputChange}
-                    onKeyDown={handleYearInputKeyDown}
-                    placeholder="Type a year"
-                    className="p-1 border rounded font-semibold text-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]"
-                  />
-                  <button
-                    onClick={() => setShowYearSelector(false)}
-                    className="ml-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-                {Array.from(
-                  { length: 10 },
-                  (_, i) => currentDate.getFullYear() - 5 + i
-                ).map((year) => (
-                  <div
-                    key={year}
-                    className="cursor-pointer hover:bg-[#0B6EC9] hover:text-white p-1 rounded font-bold text-lg"
-                    onClick={() => changeYear(year)}
-                  >
-                    {year}
+                <FaChevronDown className="h-3.5 w-3.5 text-[#0B6EC9]" />
+              </motion.button>
+              {showYearSelector && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full mt-2 bg-white rounded-xl shadow-lg border border-[#0B6EC9]/10 p-3 z-10 w-56"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <input
+                      type="text"
+                      value={yearInput}
+                      onChange={handleYearInputChange}
+                      onKeyDown={handleYearInputKeyDown}
+                      placeholder="Enter year..."
+                      className="w-full px-3 py-1.5 text-base font-medium text-[#062341] bg-[#F8FAFC] rounded-lg border border-[#0B6EC9]/10 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20 transition-all duration-300"
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowYearSelector(false)}
+                      className="p-1.5 rounded-lg text-[#062341]/70 hover:bg-[#0B6EC9]/10 transition-all duration-300"
+                    >
+                      <FaTimes className="w-4 h-4" />
+                    </motion.button>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent">
+                    {Array.from(
+                      { length: 10 },
+                      (_, i) => currentDate.getFullYear() - 5 + i
+                    ).map((year) => (
+                      <motion.div
+                        key={year}
+                        whileHover={{ scale: 1.02 }}
+                        className="cursor-pointer px-3 py-1.5 rounded-lg font-medium text-[#062341] hover:bg-[#0B6EC9]/10 transition-all duration-300 text-center"
+                        onClick={() => changeYear(year)}
+                      >
+                        {year}
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
           </div>
+
           <button
             onClick={nextMonth}
             className="text-[#0B6EC9] hover:text-[#094a86] transition-colors focus:outline-none focus:ring-2 focus:ring-[#0B6EC9] rounded-full p-2"
           >
-            <FaChevronRight className="xl:h-4 xl:w-4 2xl:h-6 2xl:w-6" />
+            <FaChevronRight className="h-5 w-5" />
           </button>
         </div>
-        <div className="grid grid-cols-7 xl:gap-0 2xl:gap-2">
+
+        <div className="grid grid-cols-7 gap-2">
           {weekdays.map((day, index) => (
             <div
               key={day}
@@ -409,12 +436,35 @@ const AppointmentCalendar = () => {
             );
           })}
         </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-[#062341]/70">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+            <span>Past Appointments</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-green-500"></div>
+            <span>Upcoming Appointments</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full border-2 border-[#0B6EC9]"></div>
+            <span>Today</span>
+          </div>
+        </div>
+
         {selectedDate && (
-          <div className="mt-4 text-center text-lg font-semibold text-[#062341]">
-            Selected Date: {selectedDate.toLocaleDateString()}
+          <div className="mt-4 bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+            <div className="flex items-center gap-3 text-[#062341]/80">
+              <FaCalendarAlt className="text-[#0B6EC9] text-xl" />
+              <span className="font-medium">
+                Selected Date: {selectedDate.toLocaleDateString()}
+              </span>
+            </div>
           </div>
         )}
       </div>
+
       {showAppointmentModal && (
         <AppointmentModal
           appointments={selectedAppointments}

@@ -7,7 +7,10 @@ import {
   FaUserMd,
   FaPhoneAlt,
   FaClipboardList,
+  FaTimes,
+  FaSpinner,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const PendingAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -75,107 +78,139 @@ const PendingAppointment = () => {
   };
 
   return (
-    <div className="absolute w-[90%] h-[80%] bg-gradient-to-br from-[#F0F8FF] to-[#E6F0F9] mt-[6%] rounded-lg shadow-lg overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
+    <div className="min-h-[60vh] flex flex-col bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
       {loading ? (
-        <div className="flex items-center justify-center w-[100%] h-[100%] rounded-lg bg-[#F0F8FF] dark:bg-gray-800">
-          <div className="px-4 py-2 text-[16pt] font-semibold leading-none text-center text-blue-800 bg-blue-100 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+        <div className="flex items-center justify-center h-[60vh]">
+          <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
+          <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
             Loading Appointments...
-          </div>
+          </p>
         </div>
       ) : appointments.length > 0 ? (
-        appointments.map((appointment) => (
-          <div
-            className="flex h-[45%] w-[100%] mt-[2%] bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg"
-            key={appointment.appointment_id}
-          >
-            <div className="flex w-[70%] h-[100%] bg-gradient-to-r from-[#F0F8FF] to-[#E6F0F9]">
-              <div className="w-[35%] h-[100%] flex justify-center items-center p-[5%]">
-                <Image
-                  alt="profilePicture"
-                  src={appointment.counselor.counselor.profilePicture}
-                  width={130}
-                  height={130}
-                  className="w-[50px] h-[50px] xl:w-[120px] xl:h-[120px] 2xl:w-[130px] 2xl:h-[130px] rounded-full object-cover border-4 border-white shadow-lg"
-                />
+        <div className="overflow-y-auto max-h-[calc(100vh-16rem)] space-y-4 p-6 scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent hover:scrollbar-thumb-[#0B6EC9]/40">
+          {appointments.map((appointment, index) => (
+            <motion.div
+              key={appointment.appointment_id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="flex flex-col sm:flex-row items-stretch bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 overflow-hidden max-w-4xl mx-auto"
+            >
+              <div className="flex-grow p-3">
+                <div className="flex items-center gap-3">
+                  <Image
+                    priority
+                    alt="counselor picture"
+                    src={appointment.counselor.counselor.profilePicture}
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover border-2 border-[#0B6EC9]"
+                  />
+                  <div>
+                    <h3 className="text-base font-semibold text-[#062341]">
+                      {appointment.counselor.counselor.name}
+                    </h3>
+                    <p className="text-xs text-[#062341]/70">
+                      {appointment.counselor.counselor.contact}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 bg-[#F8FAFC] p-3 rounded-xl border border-[#0B6EC9]/10">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                      <FaCalendarAlt className="text-[#0B6EC9] text-base" />
+                      <span>
+                        {appointment.date_time}
+                        {new Date(appointment.raw_date).toDateString() ===
+                          new Date().toDateString() && (
+                          <span className="ml-2 text-xs font-medium text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                            Today
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                      <FaMapMarkerAlt className="text-[#0B6EC9] text-base" />
+                      <span>CTU-Admin Room 301A</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                      <FaClipboardList className="text-[#0B6EC9] text-base" />
+                      <span>{appointment.type}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col justify-center pl-[5%] gap-[8%] w-[65%] h-[100%] text-[#062341]">
-                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
-                  <FaUserMd className="text-[#0B6EC9] mr-2" />
-                  <label className="font-bold">Counselor:</label>
-                  <span className="ml-[2%] font-medium">
-                    {appointment.counselor.counselor.name}
-                  </span>
-                </div>
-                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
-                  <FaPhoneAlt className="text-[#0B6EC9] mr-2" />
-                  <label className="font-bold">Contact Info:</label>
-                  <span className="ml-[2%]">
-                    {appointment.counselor.counselor.contact}
-                  </span>
-                </div>
-                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
-                  <FaCalendarAlt className="text-[#0B6EC9] mr-2" />
-                  <label className="font-bold">Date & Time:</label>
-                  <span className="ml-[2%]">{appointment.date_time}</span>
-                </div>
-                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
-                  <FaMapMarkerAlt className="text-[#0B6EC9] mr-2" />
-                  <label className="font-bold">Location:</label>
-                  <span className="ml-[2%]">CTU-Admin Room 301A</span>
-                </div>
-                <div className="flex items-center xl:text-[9pt] 2xl:text-[12pt]">
-                  <FaClipboardList className="text-[#0B6EC9] mr-2" />
-                  <label className="font-bold">Type:</label>
-                  <span className="ml-[2%]">{appointment.type}</span>
-                </div>
+
+              <div className="flex flex-col justify-between gap-3 p-3 bg-gradient-to-br from-[#0B6EC9] to-[#095396] text-white sm:w-48">
+                <p className="text-center text-sm font-medium">
+                  Please wait for the schedule
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleCancelClick(appointment.appointment_id)}
+                  className="w-full px-3 py-1.5 bg-white text-red-600 rounded-full text-sm font-medium hover:bg-red-50 transition-all duration-300 flex items-center justify-center gap-1.5"
+                >
+                  <FaTimes className="text-xs" />
+                  Cancel
+                </motion.button>
               </div>
-            </div>
-            <div className="flex flex-col items-center justify-between w-[30%] p-[3%] bg-gradient-to-br from-[#0B6EC9] to-[#1E90FF] text-white">
-              <div className="text-center font-medium mt-4">
-                <span>Please wait for the schedule</span>
-              </div>
-              <button
-                onClick={() => handleCancelClick(appointment.appointment_id)}
-                className="w-[80%] mb-4 bg-white text-red-600 font-bold py-2 px-4 rounded-full transition-all duration-300 hover:bg-red-50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        ))
+            </motion.div>
+          ))}
+        </div>
       ) : (
-        <div className="flex items-center justify-center w-full h-full">
-          <p className="text-[18pt] font-semibold text-gray-400">
-            There are no pending appointments.
-          </p>
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="text-center">
+            <FaClipboardList className="mx-auto text-4xl text-[#0B6EC9]/40 mb-2" />
+            <p className="text-xl font-semibold text-[#062341]">
+              No pending appointments
+            </p>
+            <p className="text-sm text-[#062341]/70 mt-2">
+              Check back later for new requests
+            </p>
+          </div>
         </div>
       )}
 
+      {/* Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.95 }}
+            animate={{ scale: 1 }}
+            className="bg-white rounded-xl p-6 max-w-sm w-full"
+          >
+            <h3 className="text-lg font-semibold text-[#062341] mb-4">
               Cancel Appointment
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-[#062341]/70 mb-6">
               Are you sure you want to cancel this appointment?
             </p>
-            <div className="flex justify-end space-x-4">
-              <button
+            <div className="flex justify-end gap-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+                className="px-4 py-2 text-[#062341]/70 hover:text-[#062341] font-medium rounded-lg hover:bg-[#F8FAFC] transition-all duration-300"
               >
                 No, Keep it
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleConfirmCancel}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300"
               >
                 Yes, Cancel
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );
