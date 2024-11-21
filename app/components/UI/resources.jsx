@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import { FaHeart, FaEye } from "react-icons/fa";
+import { FaHeart, FaEye, FaSpinner, FaBookOpen } from "react-icons/fa";
 import ResourceModal from "./viewResource";
+import { motion } from "framer-motion";
 
 const ResourceFeed = () => {
   const [resources, setResources] = useState([]);
@@ -130,108 +131,145 @@ const ResourceFeed = () => {
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              Learning Resources
+            </h1>
+          </div>
+
+          <div className="p-8 sm:p-10">
+            <div className="flex-grow overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6] max-h-[calc(100vh-20rem)]">
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-100 text-red-600 p-4 rounded-xl mb-6 text-center font-medium"
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              {loading ? (
+                <div className="flex items-center justify-center w-full h-40">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex items-center gap-2 px-6 py-3 bg-[#0B6EC9]/10 text-[#0B6EC9] rounded-xl font-semibold"
+                  >
+                    <FaSpinner className="animate-spin h-5 w-5" />
+                    Loading Resources...
+                  </motion.div>
+                </div>
+              ) : resources.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center h-40 text-center"
+                >
+                  <FaBookOpen className="text-4xl text-[#0B6EC9]/30 mb-4" />
+                  <h3 className="text-xl font-semibold text-[#062341]">
+                    No Resources Found
+                  </h3>
+                  <p className="text-[#062341]/70 mt-2">
+                    Check back later for new resources
+                  </p>
+                </motion.div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {resources.map((resource, index) => (
+                    <motion.div
+                      key={resource.resource_id}
+                      ref={
+                        index === resources.length - 1
+                          ? lastResourceElementRef
+                          : null
+                      }
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden"
+                    >
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                              {resource.title.charAt(0)}
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-[#062341] line-clamp-1">
+                                {resource.title}
+                              </h3>
+                              <p className="text-sm text-[#062341]/70">
+                                {formatDate(resource.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => toggleLike(resource.resource_id)}
+                            className="p-2 rounded-full hover:bg-red-50 transition-all duration-200"
+                          >
+                            <FaHeart
+                              className={`${
+                                likedResources.has(resource.resource_id)
+                                  ? "text-red-500"
+                                  : "text-red-300"
+                              } hover:text-red-500 transition-colors duration-200`}
+                              size={20}
+                            />
+                          </motion.button>
+                        </div>
+
+                        {resource.img_path && (
+                          <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
+                            <Image
+                              src={resource.img_path}
+                              alt={resource.title}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+
+                        <p className="text-[#062341]/70 text-sm line-clamp-3 mb-4">
+                          {resource.description}
+                        </p>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => openResourceModal(resource)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                        >
+                          <FaEye />
+                          View Resource
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
       {selectedResource && (
         <ResourceModal
           resource={selectedResource}
           onClose={closeResourceModal}
         />
       )}
-      <div className="resourceContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center pt-[3%] gap-[5%] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6]">
-        <h2 className="text-3xl font-bold mb-6 text-[#062341]">Resources</h2>
-        {error && (
-          <p className="text-red-500 bg-red-100 p-3 rounded-lg mb-4 w-[90%] text-center">
-            {error}
-          </p>
-        )}
-        <div className="w-full px-[5%] flex flex-col gap-6">
-          {resources.map((resource, index) => (
-            <div
-              key={resource.resource_id}
-              ref={
-                index === resources.length - 1 ? lastResourceElementRef : null
-              }
-              className="bg-white p-6 rounded-xl shadow-lg w-full mb-6 transition-all duration-300 hover:shadow-xl relative"
-            >
-              <button
-                onClick={() => toggleLike(resource.resource_id)}
-                className="absolute top-4 right-4 p-3 rounded-full bg-white shadow-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-110"
-              >
-                <FaHeart
-                  className={`${
-                    likedResources.has(resource.resource_id)
-                      ? "text-red-600"
-                      : "text-red-400"
-                  } hover:text-red-600 transition-colors duration-200`}
-                  size={24}
-                />
-              </button>
-
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-blue-500 rounded-full mr-4 flex items-center justify-center text-white font-bold text-xl">
-                  {resource.title.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">
-                    {resource.title}
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    {formatDate(resource.createdAt)}
-                  </p>
-                </div>
-              </div>
-              {resource.img_path && (
-                <div className="mb-4 relative w-full h-72 rounded-lg overflow-hidden">
-                  <Image
-                    src={resource.img_path}
-                    alt={resource.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-              )}
-              <div className="flex justify-between items-center mt-4">
-                {resource.link && (
-                  <a
-                    href={resource.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors duration-200 inline-block"
-                  >
-                    Learn More
-                  </a>
-                )}
-                <button
-                  onClick={() => openResourceModal(resource)}
-                  className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors duration-200 inline-flex items-center"
-                >
-                  <FaEye className="mr-2" /> View
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-        {loading && (
-          <div className="flex items-center justify-center w-full py-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          </div>
-        )}
-        {!loading && !hasMore && (
-          <p className="text-gray-600 italic mb-4">
-            No more resources to load.
-          </p>
-        )}
-        {!loading && hasMore && (
-          <button
-            onClick={loadMoreResources}
-            className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition-colors mb-6 font-semibold"
-          >
-            Load More Resources
-          </button>
-        )}
-      </div>
-    </>
+    </motion.div>
   );
 };
 
