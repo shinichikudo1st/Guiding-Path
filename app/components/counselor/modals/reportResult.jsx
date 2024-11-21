@@ -61,7 +61,7 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
   };
 
   return (
-    <div className="imHere w-screen h-screen fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 translate-x-[-22.55%] translate-y-[-12.8%]">
+    <div className="imHere w-screen h-screen fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-xl p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="bg-[#0B6EC9] text-white p-6 rounded-t-lg shadow-md mb-8">
           <div className="flex items-center justify-between">
