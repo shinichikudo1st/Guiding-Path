@@ -1,10 +1,13 @@
 import { useState } from "react";
 import DOMPurify from "dompurify";
+import { motion } from "framer-motion";
 import {
   FaClipboardList,
   FaSearch,
   FaCommentAlt,
   FaPaperPlane,
+  FaTimes,
+  FaSpinner,
 } from "react-icons/fa";
 import Image from "next/image";
 
@@ -115,185 +118,180 @@ const ReferStudent = () => {
   };
 
   return (
-    <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto relative scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#e2eefe]">
-      <h2 className="text-3xl font-bold text-[#062341] mb-6">
-        Student Referral Form
-      </h2>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden p-6 sm:p-8"
+    >
       {notification.message && (
-        <div
-          className={`absolute top-4 right-4 mb-4 p-2 rounded ${
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className={`absolute top-4 right-4 p-3 rounded-lg shadow-md ${
             notification.type === "success"
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-red-100 text-red-700 border border-red-200"
           }`}
         >
           {notification.message}
-        </div>
+        </motion.div>
       )}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex flex-col relative">
-          <label
-            htmlFor="search"
-            className="font-semibold text-base text-[#062341] mb-2 flex items-center"
-          >
-            <FaSearch className="mr-3" /> Search Student
-          </label>
-          <input
-            type="text"
-            value={search}
-            onChange={handleSearchChange}
-            className="outline-none bg-white border px-3 py-2 border-[#062341] rounded focus:border-[#0B6EC9] transition duration-300 text-base"
-            placeholder="Search for a student..."
-          />
 
-          {/* Search Results Dropdown */}
-          {showResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-              {searchResults.map((student) => (
-                <div
-                  key={student.user_id}
-                  onClick={() => selectStudent(student)}
-                  className="flex items-center p-3 hover:bg-[#f8fafc] cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors duration-150"
-                >
-                  <div className="flex-shrink-0">
-                    <Image
-                      src={student.profilePicture}
-                      alt="Profile"
-                      width={32}
-                      height={32}
-                      className="rounded-full border border-[#0B6EC9]"
-                    />
-                  </div>
-                  <div className="ml-3 flex-grow">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-[#062341]">
-                        {student.name}
-                      </span>
-                      <span className="text-xs bg-[#E6F0F9] text-[#0B6EC9] px-2 py-1 rounded-full">
-                        Student
-                      </span>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Search Student Section */}
+        <div className="space-y-4">
+          <label className="flex items-center gap-2 text-sm font-medium text-[#062341]/70">
+            <FaSearch className="text-[#0B6EC9]" />
+            Search Student
+          </label>
+          <div className="relative">
+            <motion.input
+              whileFocus={{ scale: 1.01 }}
+              type="text"
+              value={search}
+              onChange={handleSearchChange}
+              className="w-full px-4 py-3 rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9] focus:ring-1 focus:ring-[#0B6EC9] transition-all duration-300 outline-none bg-white/50"
+              placeholder="Search for a student..."
+            />
+
+            {/* Search Results Dropdown */}
+            {showResults && searchResults.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute w-full mt-2 bg-white rounded-xl shadow-lg border border-[#0B6EC9]/10 overflow-hidden z-10"
+              >
+                {searchResults.map((student) => (
+                  <motion.div
+                    key={student.user_id}
+                    whileHover={{ backgroundColor: "#F8FAFC" }}
+                    onClick={() => selectStudent(student)}
+                    className="p-4 cursor-pointer border-b border-[#0B6EC9]/10 last:border-b-0"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 relative rounded-full overflow-hidden border-2 border-[#0B6EC9]">
+                        <Image
+                          src={student.profilePicture}
+                          alt="Profile"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-[#062341]">
+                            {student.name}
+                          </span>
+                          <span className="text-xs bg-[#0B6EC9]/10 text-[#0B6EC9] px-3 py-1 rounded-full font-medium">
+                            Student
+                          </span>
+                        </div>
+                        <span className="text-sm text-[#062341]/70">
+                          {student.email}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-sm text-gray-500">
-                      {student.email}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {searchLoading && (
-                <div className="p-3 text-center text-gray-500">
-                  <div className="animate-pulse">Searching...</div>
-                </div>
-              )}
-            </div>
-          )}
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </div>
         </div>
 
         {/* Selected Student Display */}
         {selectedStudent && (
-          <div className="bg-white p-4 rounded-lg border-l-4 border-[#0B6EC9] shadow-md">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-3">
-                <Image
-                  src={selectedStudent.profilePicture}
-                  alt="Profile Picture"
-                  width={40}
-                  height={40}
-                  className="rounded-full border-2 border-[#0B6EC9] shadow-sm"
-                />
-                <div className="flex flex-col">
-                  <span className="font-medium text-[#062341]">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl p-4 border-l-4 border-[#0B6EC9] shadow-md"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 relative rounded-full overflow-hidden border-2 border-[#0B6EC9]">
+                  <Image
+                    src={selectedStudent.profilePicture}
+                    alt="Profile"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-[#062341]">
                     {selectedStudent.name}
-                  </span>
-                  <span className="text-sm text-[#0B6EC9]">
+                  </h3>
+                  <p className="text-sm text-[#0B6EC9]">
                     {selectedStudent.email}
-                  </span>
+                  </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedStudent(null);
-                  setSearch("");
-                }}
-                className="text-gray-400 hover:text-red-500 transition-colors p-1"
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedStudent(null)}
+                className="text-red-500 hover:text-red-600 transition-colors"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                <FaTimes className="w-5 h-5" />
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="reason"
-            className="font-semibold text-base text-[#062341] mb-2 flex items-center"
-          >
-            <FaClipboardList className="mr-3" /> Reason for Referring
-          </label>
-          <select
-            id="reason"
-            name="reason"
-            value={formData.reason}
-            onChange={handleChange}
-            required
-            className="outline-none bg-white border px-3 py-2 border-[#062341] rounded focus:border-[#0B6EC9] transition duration-300 text-base"
-          >
-            <option value="">Select a reason</option>
-            <option value="emotional_support">Emotional Support</option>
-            <option value="encouragement">Encouragement</option>
-            <option value="stress_management">Stress Management</option>
-            <option value="career_guidance">Career Guidance</option>
-          </select>
+        {/* Form Fields */}
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-[#062341]/70">
+              <FaClipboardList className="text-[#0B6EC9]" />
+              Reason for Referral
+            </label>
+            <motion.textarea
+              whileFocus={{ scale: 1.01 }}
+              name="reason"
+              value={formData.reason}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9] focus:ring-1 focus:ring-[#0B6EC9] transition-all duration-300 outline-none bg-white/50 min-h-[100px] resize-none"
+              placeholder="Enter the reason for referral..."
+            />
+          </div>
+
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-[#062341]/70">
+              <FaCommentAlt className="text-[#0B6EC9]" />
+              Additional Notes
+            </label>
+            <motion.textarea
+              whileFocus={{ scale: 1.01 }}
+              name="additionalNotes"
+              value={formData.additionalNotes}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9] focus:ring-1 focus:ring-[#0B6EC9] transition-all duration-300 outline-none bg-white/50 min-h-[100px] resize-none"
+              placeholder="Enter any additional notes..."
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="additionalNotes"
-            className="font-semibold text-base text-[#062341] mb-2 flex items-center"
-          >
-            <FaCommentAlt className="mr-3" /> Additional Notes
-          </label>
-          <textarea
-            id="additionalNotes"
-            name="additionalNotes"
-            value={formData.additionalNotes}
-            onChange={handleChange}
-            rows="4"
-            className="outline-none bg-white border px-3 py-2 border-[#062341] rounded focus:border-[#0B6EC9] transition duration-300 resize-none text-base"
-            placeholder="Enter any additional notes here..."
-          ></textarea>
-        </div>
-
-        <button
-          type="submit"
+        {/* Submit Button */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           disabled={isSubmitting}
-          className={`bg-[#0B6EC9] absolute bottom-4 text-white font-bold py-3 px-6 rounded-full hover:bg-[#095396] transition duration-300 self-center flex items-center text-base ${
-            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className="w-full bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl py-3 px-6 font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
-            "Submitting..."
+            <>
+              <FaSpinner className="animate-spin h-5 w-5" />
+              Submitting...
+            </>
           ) : (
             <>
-              <FaPaperPlane className="mr-3" />
+              <FaPaperPlane className="h-5 w-5" />
               Submit Referral
             </>
           )}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
