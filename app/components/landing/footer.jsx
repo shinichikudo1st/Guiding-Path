@@ -13,9 +13,9 @@ const Footer = () => {
               <Image
                 src={ctuLogo}
                 alt="CTU Logo"
-                width={40}
-                height={40}
-                className="brightness-0 invert"
+                width={48}
+                height={48}
+                className="rounded-full relative"
               />
               <span className="text-xl font-bold">Guiding Path</span>
             </div>

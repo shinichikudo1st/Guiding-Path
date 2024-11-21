@@ -7,7 +7,13 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";
 
-const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
+const LoginModal = ({
+  login,
+  signup,
+  toggleLogin,
+  toggleSignup,
+  closeModal,
+}) => {
   const [error, setError] = useState(null);
   const [logging, setLogging] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -140,7 +146,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
     },
     exit: {
       opacity: 0,
-      y: -20,
+      y: 20,
       scale: 0.95,
       transition: {
         duration: 0.2,
@@ -171,6 +177,26 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             exit="exit"
             style={{ zIndex: 42 }}
           >
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={closeModal}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+            >
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </motion.button>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -182,7 +208,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
                 alt="CTU Logo"
                 width={80}
                 height={80}
-                className="drop-shadow-lg"
+                className="rounded-full drop-shadow-lg"
               />
             </motion.div>
             <motion.h2
@@ -316,6 +342,26 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
             exit="exit"
             style={{ zIndex: 42 }}
           >
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={closeModal}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+            >
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </motion.button>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -327,7 +373,7 @@ const LoginModal = ({ login, signup, toggleLogin, toggleSignup }) => {
                 alt="CTU Logo"
                 width={80}
                 height={80}
-                className="drop-shadow-lg"
+                className="rounded-full drop-shadow-lg"
               />
             </motion.div>
             <motion.h2

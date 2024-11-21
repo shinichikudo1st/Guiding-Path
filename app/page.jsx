@@ -21,6 +21,10 @@ export default function Home() {
     setSignupFlag(true);
     setLoginFlag(false);
   };
+  const closeModal = () => {
+    setLoginFlag(false);
+    setSignupFlag(false);
+  };
 
   return (
     <main className="min-h-screen w-full bg-gradient-to-b from-[#D9E7F3] to-white overflow-hidden">
@@ -31,6 +35,7 @@ export default function Home() {
         signup={signupFlag}
         toggleLogin={toggleLogin}
         toggleSignup={toggleSignup}
+        closeModal={closeModal}
       />
       <Hero onGetStarted={toggleSignup} />
       <Features />

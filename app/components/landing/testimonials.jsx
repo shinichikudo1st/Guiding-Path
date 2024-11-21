@@ -6,23 +6,23 @@ const testimonials = [
   {
     content:
       "The guidance I received helped me improve my academic performance significantly.",
-    author: "Maria Santos",
-    role: "Computer Science Student",
-    image: "/student1.jpg",
+    author: "Carlito Po Geh",
+    role: "Information Systems Student",
+    image: "/carlito.jpg",
   },
   {
     content:
       "An excellent platform that makes counseling services easily accessible.",
-    author: "John Smith",
-    role: "Engineering Student",
-    image: "/student2.jpg",
+    author: "Vaughn Andre Guapo",
+    role: "Information Systems Student",
+    image: "/vaughn.jpg",
   },
   {
     content:
       "The scheduling system is efficient and the counselors are very helpful.",
-    author: "Sarah Johnson",
-    role: "Architecture Student",
-    image: "/student3.jpg",
+    author: "Nino Etchon Hansam",
+    role: "Information Systems Student",
+    image: "/etchon.jpg",
   },
 ];
 
