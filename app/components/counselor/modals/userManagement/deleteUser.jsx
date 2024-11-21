@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FaTimes, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
+import { FaTimes, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
 
-const DeleteUser = ({ onClose, userID }) => {
+const DeleteUser = ({ onClose, userID, onSuccess }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,15 +12,16 @@ const DeleteUser = ({ onClose, userID }) => {
     setError("");
 
     try {
-      const response = await fetch(``, {
+      const response = await fetch(`/api/deleteUser`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ counselorPassword: password }),
+        body: JSON.stringify({ counselorPassword: password, userID: userID }),
       });
 
       if (response.ok) {
+        onSuccess();
         onClose();
       } else {
         const data = await response.json();
@@ -36,7 +37,7 @@ const DeleteUser = ({ onClose, userID }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-orange-500"></div>
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-800"></div>
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -44,12 +45,12 @@ const DeleteUser = ({ onClose, userID }) => {
           <FaTimes size={24} />
         </button>
         <div className="flex items-center mb-6">
-          <FaExclamationTriangle className="text-red-500 mr-4" size={32} />
+          <FaExclamationTriangle className="text-red-600 mr-4" size={32} />
           <h2 className="text-3xl font-bold text-gray-800">Delete User</h2>
         </div>
         <p className="text-gray-600 mb-6">
-          Are you sure you want to delete this user? This action cannot be
-          undone.
+          Warning: This action cannot be undone. All user data will be
+          permanently deleted from the system.
         </p>
         <form onSubmit={handleDelete} className="space-y-4">
           <div>
@@ -64,11 +65,11 @@ const DeleteUser = ({ onClose, userID }) => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
               required
             />
           </div>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
+          {error && <div className="text-red-600 text-sm">{error}</div>}
           <div className="flex justify-end space-x-4">
             <button
               type="button"
@@ -90,7 +91,7 @@ const DeleteUser = ({ onClose, userID }) => {
               {isLoading ? (
                 <FaSpinner className="animate-spin inline-block mr-2" />
               ) : null}
-              {isLoading ? "Deleting..." : "Delete User"}
+              {isLoading ? "Deleting..." : "Delete Permanently"}
             </button>
           </div>
         </form>

@@ -39,7 +39,7 @@ const TeacherDashboard = () => {
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
-      <UserNavbar />
+      <UserNavbar profile={() => toggleComponent("profile")} />
       <QuickView />
       <TeacherSidebar
         profile={() => toggleComponent("profile")}

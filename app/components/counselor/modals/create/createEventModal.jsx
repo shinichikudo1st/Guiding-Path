@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { FaTimes, FaImage } from "react-icons/fa";
+import {
+  FaTimes,
+  FaImage,
+  FaLink,
+  FaUpload,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const EventModal = ({ closeButton }) => {
   const [title, setTitle] = useState("");
@@ -54,137 +61,193 @@ const EventModal = ({ closeButton }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen xl:translate-x-[-22.55%] xl:translate-y-[-16%] 2xl:translate-y-[-12.8%] 2xl:translate-x-[-22.55%]"></div>
-      <div className="relative bg-white w-full max-w-2xl mx-auto p-12 rounded-lg shadow-2xl z-50 max-h-[90vh] overflow-y-auto">
-        <button
-          onClick={closeButton}
-          className="absolute top-6 right-6 text-gray-500 hover:text-gray-700"
-        >
-          <FaTimes size={24} />
-        </button>
-        <h2 className="text-3xl font-semibold mb-8 text-center">
-          Create Event
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <input
-            type="datetime-local"
-            value={dateTime}
-            onChange={(e) => setDateTime(e.target.value)}
-            className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <input
-            type="url"
-            placeholder="Link (optional)"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-            className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div>
-            <label
-              htmlFor="department"
-              className="block text-lg font-medium text-gray-700 mb-2"
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-xl"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">Create New Event</h2>
+            <button
+              onClick={closeButton}
+              className="text-white/80 hover:text-white transition duration-300"
             >
-              Department Access (optional)
-            </label>
-            <select
-              id="department"
-              value={forDepartment}
-              onChange={(e) => setForDepartment(e.target.value)}
-              className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Departments</option>
-              <option value="College of Education">College of Education</option>
-              <option value="College of Technology">
-                College of Technology
-              </option>
-              <option value="College of Engineering">
-                College of Engineering
-              </option>
-              <option value="College of Arts and Sciences">
-                College of Arts and Sciences
-              </option>
-              <option value="College of Management">
-                College of Management and Entrepreneurship
-              </option>
-              <option value="College of CCICT">
-                College of Computer Information and Communications Technology
-              </option>
-            </select>
+              <FaTimes size={24} />
+            </button>
           </div>
-          <div>
-            <label
-              htmlFor="image"
-              className="block text-lg font-medium text-gray-700 mb-2"
-            >
-              Image (optional)
-            </label>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="image"
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300"
-              >
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Preview"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <FaImage className="w-10 h-10 mb-3 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG or GIF (MAX. 800x400px)
-                    </p>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  id="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
+        </div>
+
+        {/* Content */}
+        <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-[#062341] mb-1">
+                Title
               </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                required
+                placeholder="Enter event title"
+              />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#062341] mb-1">
+                Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows="4"
+                className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                required
+                placeholder="Enter event description"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  value={dateTime}
+                  onChange={(e) => setDateTime(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Location
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full p-2.5 pl-10 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                    required
+                    placeholder="Enter event location"
+                  />
+                  <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0B6EC9]/40" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#062341] mb-1">
+                Related Link (optional)
+              </label>
+              <div className="relative">
+                <input
+                  type="url"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  className="w-full p-2.5 pl-10 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                  placeholder="https://"
+                />
+                <FaLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#0B6EC9]/40" />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#062341] mb-1">
+                Department Access
+              </label>
+              <select
+                value={forDepartment}
+                onChange={(e) => setForDepartment(e.target.value)}
+                className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+              >
+                <option value="">All Departments</option>
+                <option value="College of Education">
+                  College of Education
+                </option>
+                <option value="College of Technology">
+                  College of Technology
+                </option>
+                <option value="College of Engineering">
+                  College of Engineering
+                </option>
+                <option value="College of Arts and Sciences">
+                  College of Arts and Sciences
+                </option>
+                <option value="College of Management">
+                  College of Management and Entrepreneurship
+                </option>
+                <option value="College of CCICT">College of CCICT</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#062341] mb-2">
+                Image (optional)
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="h-32 w-32 rounded-lg overflow-hidden bg-gray-50 border border-[#0B6EC9]/20">
+                  {previewImage ? (
+                    <img
+                      src={previewImage}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-gray-50">
+                      <FaImage className="text-[#0B6EC9]/40 text-xl" />
+                    </div>
+                  )}
+                </div>
+                <label className="flex items-center px-4 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-gray-50 cursor-pointer transition-all duration-300">
+                  <FaUpload className="mr-2" />
+                  Upload Image
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </label>
+              </div>
+              <p className="mt-2 text-xs text-[#062341]/60">
+                Supported formats: PNG, JPG or GIF (Max: 800x400px)
+              </p>
+            </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-[#0B6EC9]/10 p-6 bg-gray-50">
+          <div className="flex justify-end gap-3">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={closeButton}
+              className="px-4 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-gray-50 transition-all duration-300"
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            >
+              {isLoading ? "Creating..." : "Create Event"}
+            </motion.button>
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
-          >
-            {isLoading ? "Creating..." : "Create Event"}
-          </button>
-        </form>
-      </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

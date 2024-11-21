@@ -30,4 +30,15 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .bg-gradient-brand {
+    background: linear-gradient(135deg, #0b6ec9 0%, #062341 100%);
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #0b6ec9 0%, #062341 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }

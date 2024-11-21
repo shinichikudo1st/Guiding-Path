@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AiFillBook, AiFillEye } from "react-icons/ai";
 import { FaSpinner } from "react-icons/fa";
 import TodayAppointmentSingle from "./todayAppointmentSingle";
+import { motion } from "framer-motion";
 
 const ShowAppointmentToday = () => {
   const [appointments, setAppointments] = useState([]);
@@ -51,68 +52,77 @@ const ShowAppointmentToday = () => {
           appointment={singleAppointment}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center h-full">
+          <div className="flex items-center justify-center h-[60vh]">
             <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
             <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
               Loading Appointments...
             </p>
           </div>
         ) : appointments.length > 0 ? (
-          <div className="space-y-4 p-4">
+          <div className="space-y-4 p-6">
             {appointments.map((appointment, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="flex items-center p-4 bg-[#F0F7FF] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5"
               >
-                <div className="flex-shrink-0 mr-4">
+                <div className="flex-shrink-0">
                   <Image
                     alt="Profile Picture"
                     src={appointment.student.student.profilePicture}
-                    width={64}
-                    height={64}
-                    className="rounded-full object-cover border-2 border-blue-500"
+                    width={56}
+                    height={56}
+                    className="rounded-full object-cover border-2 border-[#0B6EC9]"
                   />
                 </div>
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-900">
+                <div className="flex-grow text-center sm:text-left">
+                  <h3 className="text-lg font-semibold text-[#062341]">
                     {appointment.student.student.name}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[#062341]/70">
                     {appointment.student.student.email}
                   </p>
                 </div>
-                <div className="flex-shrink-0 text-right">
-                  <p className="text-sm font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                <div className="flex-shrink-0 flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <p className="text-sm font-medium text-red-600 bg-red-100 px-3 py-1 rounded-full text-center">
                     {appointment.date_time}
                   </p>
-                  <div className="mt-2 space-x-2">
-                    <button
+                  <div className="flex justify-center gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() =>
                         specificAppointment(appointment.appointment_id)
                       }
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-150"
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-[#0B6EC9] bg-[#0B6EC9]/10 rounded-full hover:bg-[#0B6EC9]/20 transition-all duration-300"
                     >
                       <AiFillEye className="mr-1" />
                       View
-                    </button>
-                    <button className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-colors duration-150">
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-all duration-300"
+                    >
                       <AiFillBook className="mr-1" />
                       Set
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="flex items-center justify-center w-full h-full">
+          <div className="flex items-center justify-center h-[60vh]">
             <div className="text-center">
-              <p className="text-xl font-semibold text-gray-600">
+              <p className="text-xl font-semibold text-[#062341]">
                 No appointments for today
               </p>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-[#062341]/70 mt-2">
                 Check back later or schedule new appointments
               </p>
             </div>

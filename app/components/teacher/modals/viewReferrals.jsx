@@ -13,26 +13,49 @@ const ViewReferrals = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [message, setMessage] = useState("");
+
+  const fetchReferrals = async () => {
+    try {
+      const response = await fetch("/api/getReferrals");
+      if (!response.ok) {
+        throw new Error("Failed to fetch referrals");
+      }
+      const data = await response.json();
+      setReferrals(data);
+      setFilteredReferrals(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchReferrals = async () => {
-      try {
-        const response = await fetch("/api/getReferrals");
-        if (!response.ok) {
-          throw new Error("Failed to fetch referrals");
-        }
-        const data = await response.json();
-        setReferrals(data);
-        setFilteredReferrals(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchReferrals();
   }, []);
+
+  const handleCancelReferral = async (referralId) => {
+    try {
+      const response = await fetch(`/api/cancelReferral?id=${referralId}`, {
+        method: "PUT",
+      });
+
+      if (response.ok) {
+        setMessage({
+          type: "success",
+          content: "Referral cancelled successfully!",
+        });
+        setTimeout(() => {
+          setMessage("");
+        }, 1000);
+      }
+    } catch (error) {
+      setError("Error cancelling referral: " + error.message);
+    } finally {
+      fetchReferrals();
+    }
+  };
 
   useEffect(() => {
     if (statusFilter === "all") {
@@ -66,6 +89,10 @@ const ViewReferrals = () => {
       case "closed":
       case "completed":
         return "bg-gray-200 text-gray-700";
+      case "rejected":
+        return "bg-red-200 text-red-800";
+      case "cancelled":
+        return "bg-gray-200 text-gray-700";
       default:
         return "bg-gray-200 text-gray-800";
     }
@@ -80,6 +107,44 @@ const ViewReferrals = () => {
 
   return (
     <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#E6F0F9]">
+      {message && (
+        <div
+          className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform ${
+            message.type === "success"
+              ? "bg-green-100 text-green-800 border-l-4 border-green-500"
+              : "bg-red-100 text-red-800 border-l-4 border-red-500"
+          }`}
+        >
+          <div className="flex items-center">
+            {message.type === "success" ? (
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            )}
+            <p className="font-medium">{message.content}</p>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-[#062341] mb-4 md:mb-0">
           View Referrals
@@ -142,7 +207,15 @@ const ViewReferrals = () => {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 flex justify-end items-center pt-4 border-t border-gray-200">
+              <div className="mt-4 flex justify-between items-center pt-4 border-t border-gray-200">
+                {referral.status === "pending" && (
+                  <button
+                    onClick={() => handleCancelReferral(referral.referral_id)}
+                    className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
+                  >
+                    Cancel
+                  </button>
+                )}
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
                     referral.status

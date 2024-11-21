@@ -37,6 +37,13 @@ export async function POST(request) {
       },
     });
 
+    if (user.status === "archived") {
+      return NextResponse.json(
+        { message: "User is archived" },
+        { status: 400 }
+      );
+    }
+
     const passwordMatched = await bcrypt.compare(password, user.hashedPassword);
 
     if (!passwordMatched) {

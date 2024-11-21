@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
-import { FaImage } from "react-icons/fa";
+import {
+  FaTimes,
+  FaEdit,
+  FaTrash,
+  FaUpload,
+  FaLink,
+  FaCalendar,
+  FaClock,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -82,198 +92,250 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-80 h-screen w-screen translate-x-[-22.55%] translate-y-[-16%]"></div>
-      <div className="relative bg-white w-full max-w-4xl mx-auto p-16 rounded-lg shadow-2xl z-50">
-        <button
-          onClick={closeButton}
-          className="absolute top-6 right-6 text-gray-500 hover:text-gray-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-8 w-8"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-        <h2 className="text-4xl font-semibold mb-8 text-center text-[#0B6EC9]">
-          {isEditing ? (
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-center"
-            />
-          ) : (
-            currentEvent.title
-          )}
-        </h2>
-        <div className="space-y-8">
-          <p className="text-xl text-[#818487]">
-            <strong>Description:</strong>{" "}
-            {isEditing ? (
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full"
-              />
-            ) : (
-              currentEvent.description
-            )}
-          </p>
-          <p className="text-xl text-[#818487]">
-            <strong>Date & Time:</strong>{" "}
-            {isEditing ? (
-              <input
-                type="datetime-local"
-                value={new Date(dateTime).toISOString().slice(0, 16)}
-                onChange={(e) => setDateTime(e.target.value)}
-                className="w-full"
-              />
-            ) : (
-              new Date(currentEvent.date_time).toLocaleString()
-            )}
-          </p>
-          <p className="text-xl text-[#818487]">
-            <strong>Location:</strong>{" "}
-            {isEditing ? (
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full"
-              />
-            ) : (
-              currentEvent.location
-            )}
-          </p>
-          {currentEvent.link && (
-            <p className="text-xl text-[#818487]">
-              <strong>Link:</strong>{" "}
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  className="w-full"
-                />
-              ) : (
-                <a
-                  href={currentEvent.link}
-                  className="text-blue-500 hover:underline"
-                >
-                  {currentEvent.link}
-                </a>
-              )}
-            </p>
-          )}
-          <p className="text-xl text-[#818487]">
-            <strong>Department Access:</strong>{" "}
-            {isEditing ? (
-              <select
-                value={department || ""}
-                onChange={(e) => setDepartment(e.target.value)}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">All Departments</option>
-                <option value="College of Education">
-                  College of Education
-                </option>
-                <option value="College of Technology">
-                  College of Technology
-                </option>
-                <option value="College of Engineering">
-                  College of Engineering
-                </option>
-                <option value="College of Arts and Sciences">
-                  College of Arts and Sciences
-                </option>
-                <option value="College of Management">
-                  College of Management and Entrepreneurship
-                </option>
-                <option value="College of CCICT">
-                  College of Computer Information and Communications Technology
-                </option>
-              </select>
-            ) : (
-              currentEvent.forDepartment || "All Departments"
-            )}
-          </p>
-          <div>
-            <label
-              htmlFor="image"
-              className="block text-lg font-medium text-gray-700 mb-2"
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-xl"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">
+              {isEditing ? "Edit Event" : "View Event"}
+            </h2>
+            <button
+              onClick={closeButton}
+              className="text-white/80 hover:text-white transition duration-300"
             >
-              Image
-            </label>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="image"
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300"
-              >
-                {previewImage ? (
-                  <img
-                    src={previewImage}
-                    alt="Event"
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <FaImage className="w-10 h-10 mb-3 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500">
-                      <span className="font-semibold">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG or GIF (MAX. 800x400px)
-                    </p>
-                  </div>
-                )}
-                {isEditing && (
-                  <input
-                    type="file"
-                    id="image"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                )}
-              </label>
-            </div>
+              <FaTimes size={24} />
+            </button>
           </div>
         </div>
-        <div className="flex justify-end mt-8 space-x-4">
+
+        {/* Content */}
+        <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
           {isEditing ? (
-            <button
-              onClick={handleEdit}
-              className="bg-[#0B6EC9] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#062341] transition-colors duration-300"
-            >
-              Save
-            </button>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows="4"
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  value={new Date(dateTime).toISOString().slice(0, 16)}
+                  onChange={(e) => setDateTime(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Related Link
+                </label>
+                <input
+                  type="text"
+                  value={link || ""}
+                  onChange={(e) => setLink(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                  placeholder="https://"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Department Access
+                </label>
+                <select
+                  value={department || ""}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                >
+                  <option value="">All Departments</option>
+                  <option value="College of Education">
+                    College of Education
+                  </option>
+                  <option value="College of Technology">
+                    College of Technology
+                  </option>
+                  <option value="College of Engineering">
+                    College of Engineering
+                  </option>
+                  <option value="College of Arts and Sciences">
+                    College of Arts and Sciences
+                  </option>
+                  <option value="College of Management">
+                    College of Management and Entrepreneurship
+                  </option>
+                  <option value="College of CCICT">
+                    College of Computer Information and Communications
+                    Technology
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-2">
+                  Image
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="h-32 w-32 rounded-lg overflow-hidden bg-gray-50 border border-[#0B6EC9]/20">
+                    {previewImage ? (
+                      <img
+                        src={previewImage}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+                        <FaUpload className="text-gray-400 text-xl" />
+                      </div>
+                    )}
+                  </div>
+                  <label className="flex items-center px-4 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-gray-50 cursor-pointer transition-all duration-300">
+                    <FaUpload className="mr-2" />
+                    Upload Image
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      accept="image/*"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
           ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-[#0B6EC9] text-white px-6 py-3 rounded-lg shadow-md hover:bg-[#062341] transition-colors duration-300"
-            >
-              Edit
-            </button>
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold text-[#062341]">
+                {currentEvent.title}
+              </h3>
+              <p className="text-[#062341]/70 whitespace-pre-wrap">
+                {currentEvent.description}
+              </p>
+
+              <div className="flex flex-wrap items-center text-sm text-[#062341]/70 gap-4">
+                <div className="flex items-center">
+                  <FaCalendar className="mr-2" />
+                  <span>
+                    {new Date(currentEvent.date_time).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <FaClock className="mr-2" />
+                  <span>
+                    {new Date(currentEvent.date_time).toLocaleTimeString()}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <FaMapMarkerAlt className="mr-2" />
+                  <span>{currentEvent.location}</span>
+                </div>
+              </div>
+
+              {currentEvent.link && (
+                <a
+                  href={currentEvent.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-[#0B6EC9] hover:text-[#095396] group"
+                >
+                  <FaLink className="mr-2 transition-transform group-hover:scale-110" />
+                  Related Link
+                </a>
+              )}
+
+              {previewImage && (
+                <img
+                  src={previewImage}
+                  alt="Event"
+                  className="w-full h-auto rounded-lg shadow-md"
+                />
+              )}
+
+              <div className="mt-4 p-3 bg-[#0B6EC9]/5 rounded-lg">
+                <p className="text-sm text-[#062341]/70">
+                  <span className="font-medium">Department Access:</span>{" "}
+                  {currentEvent.forDepartment || "All Departments"}
+                </p>
+              </div>
+            </div>
           )}
-          <button
-            onClick={handleDelete}
-            className="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-300"
-          >
-            Delete
-          </button>
         </div>
-      </div>
+
+        {/* Footer */}
+        <div className="border-t border-[#0B6EC9]/10 p-6 bg-gray-50">
+          <div className="flex justify-end gap-3">
+            {isEditing ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleEdit}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300"
+              >
+                <FaUpload className="mr-2" />
+                Save Changes
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setIsEditing(true)}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+              >
+                <FaEdit className="mr-2" />
+                Edit
+              </motion.button>
+            )}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleDelete}
+              className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300"
+            >
+              <FaTrash className="mr-2" />
+              Delete
+            </motion.button>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };

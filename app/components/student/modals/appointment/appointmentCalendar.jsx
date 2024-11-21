@@ -18,7 +18,7 @@ const AppointmentCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedAppointments, setSelectedAppointments] = useState([]);
 
   const daysInMonth = new Date(
     currentDate.getFullYear(),
@@ -129,7 +129,8 @@ const AppointmentCalendar = () => {
       day
     );
     setSelectedDate(selectedDate);
-    const appointmentOnDay = appointments.find((appointment) => {
+
+    const appointmentsOnDay = appointments.filter((appointment) => {
       const appointmentDate = new Date(appointment.date_time);
       return (
         appointmentDate.getDate() === selectedDate.getDate() &&
@@ -137,11 +138,12 @@ const AppointmentCalendar = () => {
         appointmentDate.getFullYear() === selectedDate.getFullYear()
       );
     });
-    if (appointmentOnDay) {
-      setSelectedAppointment(appointmentOnDay);
+
+    if (appointmentsOnDay.length > 0) {
+      setSelectedAppointments(appointmentsOnDay);
       setShowAppointmentModal(true);
     } else {
-      setSelectedAppointment(null);
+      setSelectedAppointments([]);
       setShowAppointmentModal(false);
     }
   };
@@ -163,9 +165,8 @@ const AppointmentCalendar = () => {
     return date < today;
   };
 
-  const AppointmentModal = ({ appointment, onClose }) => {
-    if (!appointment) return null;
-    const appointmentDate = new Date(appointment.date_time);
+  const AppointmentModal = ({ appointments, onClose }) => {
+    if (!appointments || appointments.length === 0) return null;
 
     const formatDate = (date) => {
       const options = {
@@ -186,58 +187,71 @@ const AppointmentCalendar = () => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 rounded-[20px] flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+        <div className="bg-white rounded-lg shadow-xl max-w-xl w-[90%] p-4 relative max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
           <button
             onClick={onClose}
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <FaTimes className="h-6 w-6" />
+            <FaTimes className="h-5 w-5" />
           </button>
-          <h2 className="text-2xl font-bold mb-4 text-[#062341]">
-            Appointment Details
+          <h2 className="text-xl font-bold mb-4 text-[#062341]">
+            Appointments for {formatDate(new Date(appointments[0].date_time))}
           </h2>
-          <div className="flex items-center mb-6">
-            <div className="w-20 h-20 rounded-full overflow-hidden mr-4 border-4 border-[#0B6EC9]">
-              <Image
-                src={
-                  appointment.counselor.counselor.profilePicture ||
-                  "/default-profile.png"
-                }
-                alt="Counselor"
-                width={80}
-                height={80}
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <p className="font-semibold text-xl text-[#062341]">
-                {appointment.counselor.counselor.name}
-              </p>
-              <p className="text-sm text-gray-600">
-                {appointment.counselor.counselor.email}
-              </p>
-            </div>
+
+          <div className="space-y-4">
+            {appointments.map((appointment, index) => {
+              const appointmentDate = new Date(appointment.date_time);
+              return (
+                <div
+                  key={index}
+                  className="border-b border-gray-200 pb-4 last:border-0"
+                >
+                  <div className="flex items-center mb-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden mr-3 border-2 border-[#0B6EC9]">
+                      <Image
+                        src={
+                          appointment.counselor.counselor.profilePicture ||
+                          "/default-profile.png"
+                        }
+                        alt="Counselor"
+                        width={48}
+                        height={48}
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-base text-[#062341]">
+                        {appointment.counselor.counselor.name}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        {appointment.counselor.counselor.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#E6F0F9] p-3 rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <FaClock className="text-[#0B6EC9] mr-2 text-sm" />
+                      <p className="font-semibold text-sm">
+                        {formatTime(appointmentDate)}
+                      </p>
+                    </div>
+                    <div className="flex items-start">
+                      <FaInfoCircle className="text-[#0B6EC9] mr-2 mt-1 text-sm" />
+                      <p className="text-sm">
+                        <span className="font-semibold">Reason:</span>{" "}
+                        {appointment.reason}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div className="bg-[#E6F0F9] p-4 rounded-lg mb-6 shadow-inner">
-            <div className="flex items-center mb-3">
-              <FaCalendarAlt className="text-[#0B6EC9] mr-2" />
-              <p className="font-semibold">{formatDate(appointmentDate)}</p>
-            </div>
-            <div className="flex items-center mb-3">
-              <FaClock className="text-[#0B6EC9] mr-2" />
-              <p className="font-semibold">{formatTime(appointmentDate)}</p>
-            </div>
-            <div className="flex items-start">
-              <FaInfoCircle className="text-[#0B6EC9] mr-2 mt-1" />
-              <p>
-                <span className="font-semibold">Reason:</span>{" "}
-                {appointment.reason}
-              </p>
-            </div>
-          </div>
+
           <button
             onClick={onClose}
-            className="w-full bg-[#0B6EC9] text-white px-4 py-3 rounded-lg hover:bg-[#094a86] transition-colors font-semibold text-lg shadow-md hover:shadow-lg"
+            className="w-full mt-4 bg-[#0B6EC9] text-white px-4 py-2 rounded-lg hover:bg-[#094a86] transition-colors font-semibold text-base shadow-md hover:shadow-lg"
           >
             Close
           </button>
@@ -403,7 +417,7 @@ const AppointmentCalendar = () => {
       </div>
       {showAppointmentModal && (
         <AppointmentModal
-          appointment={selectedAppointment}
+          appointments={selectedAppointments}
           onClose={() => setShowAppointmentModal(false)}
         />
       )}

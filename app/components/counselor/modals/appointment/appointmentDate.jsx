@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import AvailableAppointmentSlot from "./availableAppointmentSlot";
+import { IoClose } from "react-icons/io5";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const ManageAppointmentDate = ({
   renderRequest,
@@ -64,53 +66,47 @@ const ManageAppointmentDate = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-80 rounded-[20px] z-50"
-    >
-      <div className="bg-white w-full max-w-3xl rounded-lg shadow-lg overflow-hidden">
-        <div className="flex justify-between items-center p-4 bg-gray-50">
-          <h2 className="text-xl font-semibold text-gray-800">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="relative w-[95%] max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden"
+      >
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 relative">
+          <h2 className="text-white text-xl font-semibold">
             Schedule Appointment
           </h2>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={closeButtonDate}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="absolute right-4 top-4 text-white/90 hover:text-white transition-colors"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+            <IoClose size={24} />
+          </motion.button>
         </div>
         <div className="p-6">
           <AvailableAppointmentSlot onSelectSlot={handleSelectSlot} />
           {error && (
-            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-xl">
               {error}
             </div>
           )}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={acceptRequest}
             disabled={isLoading || !selectedDateTime}
-            className="mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="mt-6 w-full bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white py-2 px-4 rounded-xl font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
+            <FaCalendarAlt className="text-sm" />
             {isLoading ? "Scheduling..." : "Schedule Appointment"}
-          </button>
+          </motion.button>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

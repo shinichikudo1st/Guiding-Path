@@ -1,5 +1,13 @@
 import { useState } from "react";
 import ReportResult from "../modals/reportResult";
+import {
+  FaChartBar,
+  FaFileAlt,
+  FaCalendar,
+  FaChartLine,
+  FaSpinner,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const GenerateReport = () => {
   const [selectedReports, setSelectedReports] = useState([]);
@@ -52,6 +60,14 @@ const GenerateReport = () => {
     setShowReportResult(false);
   };
 
+  const handleSelectAll = () => {
+    if (selectedReports.length === reportOptions.length) {
+      setSelectedReports([]);
+    } else {
+      setSelectedReports(reportOptions.map((option) => option.id));
+    }
+  };
+
   const reportOptions = [
     { id: "appointment", label: "Appointment" },
     { id: "appraisal", label: "Appraisal" },
@@ -64,83 +80,181 @@ const GenerateReport = () => {
   ];
 
   return (
-    <div className="generateReportContainer absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col px-[4%] pt-[3%] xl:gap-[2%] 2xl:gap-[5%]">
-      <h1 className="xl:text-[20pt] 2xl:text-[30pt] text-[#062341] font-bold">
-        Generate Report
-      </h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div className="bg-[#F0F7FF] rounded-lg p-6 shadow-md">
-          <h2 className="xl:text-[12pt] 2xl:text-[18pt] text-[#062341] font-semibold mb-4">
-            Select related reports to generate:
-          </h2>
-          <div className="grid grid-cols-2 gap-4">
-            {reportOptions.map((option) => (
-              <div key={option.id} className="flex items-center">
-                <input
-                  id={option.id}
-                  type="checkbox"
-                  checked={selectedReports.includes(option.id)}
-                  onChange={() => handleReportSelection(option.id)}
-                  className="w-5 h-5 text-[#0B6EC9] bg-[#dbe9f6] border-[#0B6EC9] rounded focus:ring-[#0B6EC9]"
-                />
-                <label
-                  htmlFor={option.id}
-                  className="ml-2 xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60]"
-                >
-                  {option.label}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="bg-[#F0F7FF] rounded-lg p-6 shadow-md">
-          <h2 className="xl:text-[12pt] 2xl:text-[18pt] text-[#062341] font-semibold mb-4">
-            Select report date range:
-          </h2>
-          <div className="flex justify-between">
-            <div className="flex flex-col w-[45%]">
-              <label
-                htmlFor="startDate"
-                className="xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60] mb-2"
-              >
-                Start Date:
-              </label>
-              <input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-[#dbe9f6] text-[#565B60] border border-[#0B6EC9] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]"
-              />
-            </div>
-            <div className="flex flex-col w-[45%]">
-              <label
-                htmlFor="endDate"
-                className="xl:text-[10pt] 2xl:text-[14pt] font-medium text-[#565B60] mb-2"
-              >
-                End Date:
-              </label>
-              <input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-[#dbe9f6] text-[#565B60] border border-[#0B6EC9] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]"
-              />
-            </div>
-          </div>
-        </div>
-        <button
-          type="submit"
-          disabled={
-            isLoading || selectedReports.length === 0 || !startDate || !endDate
-          }
-          className="self-end w-[30%] py-3 rounded-[10px] font-semibold text-[#E6F0F9] bg-[#062341] hover:bg-[#0B6EC9] transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden"
         >
-          {isLoading ? "Generating..." : "Generate Report"}
-        </button>
-      </form>
-      {error && <div className="text-red-500 mt-4">Error: {error}</div>}
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <div className="flex items-center justify-center gap-4">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                <FaChartBar className="text-white text-2xl" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold">
+                Generate Report
+              </h1>
+            </div>
+          </div>
+
+          <div className="p-8 sm:p-10">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/50 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center">
+                      <FaFileAlt className="text-white text-xl" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-[#062341]">
+                      Select Reports
+                    </h2>
+                  </div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`flex items-center p-3 rounded-xl border transition-all duration-300 ${
+                      selectedReports.length === reportOptions.length
+                        ? "border-[#0B6EC9] bg-[#0B6EC9]/5"
+                        : "border-[#0B6EC9]/20 hover:border-[#0B6EC9]/40"
+                    }`}
+                  >
+                    <input
+                      id="selectAll"
+                      type="checkbox"
+                      checked={selectedReports.length === reportOptions.length}
+                      onChange={handleSelectAll}
+                      className="w-5 h-5 text-[#0B6EC9] border-[#0B6EC9] rounded focus:ring-[#0B6EC9]"
+                    />
+                    <label
+                      htmlFor="selectAll"
+                      className="ml-3 text-sm font-medium text-[#062341] cursor-pointer whitespace-nowrap"
+                    >
+                      Select All
+                    </label>
+                  </motion.div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {reportOptions.map((option, index) => (
+                    <motion.div
+                      key={option.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`flex items-center p-4 rounded-xl border transition-all duration-300 ${
+                        selectedReports.includes(option.id)
+                          ? "border-[#0B6EC9] bg-[#0B6EC9]/5"
+                          : "border-[#0B6EC9]/20 hover:border-[#0B6EC9]/40"
+                      }`}
+                    >
+                      <input
+                        id={option.id}
+                        type="checkbox"
+                        checked={selectedReports.includes(option.id)}
+                        onChange={() => handleReportSelection(option.id)}
+                        className="w-5 h-5 text-[#0B6EC9] border-[#0B6EC9] rounded focus:ring-[#0B6EC9]"
+                      />
+                      <label
+                        htmlFor={option.id}
+                        className="ml-3 text-sm font-medium text-[#062341] cursor-pointer"
+                      >
+                        {option.label}
+                      </label>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="bg-white/50 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center">
+                    <FaCalendar className="text-white text-xl" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-[#062341]">
+                    Date Range
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#062341]">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full p-3 bg-white border border-[#0B6EC9]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#062341]">
+                      End Date
+                    </label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full p-3 bg-white border border-[#0B6EC9]/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+
+              <div className="flex justify-end">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={
+                    isLoading ||
+                    selectedReports.length === 0 ||
+                    !startDate ||
+                    !endDate
+                  }
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl font-semibold hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <FaSpinner className="animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <FaChartLine />
+                      Generate Report
+                    </>
+                  )}
+                </motion.button>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+      </div>
+
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed bottom-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg"
+        >
+          {error}
+        </motion.div>
+      )}
+
       {showReportResult && (
         <ReportResult
           reportData={reportData}
@@ -149,7 +263,7 @@ const GenerateReport = () => {
           endDate={endDate}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

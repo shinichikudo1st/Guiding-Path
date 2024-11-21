@@ -4,6 +4,7 @@ import ManageRequest from "./manageRequest";
 import { AiOutlineCalendar } from "react-icons/ai";
 import { FaUserGraduate, FaClipboardList, FaSpinner } from "react-icons/fa";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 const ShowAppointmentRequest = () => {
   const [requests, setRequests] = useState([]);
@@ -61,122 +62,108 @@ const ShowAppointmentRequest = () => {
           initialRequests={initialRequests}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#D8E8F6] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
-            <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
-              Loading Requests...
-            </p>
-          </div>
-        ) : requests.length > 0 ? (
-          <div className="space-y-4 p-4 overflow-auto h-full">
-            {requests.map((request) => (
-              <div
-                key={request.request_id}
-                className="flex items-center p-4 bg-[#F0F7FF] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="flex-shrink-0 mr-4">
-                  <Image
-                    priority
-                    alt="profile picture"
-                    src={request.student.student.profilePicture}
-                    width={64}
-                    height={64}
-                    className="rounded-full object-cover border-2 border-blue-500"
-                  />
-                </div>
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <FaUserGraduate className="mr-2 text-blue-500" />
-                    {request.name}
-                  </h3>
-                  <p className="text-sm font-medium text-gray-600 mt-1 flex items-center">
-                    <AiOutlineCalendar className="mr-1 text-blue-500" />
-                    Requested for: {request.request_date}
+      <div className="bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
+        <div className="min-h-[60vh] flex flex-col justify-between">
+          {loading ? (
+            <div className="flex items-center justify-center h-[60vh]">
+              <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
+              <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
+                Loading Requests...
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex-grow">
+                {requests.length > 0 ? (
+                  <div className="space-y-4 p-6">
+                    {requests.map((request) => (
+                      <motion.div
+                        key={request.request_id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row items-center gap-3 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 max-w-4xl mx-auto"
+                      >
+                        <div className="flex-shrink-0">
+                          <Image
+                            priority
+                            alt="profile picture"
+                            src={request.student.student.profilePicture}
+                            width={48}
+                            height={48}
+                            className="rounded-full object-cover border-2 border-[#0B6EC9]"
+                          />
+                        </div>
+                        <div className="flex-grow text-center sm:text-left">
+                          <h3 className="text-base font-semibold text-[#062341] flex items-center justify-center sm:justify-start gap-2">
+                            <FaUserGraduate className="text-[#0B6EC9] text-sm" />
+                            {request.name}
+                          </h3>
+                          <p className="text-xs font-medium text-[#062341]/70 mt-1 flex items-center justify-center sm:justify-start gap-2">
+                            <AiOutlineCalendar className="text-[#0B6EC9] text-sm" />
+                            Requested for: {request.request_date}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 w-full sm:w-auto">
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() =>
+                              handleManageRequest(request.request_id)
+                            }
+                            className="w-full sm:w-auto px-4 py-1.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-full font-medium text-sm hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 shadow-md flex items-center justify-center gap-1.5"
+                          >
+                            <FaClipboardList className="text-sm" />
+                            Manage Request
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-[50vh]">
+                    <div className="text-center">
+                      <FaClipboardList className="mx-auto text-4xl text-[#0B6EC9]/40 mb-2" />
+                      <p className="text-xl font-semibold text-[#062341]">
+                        No appointment requests
+                      </p>
+                      <p className="text-sm text-[#062341]/70 mt-2">
+                        Check back later for new requests
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white border-t border-[#0B6EC9]/10 p-3 mt-auto">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-[#062341]/70">
+                    Page <span className="font-medium">{currentPage}</span> of{" "}
+                    <span className="font-medium">{totalPages}</span>
                   </p>
-                </div>
-                <div className="flex-shrink-0 text-right">
-                  <button
-                    onClick={() => handleManageRequest(request.request_id)}
-                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors duration-150 shadow-md hover:shadow-lg"
-                  >
-                    <FaClipboardList className="mr-2" />
-                    Manage Request
-                  </button>
+                  <div className="flex gap-1">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handlePreviousPage}
+                      disabled={currentPage === 1}
+                      className="p-1.5 rounded-lg border border-[#0B6EC9]/10 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-colors"
+                    >
+                      <IoChevronBackOutline className="w-4 h-4 text-[#062341]" />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleNextPage}
+                      disabled={currentPage === totalPages}
+                      className="p-1.5 rounded-lg border border-[#0B6EC9]/10 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-colors"
+                    >
+                      <IoChevronForwardOutline className="w-4 h-4 text-[#062341]" />
+                    </motion.button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex items-center justify-center w-full h-full">
-            <div className="text-center">
-              <FaClipboardList className="mx-auto text-4xl text-gray-400 mb-2" />
-              <p className="text-xl font-semibold text-gray-600">
-                No appointment requests
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Check back later for new requests
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* New Pagination UI */}
-        <div className="mt-auto p-4 flex items-center justify-between border-t border-gray-200 bg-white">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Showing page <span className="font-medium">{currentPage}</span>{" "}
-                of <span className="font-medium">{totalPages}</span>
-              </p>
-            </div>
-            <div>
-              <nav
-                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Previous</span>
-                  <IoChevronBackOutline
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span className="sr-only">Next</span>
-                  <IoChevronForwardOutline
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </nav>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </>

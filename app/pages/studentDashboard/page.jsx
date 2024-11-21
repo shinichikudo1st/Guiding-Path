@@ -42,7 +42,7 @@ const StudentDashboard = () => {
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <FullBackground />
-      <UserNavbar />
+      <UserNavbar profile={() => toggleComponent("profile")} />
       <StudentSidebar
         viewProfile={() => toggleComponent("profile")}
         viewAppraisal={() => toggleComponent("appraisal")}

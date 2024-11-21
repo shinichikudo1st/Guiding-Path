@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const requestAppointmentSchema = z.object({
-  name: z.string().min(1),
   grade: z.string().min(1),
   reason: z.string().min(1),
   urgency: z.string().min(1),
@@ -24,7 +23,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    const { name, grade, reason, urgency, type, contact, notes } =
+    const { grade, reason, urgency, type, contact, notes } =
       requestAppointmentSchema.parse(body);
 
     const { sessionData } = await getSession();
@@ -35,20 +34,30 @@ export async function POST(request) {
 
     const date = new Date();
 
-    await prisma.appointment_Requests.create({
-      data: {
-        student_id: sessionData.id,
-        name: name,
-        grade: grade,
-        reason: reason,
-        urgency: urgency,
-        contact: contact,
-        notes: notes,
-        type: type,
-        role: sessionData.role,
-        request_date: date,
-      },
-    });
+    await Promise.all([
+      prisma.appointment_Requests.create({
+        data: {
+          student_id: sessionData.id,
+          name: sessionData.name,
+          grade: grade,
+          reason: reason,
+          urgency: urgency,
+          contact: contact,
+          notes: notes,
+          type: type,
+          role: sessionData.role,
+          request_date: date,
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: "332570",
+          title: "New Appointment Request",
+          content: "You have a new appointment request",
+          date: new Date(),
+        },
+      }),
+    ]);
 
     return NextResponse.json(
       { message: "Appointment Request Submitted" },

@@ -3,7 +3,8 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { AiFillEye } from "react-icons/ai";
 import AnnouncementModal from "./createAnnouncementModal";
 import ViewAnnouncementModal from "./viewAnnouncement";
-import { FaCalendar, FaClock, FaLink, FaSpinner } from "react-icons/fa";
+import { FaCalendar, FaClock, FaLink, FaSpinner, FaPlus } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const CreateAnnouncement = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -65,130 +66,132 @@ const CreateAnnouncement = () => {
           onUpdate={() => setRefreshKey((oldKey) => oldKey + 1)}
         />
       )}
-      <div className="absolute mt-[10%] w-[80%] h-[70%] bg-[#F0F7FF] shadow-lg rounded-lg border border-gray-200 overflow-hidden flex flex-col">
-        <div className="space-y-4 p-4 overflow-auto h-full">
+      <div className="relative flex flex-col min-h-[calc(60vh-2rem)]">
+        {/* Main Content */}
+        <div className="flex-grow space-y-6 pb-24">
           {isLoading ? (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-[50vh]">
               <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
               <p className="ml-2 text-lg text-[#0B6EC9] font-semibold">
                 Loading announcements...
               </p>
             </div>
           ) : announcements && announcements.length > 0 ? (
-            announcements.map((announcement) => (
-              <div
-                key={announcement.resource_id}
-                className="flex items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {announcement.title}
-                  </h3>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <FaCalendar className="mr-2" />
-                    <span>
-                      {new Date(announcement.createdAt).toLocaleDateString()}
-                    </span>
-                    <FaClock className="ml-4 mr-2" />
-                    <span>
-                      {new Date(announcement.createdAt).toLocaleTimeString()}
-                    </span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-5xl mx-auto">
+              {announcements.map((announcement) => (
+                <motion.div
+                  key={announcement.resource_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-grow">
+                        <h3 className="text-xl font-semibold text-[#062341] mb-2">
+                          {announcement.title}
+                        </h3>
+                        <div className="flex items-center text-sm text-[#062341]/70 space-x-4">
+                          <div className="flex items-center">
+                            <FaCalendar className="mr-2" />
+                            <span>
+                              {new Date(
+                                announcement.createdAt
+                              ).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <FaClock className="mr-2" />
+                            <span>
+                              {new Date(
+                                announcement.createdAt
+                              ).toLocaleTimeString()}
+                            </span>
+                          </div>
+                        </div>
+                        {announcement.link && (
+                          <a
+                            href={announcement.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-[#0B6EC9] hover:text-[#095396] mt-2 group"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <FaLink className="mr-2 transition-transform group-hover:scale-110" />
+                            Related Link
+                          </a>
+                        )}
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleViewAnnouncement(announcement)}
+                        className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                      >
+                        <AiFillEye className="mr-2" />
+                        View
+                      </motion.button>
+                    </div>
                   </div>
-                  {announcement.link && (
-                    <a
-                      href={announcement.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center text-blue-600 hover:underline mt-2"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FaLink className="mr-2" />
-                      Related Link
-                    </a>
-                  )}
-                </div>
-                <div className="flex-shrink-0">
-                  <button
-                    onClick={() => handleViewAnnouncement(announcement)}
-                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors duration-150"
-                  >
-                    <AiFillEye className="mr-1" />
-                    View
-                  </button>
-                </div>
-              </div>
-            ))
+                </motion.div>
+              ))}
+            </div>
           ) : (
-            <div className="text-center text-gray-500">
-              <p>No announcements found.</p>
-              <p>Click the + button to create a new announcement.</p>
+            <div className="flex flex-col items-center justify-center h-[50vh] text-[#062341]/70">
+              <FaRegNewspaper className="text-6xl mb-4" />
+              <p className="text-xl font-medium">No announcements found</p>
+              <p className="text-sm mt-2">
+                Click the + button to create a new announcement
+              </p>
             </div>
           )}
         </div>
 
-        <button
-          onClick={() => setCreateModal(true)}
-          className="fixed bottom-8 right-8 inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#0B6EC9] text-white shadow-lg hover:bg-[#095396] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] transition-all duration-300 transform hover:scale-110"
-          title="Create New Announcement"
-        >
-          <svg
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-        </button>
-
-        <div className="mt-auto p-4 flex items-center justify-between border-t border-gray-200 bg-white">
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-gray-700">
-                Showing page <span className="font-medium">{currentPage}</span>{" "}
-                of <span className="font-medium">{totalPages}</span>
+        {/* Fixed Pagination */}
+        {announcements && announcements.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-[#0B6EC9]/10 py-4 px-8">
+            <div className="max-w-6xl mx-auto flex items-center justify-between">
+              <p className="text-sm text-[#062341]/70">
+                Page <span className="font-medium">{currentPage}</span> of{" "}
+                <span className="font-medium">{totalPages}</span>
               </p>
-            </div>
-            <div>
-              <nav
-                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
+              <div className="flex gap-2 mr-20">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-3 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-[#F8FAFC] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
-                  <span className="sr-only">Previous</span>
-                  <IoChevronBackOutline
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
-                <button
+                  <IoChevronBackOutline className="text-lg" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() =>
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                   }
                   disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center px-3 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-[#F8FAFC] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
                 >
-                  <span className="sr-only">Next</span>
-                  <IoChevronForwardOutline
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                </button>
-              </nav>
+                  <IoChevronForwardOutline className="text-lg" />
+                </motion.button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Create Button - now positioned relative to the viewport */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setCreateModal(true)}
+          className="fixed bottom-20 right-8 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-full shadow-lg hover:from-[#095396] hover:to-[#084B87] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] transition-all duration-300 z-10"
+        >
+          <FaPlus className="text-xl" />
+        </motion.button>
       </div>
     </>
   );

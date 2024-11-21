@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { FaTimes, FaEdit, FaTrash, FaUpload } from "react-icons/fa";
+import {
+  FaTimes,
+  FaEdit,
+  FaTrash,
+  FaUpload,
+  FaLink,
+  FaCalendar,
+  FaClock,
+} from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -84,62 +93,90 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-20">
-      <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen translate-x-[-22.55%] translate-y-[-16%] z-30"></div>
-      <div className="bg-white p-8 rounded-lg w-[600px] max-w-[95%] max-h-[90vh] overflow-y-auto translate-y-[-5%] z-50">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold text-[#0B6EC9]">
-            {isEditing ? "Edit Announcement" : "View Announcement"}
-          </h2>
-          <button
-            onClick={closeModal}
-            className="text-gray-500 hover:text-gray-700 transition duration-300"
-          >
-            <FaTimes size={24} />
-          </button>
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-xl"
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-white">
+              {isEditing ? "Edit Announcement" : "View Announcement"}
+            </h2>
+            <button
+              onClick={closeModal}
+              className="text-white/80 hover:text-white transition duration-300"
+            >
+              <FaTimes size={24} />
+            </button>
+          </div>
         </div>
-        <div className="space-y-4">
+
+        {/* Content */}
+        <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
           {isEditing ? (
-            <>
-              <input
-                type="text"
-                value={announcementData.title}
-                onChange={(e) =>
-                  setAnnouncementData({
-                    ...announcementData,
-                    title: e.target.value,
-                  })
-                }
-                className="w-full p-2 border rounded"
-              />
-              <textarea
-                value={announcementData.description}
-                onChange={(e) =>
-                  setAnnouncementData({
-                    ...announcementData,
-                    description: e.target.value,
-                  })
-                }
-                className="w-full p-2 border rounded"
-              />
-              <input
-                type="text"
-                value={announcementData.link || ""}
-                onChange={(e) =>
-                  setAnnouncementData({
-                    ...announcementData,
-                    link: e.target.value,
-                  })
-                }
-                className="w-full p-2 border rounded"
-                placeholder="Related Link"
-              />
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Update Image
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Title
                 </label>
-                <div className="mt-1 flex items-center">
-                  <span className="inline-block h-32 w-32 rounded-lg overflow-hidden bg-gray-100">
+                <input
+                  type="text"
+                  value={announcementData.title}
+                  onChange={(e) =>
+                    setAnnouncementData({
+                      ...announcementData,
+                      title: e.target.value,
+                    })
+                  }
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={announcementData.description}
+                  onChange={(e) =>
+                    setAnnouncementData({
+                      ...announcementData,
+                      description: e.target.value,
+                    })
+                  }
+                  rows="4"
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-1">
+                  Related Link
+                </label>
+                <input
+                  type="text"
+                  value={announcementData.link || ""}
+                  onChange={(e) =>
+                    setAnnouncementData({
+                      ...announcementData,
+                      link: e.target.value,
+                    })
+                  }
+                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                  placeholder="https://"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#062341] mb-2">
+                  Image
+                </label>
+                <div className="flex items-center gap-4">
+                  <div className="h-32 w-32 rounded-lg overflow-hidden bg-gray-50 border border-[#0B6EC9]/20">
                     {previewImage ? (
                       <img
                         src={previewImage}
@@ -153,43 +190,37 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <svg
-                        className="h-full w-full text-gray-300"
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
+                      <div className="h-full w-full flex items-center justify-center bg-gray-50">
+                        <FaUpload className="text-gray-400 text-xl" />
+                      </div>
                     )}
-                  </span>
-                  <label
-                    htmlFor="file-upload"
-                    className="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-                  >
-                    <span>Upload a file</span>
+                  </div>
+                  <label className="flex items-center px-4 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-gray-50 cursor-pointer transition-all duration-300">
+                    <FaUpload className="mr-2" />
+                    Upload Image
                     <input
-                      id="file-upload"
-                      name="file-upload"
                       type="file"
-                      className="sr-only"
+                      className="hidden"
                       onChange={handleImageChange}
                       accept="image/*"
                     />
                   </label>
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <h3 className="text-2xl font-semibold">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-semibold text-[#062341]">
                 {announcementData.title}
               </h3>
-              <p className="text-gray-600">{announcementData.description}</p>
+              <p className="text-[#062341]/70 whitespace-pre-wrap">
+                {announcementData.description}
+              </p>
               {announcementData.img_path && (
                 <img
                   src={announcementData.img_path}
-                  alt="Announcement Image"
-                  className="w-full h-auto rounded-lg"
+                  alt="Announcement"
+                  className="w-full h-auto rounded-lg shadow-md"
                 />
               )}
               {announcementData.link && (
@@ -197,47 +228,66 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
                   href={announcementData.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
+                  className="flex items-center text-[#0B6EC9] hover:text-[#095396] group"
                 >
+                  <FaLink className="mr-2 transition-transform group-hover:scale-110" />
                   Related Link
                 </a>
               )}
-              <p className="text-sm text-gray-500">
-                Posted on:{" "}
-                {new Date(announcementData.createdAt).toLocaleString()}
-              </p>
-            </>
+              <div className="flex items-center text-sm text-[#062341]/70 space-x-4">
+                <div className="flex items-center">
+                  <FaCalendar className="mr-2" />
+                  <span>
+                    {new Date(announcementData.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <FaClock className="mr-2" />
+                  <span>
+                    {new Date(announcementData.createdAt).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            </div>
           )}
         </div>
-        <div className="mt-8 flex justify-center gap-4">
-          {isEditing ? (
-            <button
-              onClick={handleSave}
-              className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-1"
+
+        {/* Footer */}
+        <div className="border-t border-[#0B6EC9]/10 p-6 bg-gray-50">
+          <div className="flex justify-end gap-3">
+            {isEditing ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleSave}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300"
+              >
+                <FaUpload className="mr-2" />
+                Save Changes
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleEdit}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+              >
+                <FaEdit className="mr-2" />
+                Edit
+              </motion.button>
+            )}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleDelete}
+              className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300"
             >
-              <FaUpload size={18} className="mr-2" />
-              Save
-            </button>
-          ) : (
-            <button
-              onClick={handleEdit}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-1"
-              title="Edit Announcement"
-            >
-              <FaEdit size={18} className="mr-2" />
-              Edit
-            </button>
-          )}
-          <button
-            onClick={handleDelete}
-            className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300 flex items-center shadow-md hover:shadow-lg transform hover:-translate-y-1"
-            title="Delete Announcement"
-          >
-            <FaTrash size={18} className="mr-2" />
-            Delete
-          </button>
+              <FaTrash className="mr-2" />
+              Delete
+            </motion.button>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
