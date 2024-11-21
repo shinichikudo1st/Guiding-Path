@@ -196,9 +196,9 @@ const ResourceFeed = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden"
+                      className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden flex flex-col h-full"
                     >
-                      <div className="p-6">
+                      <div className="p-6 flex-1 flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-4">
                             <div className="w-12 h-12 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
@@ -230,26 +230,28 @@ const ResourceFeed = () => {
                           </motion.button>
                         </div>
 
-                        {resource.img_path && (
-                          <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
-                            <Image
-                              src={resource.img_path}
-                              alt={resource.title}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
+                        <div className="flex-1 flex flex-col">
+                          {resource.img_path && (
+                            <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
+                              <Image
+                                src={resource.img_path}
+                                alt={resource.title}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
 
-                        <p className="text-[#062341]/70 text-sm line-clamp-3 mb-4">
-                          {resource.description}
-                        </p>
+                          <p className="text-[#062341]/70 text-sm line-clamp-3 mb-4">
+                            {resource.description}
+                          </p>
+                        </div>
 
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           onClick={() => openResourceModal(resource)}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 mt-4"
                         >
                           <FaEye />
                           View Resource
