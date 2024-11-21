@@ -1,24 +1,37 @@
 import noProfile from "@/public/noProfile.png";
 import ProgressiveImage from "@/app/components/UI/progressiveImage";
-import { FaRegEdit } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const UploadProfilePicture = ({ toggleUploadModal, picture }) => {
   return (
-    <div className="absolute left-[5%] top-[5%] 2xl:w-[25%] 2xl:h-[40%] flex flex-col items-center gap-[20px]">
-      <div className="w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] 2xl:w-[250px] 2xl:h-[250px] overflow-hidden rounded-full shadow-lg border-4 border-white">
-        <ProgressiveImage
-          alt="Profile Picture"
-          src={picture ? picture : noProfile.src}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-        />
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="relative group"
+    >
+      <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32">
+        <div className="w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-[#0B6EC9] to-[#095396] p-0.5">
+          <div className="w-full h-full rounded-full overflow-hidden bg-white">
+            <ProgressiveImage
+              alt="Profile Picture"
+              src={picture ? picture : noProfile.src}
+              className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+            />
+          </div>
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleUploadModal}
+          className="absolute bottom-0 right-0 p-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105"
+        >
+          <FaCamera className="text-sm sm:text-base md:text-lg" />
+        </motion.button>
       </div>
-      <button
-        onClick={toggleUploadModal}
-        className="bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-shadow duration-300"
-      >
-        <FaRegEdit className="text-[30pt] text-blue-600" />
-      </button>
-    </div>
+    </motion.div>
   );
 };
 

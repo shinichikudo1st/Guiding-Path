@@ -8,6 +8,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import DOMPurify from "dompurify";
+import { motion, AnimatePresence } from "framer-motion";
 
 const EditModalCounselor = ({ editButton, profileData, retrieveProfile }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,96 +51,102 @@ const EditModalCounselor = ({ editButton, profileData, retrieveProfile }) => {
     } catch (error) {
       console.error("Error updating profile:", error);
       setIsLoading(false);
-      // TODO: Add user-friendly error handling
     }
   };
 
+  const inputFields = [
+    {
+      icon: FaUser,
+      name: "name",
+      label: "Name",
+      placeholder: profileData.name,
+    },
+    {
+      icon: FaBuilding,
+      name: "department",
+      label: "Department",
+      placeholder: profileData.department,
+    },
+    {
+      icon: FaPhone,
+      name: "contact",
+      label: "Contact",
+      placeholder: profileData.contact,
+    },
+  ];
+
   return (
-    <div className="absolute h-[100%] w-[100%] flex pl-[30%] pt-[10%] bg-[#dfecf6] rounded-[20px] z-20">
-      <button
-        onClick={editButton}
-        className="right-4 top-4 absolute inline-flex items-center justify-center p-2 overflow-hidden text-sm font-medium text-gray-900 rounded-full group bg-white hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 focus:ring-4 focus:outline-none focus:ring-blue-300"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 w-full max-w-lg overflow-hidden"
       >
-        <FaTimes className="h-6 w-6" />
-      </button>
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-sm mx-auto absolute space-y-6"
-      >
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h2>
-        <div>
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-medium text-gray-900"
+        {/* Header */}
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={editButton}
+            className="text-white hover:text-red-100 transition-colors"
           >
-            <FaUser className="inline-block mr-2" />
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
-            placeholder={profileData.name}
-          />
+            <FaTimes className="h-6 w-6" />
+          </motion.button>
         </div>
 
-        <div>
-          <label
-            htmlFor="department"
-            className="block mb-2 text-sm font-medium text-gray-900"
-          >
-            <FaBuilding className="inline-block mr-2" />
-            Department
-          </label>
-          <input
-            type="text"
-            id="department"
-            name="department"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
-            placeholder={profileData.department}
-          />
-        </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {inputFields.map((field) => (
+            <div key={field.name} className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-[#062341]/70">
+                <field.icon className="text-[#0B6EC9]" />
+                {field.label}
+              </label>
+              <motion.input
+                whileFocus={{ scale: 1.01 }}
+                type="text"
+                id={field.name}
+                name={field.name}
+                className="w-full px-4 py-3 bg-white rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9]/30 focus:ring-2 focus:ring-[#0B6EC9]/10 outline-none transition-all duration-300 shadow-sm"
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))}
 
-        <div>
-          <label
-            htmlFor="contact"
-            className="block mb-2 text-sm font-medium text-gray-900"
+          {/* Submit Button */}
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 ${
+              isLoading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] hover:from-[#095396] hover:to-[#084B87] text-white shadow-md"
+            }`}
           >
-            <FaPhone className="inline-block mr-2" />
-            Contact
-          </label>
-          <input
-            type="text"
-            id="contact"
-            name="contact"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-all duration-300"
-            placeholder={profileData.contact}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={`w-full text-white ${
-            isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-[#0B6EC9] hover:bg-blue-800"
-          } focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all duration-300 flex items-center justify-center`}
-        >
-          {isLoading ? (
-            <>
-              <FaSpinner className="animate-spin mr-2 h-5 w-5" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <FaSave className="mr-2" />
-              Save Changes
-            </>
-          )}
-        </button>
-      </form>
-    </div>
+            {isLoading ? (
+              <>
+                <FaSpinner className="animate-spin h-5 w-5" />
+                Saving Changes...
+              </>
+            ) : (
+              <>
+                <FaSave className="h-5 w-5" />
+                Save Changes
+              </>
+            )}
+          </motion.button>
+        </form>
+      </motion.div>
+    </motion.div>
   );
 };
 
