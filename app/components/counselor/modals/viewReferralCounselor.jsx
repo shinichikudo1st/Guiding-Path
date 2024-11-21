@@ -5,7 +5,6 @@ import {
   FaCalendarAlt,
   FaVideo,
   FaUserFriends,
-  FaClock,
   FaSpinner,
 } from "react-icons/fa";
 import { IoMdInformationCircle } from "react-icons/io";
@@ -159,66 +158,86 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-20">
-      <div className="absolute inset-0 bg-black opacity-[0.8] h-screen w-screen z-30"></div>
-      <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-[90vw] z-50 max-h-[90vh] overflow-hidden flex">
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+      <div
+        className={`bg-white rounded-2xl w-full max-w-4xl mx-4 overflow-hidden shadow-xl flex flex-col ${
+          referral?.status === "pending" ? "md:flex-row" : ""
+        }`}
+      >
         {/* Left side - Referral Details */}
-        <div className="w-1/2 pr-6 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
-          <h2 className="text-2xl font-bold mb-4">Referral Details</h2>
+        <div
+          className={`${
+            referral?.status === "pending" ? "w-full md:w-1/2" : "w-full"
+          } p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100`}
+        >
+          <h2 className="text-2xl font-bold mb-6 text-[#062341]">
+            Referral Details
+          </h2>
           {isLoading ? (
-            <div className="space-y-4">
-              <p className="text-lg font-semibold text-gray-600">
-                Loading referral...
-              </p>
-              <SkeletonLoading />
-            </div>
+            <SkeletonLoading />
           ) : error ? (
             <div className="text-center">
               <p className="text-xl text-red-500 font-semibold">{error}</p>
             </div>
           ) : referral ? (
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <FaUser className="mr-2 text-blue-500" />
-                <span className="font-semibold">Student:</span>
-                <span className="ml-2">{referral.student_name}</span>
-              </div>
-              <div className="flex items-center">
-                <FaChalkboardTeacher className="mr-2 text-green-500" />
-                <span className="font-semibold">Teacher:</span>
-                <span className="ml-2">{referral.teacher_name}</span>
-              </div>
-              <div className="flex items-center">
-                <FaCalendarAlt className="mr-2 text-red-500" />
-                <span className="font-semibold">Date Submitted:</span>
-                <span className="ml-2">
-                  {formatDate(referral.dateSubmitted)}
-                </span>
-              </div>
-              <div className="flex items-center">
-                <IoMdInformationCircle
-                  className={`mr-2 ${getStatusColor(referral.status)}`}
-                />
-                <span className="font-semibold">Status:</span>
-                <span className={`ml-2 ${getStatusColor(referral.status)}`}>
-                  {referral.status}
-                </span>
-              </div>
-              <div>
-                <span className="font-semibold">Reason:</span>
-                <p className="mt-2 p-4 bg-gray-100 rounded">
-                  {referral.reason}
-                </p>
-              </div>
-              <div>
-                <span className="font-semibold">Notes:</span>
-                <p className="mt-2 p-4 bg-gray-100 rounded">{referral.notes}</p>
+            <div className="space-y-6">
+              {/* Student Info */}
+              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                <FaUser className="text-[#0B6EC9] text-xl mr-4" />
+                <div>
+                  <p className="text-sm text-gray-500">Student</p>
+                  <p className="font-semibold text-lg">
+                    {referral.student_name}
+                  </p>
+                </div>
               </div>
 
-              {(referral.status === "closed" ||
-                referral.status === "confirmed") && (
-                <>
-                  <div className="flex items-center mt-4">
+              {/* Teacher Info */}
+              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                <FaChalkboardTeacher className="text-[#0B6EC9] text-xl mr-4" />
+                <div>
+                  <p className="text-sm text-gray-500">Teacher</p>
+                  <p className="font-semibold text-lg">
+                    {referral.teacher_name}
+                  </p>
+                </div>
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                <IoMdInformationCircle
+                  className={`text-2xl mr-4 ${getStatusColor(referral.status)}`}
+                />
+                <div>
+                  <p className="text-sm text-gray-500">Status</p>
+                  <p
+                    className={`font-semibold text-lg ${getStatusColor(
+                      referral.status
+                    )}`}
+                  >
+                    {referral.status.charAt(0).toUpperCase() +
+                      referral.status.slice(1)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Reason & Notes */}
+              <div className="space-y-4">
+                <div>
+                  <p className="font-semibold mb-2">Reason:</p>
+                  <p className="bg-gray-50 p-4 rounded-lg">{referral.reason}</p>
+                </div>
+                <div>
+                  <p className="font-semibold mb-2">Notes:</p>
+                  <p className="bg-gray-50 p-4 rounded-lg">{referral.notes}</p>
+                </div>
+              </div>
+
+              {/* Appointment Details for Confirmed/Closed Status */}
+              {(referral.status === "confirmed" ||
+                referral.status === "closed") && (
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center">
                     <Image
                       src={
                         referral.counselor_profilePicture ||
@@ -230,35 +249,41 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
                       className="rounded-full mr-4"
                     />
                     <div>
-                      <p className="font-semibold">Counselor:</p>
-                      <p>{referral.counselor_name}</p>
+                      <p className="text-sm text-gray-500">Counselor</p>
+                      <p className="font-semibold text-lg">
+                        {referral.counselor_name}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center">
-                    <FaCalendarAlt className="mr-2 text-purple-500" />
-                    <span className="font-semibold">Appointment:</span>
-                    <span className="ml-2">
-                      {referral.appointment_date_time
-                        ? `${formatDate(
-                            referral.appointment_date_time
-                          )} at ${new Date(
-                            referral.appointment_date_time
-                          ).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}`
-                        : "Not scheduled"}
-                    </span>
+                  <div className="flex items-center mt-2">
+                    <FaCalendarAlt className="text-[#0B6EC9] mr-4 text-xl" />
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Appointment Schedule
+                      </p>
+                      <p className="font-semibold">
+                        {referral.appointment_date_time
+                          ? `${formatDate(
+                              referral.appointment_date_time
+                            )} at ${new Date(
+                              referral.appointment_date_time
+                            ).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}`
+                          : "Not scheduled"}
+                      </p>
+                    </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           ) : null}
         </div>
 
-        {/* Right side - Appointment Scheduling */}
+        {/* Right side - Only show for pending status */}
         {referral && referral.status === "pending" && (
-          <div className="w-1/2 pl-6 border-l overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
+          <div className="w-full md:w-1/2 p-6 border-t md:border-t-0 md:border-l border-[#0B6EC9]/10">
             <h3 className="text-xl font-semibold mb-4">Schedule Appointment</h3>
             <AvailableAppointmentSlot
               onSelectSlot={handleSelectSlot}
@@ -327,10 +352,10 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
           </div>
         )}
 
-        {/* Single Close button - Absolute positioned */}
+        {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="absolute top-4 right-4 px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
         >
           Close
         </button>

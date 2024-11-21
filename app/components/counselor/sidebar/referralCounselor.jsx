@@ -6,8 +6,47 @@ import {
   FaFilter,
 } from "react-icons/fa";
 import { IoMdInformationCircle } from "react-icons/io";
-import LoadingSpinner from "../../UI/loadingSpinner";
 import ViewReferralCounselor from "../modals/viewReferralCounselor";
+import { motion } from "framer-motion";
+
+const ReferralLoadingSkeleton = () => (
+  <div className="space-y-4">
+    {[1, 2, 3].map((index) => (
+      <div
+        key={index}
+        className="bg-white rounded-lg p-4 shadow-md animate-pulse"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-[#0B6EC9]/20 rounded-full mr-2" />
+            <div>
+              <div className="h-3 w-16 bg-[#0B6EC9]/20 rounded mb-1" />
+              <div className="h-4 w-24 bg-[#0B6EC9]/20 rounded" />
+            </div>
+          </div>
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-[#0B6EC9]/20 rounded-full mr-2" />
+            <div>
+              <div className="h-3 w-16 bg-[#0B6EC9]/20 rounded mb-1" />
+              <div className="h-4 w-24 bg-[#0B6EC9]/20 rounded" />
+            </div>
+          </div>
+          <div className="flex items-center lg:col-span-2">
+            <div className="w-8 h-8 bg-[#0B6EC9]/20 rounded-full mr-2" />
+            <div className="flex-1">
+              <div className="h-3 w-16 bg-[#0B6EC9]/20 rounded mb-1" />
+              <div className="h-4 w-full bg-[#0B6EC9]/20 rounded" />
+            </div>
+          </div>
+        </div>
+        <div className="mt-2 flex justify-end items-center">
+          <div className="w-4 h-4 bg-[#0B6EC9]/20 rounded-full mr-1" />
+          <div className="h-3 w-32 bg-[#0B6EC9]/20 rounded" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 const ReferralCounselor = () => {
   const [referrals, setReferrals] = useState([]);
@@ -15,6 +54,8 @@ const ReferralCounselor = () => {
   const [error, setError] = useState(null);
   const [filterStatus, setFilterStatus] = useState("pending");
   const [selectedReferralId, setSelectedReferralId] = useState(null);
+
+  const [activeTab, setActiveTab] = useState("pending");
 
   const fetchReferrals = async () => {
     setIsLoading(true);
@@ -54,105 +95,157 @@ const ReferralCounselor = () => {
     setSelectedReferralId(null);
   };
 
-  if (isLoading) {
-    return (
-      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex items-center justify-center">
-        <p className="text-xl text-red-500 font-semibold">{error}</p>
-      </div>
-    );
-  }
+  const handleTabChange = (status) => {
+    setFilterStatus(status);
+    setActiveTab(status);
+  };
 
   return (
-    <>
-      <div className="absolute bg-[#dfecf6] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col items-center p-8 overflow-hidden shadow-lg">
-        <h2 className="text-3xl font-bold text-[#062341]">
-          {filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}{" "}
-          Referrals
-        </h2>
-        <div className="w-full flex justify-between items-center mb-8">
-          <div className="relative">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="appearance-none bg-white border border-gray-300 rounded-md py-2 pl-3 pr-10 text-sm leading-5 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="closed">Closed</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <FaFilter className="h-4 w-4" />
-            </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              Referrals
+            </h1>
           </div>
-        </div>
-        <div className="w-full h-[calc(100%-5rem)] overflow-y-auto pr-4">
-          {referrals.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-xl text-gray-600 text-center">
-                No {filterStatus} referrals at the moment.
-              </p>
-            </div>
-          ) : (
-            referrals.map((referral) => (
-              <div
-                key={referral.id}
-                className="bg-white rounded-lg p-6 mb-6 shadow-md cursor-pointer hover:bg-gray-50 transition-colors duration-200"
-                onClick={() => handleReferralClick(referral.id)}
+
+          <div className="p-8 sm:p-10 space-y-8">
+            {/* Navigation Tabs */}
+            <div className="flex w-full justify-evenly select-none bg-white rounded-full shadow-md">
+              <span
+                onClick={() => handleTabChange("pending")}
+                className={`text-base sm:text-lg w-1/3 py-3 ${
+                  activeTab === "pending"
+                    ? "bg-[#0B6EC9] text-white"
+                    : "text-[#818487]"
+                } cursor-pointer hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 text-center rounded-l-full font-bold`}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="flex items-center">
-                    <FaUser
-                      className="text-[#0B6EC9] mr-3 flex-shrink-0"
-                      size={24}
-                    />
-                    <div>
-                      <p className="text-sm text-gray-500">Student</p>
-                      <p className="font-semibold truncate">
-                        {referral.student_name}
+                Pending
+              </span>
+              <span
+                onClick={() => handleTabChange("confirmed")}
+                className={`text-base sm:text-lg w-1/3 py-3 ${
+                  activeTab === "confirmed"
+                    ? "bg-[#0B6EC9] text-white"
+                    : "text-[#818487]"
+                } cursor-pointer hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 text-center font-bold`}
+              >
+                Confirmed
+              </span>
+              <span
+                onClick={() => handleTabChange("closed")}
+                className={`text-base sm:text-lg w-1/3 py-3 ${
+                  activeTab === "closed"
+                    ? "bg-[#0B6EC9] text-white"
+                    : "text-[#818487]"
+                } cursor-pointer hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 text-center rounded-r-full font-bold`}
+              >
+                Closed
+              </span>
+            </div>
+
+            {/* Content Area */}
+            <div className="min-h-[60vh] max-h-[60vh] overflow-y-auto px-2 sm:px-4 scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <ReferralLoadingSkeleton />
+                </div>
+              ) : error ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-base sm:text-lg md:text-xl text-red-500 font-semibold">
+                    {error}
+                  </p>
+                </div>
+              ) : referrals.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-base sm:text-lg md:text-xl text-gray-600 text-center">
+                    No {filterStatus} referrals at the moment.
+                  </p>
+                </div>
+              ) : (
+                referrals.map((referral) => (
+                  <div
+                    key={referral.id}
+                    className="bg-white rounded-lg p-3 sm:p-4 mb-3 shadow-md cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+                    onClick={() => handleReferralClick(referral.id)}
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+                      {/* Student Info */}
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-shrink-0">
+                          <FaUser className="text-[#0B6EC9]" size={16} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          {" "}
+                          {/* min-w-0 ensures proper truncation */}
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                            Student
+                          </p>
+                          <p className="font-semibold text-xs sm:text-sm md:text-base truncate">
+                            {referral.student_name}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Teacher Info */}
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-shrink-0">
+                          <FaChalkboardTeacher
+                            className="text-[#0B6EC9]"
+                            size={16}
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                            Teacher
+                          </p>
+                          <p className="text-xs sm:text-sm md:text-base truncate">
+                            {referral.teacher_name}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Reason Info */}
+                      <div className="flex items-center space-x-2 lg:col-span-2">
+                        <div className="flex-shrink-0">
+                          <IoMdInformationCircle
+                            className="text-[#0B6EC9]"
+                            size={16}
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] sm:text-xs text-gray-500">
+                            Reason
+                          </p>
+                          <p className="text-[10px] sm:text-xs md:text-sm truncate">
+                            {referral.reason}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date Info */}
+                    <div className="mt-2 flex justify-end items-center space-x-1">
+                      <FaCalendarAlt
+                        className="text-[#0B6EC9] flex-shrink-0"
+                        size={14}
+                      />
+                      <p className="text-[10px] sm:text-xs md:text-sm text-gray-600">
+                        {formatDate(referral.dateSubmitted)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center">
-                    <FaChalkboardTeacher
-                      className="text-[#0B6EC9] mr-3 flex-shrink-0"
-                      size={24}
-                    />
-                    <div>
-                      <p className="text-sm text-gray-500">Teacher</p>
-                      <p className="truncate">{referral.teacher_name}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center lg:col-span-2">
-                    <IoMdInformationCircle
-                      className="text-[#0B6EC9] mr-3 flex-shrink-0"
-                      size={24}
-                    />
-                    <div>
-                      <p className="text-sm text-gray-500">Reason</p>
-                      <p className="text-sm truncate">{referral.reason}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end items-center">
-                  <FaCalendarAlt
-                    className="text-[#0B6EC9] mr-2 flex-shrink-0"
-                    size={18}
-                  />
-                  <p className="text-sm text-gray-600">
-                    {formatDate(referral.dateSubmitted)}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
       {selectedReferralId && (
@@ -162,7 +255,7 @@ const ReferralCounselor = () => {
           onRefresh={fetchReferrals}
         />
       )}
-    </>
+    </motion.div>
   );
 };
 
