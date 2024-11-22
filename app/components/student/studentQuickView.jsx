@@ -90,47 +90,49 @@ const StudentQuickView = () => {
             Scheduled Appointment
           </h2>
 
-          <div className="w-full space-y-4">
-            <div className="flex items-center gap-3">
+          <div className="w-full">
+            <div className="flex items-center space-x-3 bg-white/50 p-3 rounded-lg border border-[#0B6EC9]/10 hover:bg-white/80 transition-all duration-300">
               {appointment.counselor.counselor.profilePicture ? (
                 <img
                   src={appointment.counselor.counselor.profilePicture}
                   alt="Counselor"
-                  className="w-12 h-12 rounded-full object-cover border-2 border-[#0B6EC9]/10"
+                  className="w-10 h-10 rounded-full object-cover ring-2 ring-[#0B6EC9]/20"
                 />
               ) : (
-                <FaUserCircle className="w-12 h-12 text-[#0B6EC9]" />
+                <FaUserCircle className="w-10 h-10 text-[#0B6EC9]" />
               )}
-              <div>
-                <p className="font-semibold text-[#062341]">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-[#062341] truncate">
                   {appointment.counselor.counselor.name}
                 </p>
-                <p className="text-sm text-[#062341]/70 flex items-center gap-1">
-                  <FaEnvelope className="text-[#0B6EC9]" />
-                  {appointment.counselor.counselor.email}
-                </p>
+                <div className="flex items-center text-sm text-[#062341]/70 gap-1.5">
+                  <FaEnvelope className="text-[#0B6EC9] flex-shrink-0 w-3.5 h-3.5" />
+                  <span className="truncate">
+                    {appointment.counselor.counselor.email}
+                  </span>
+                </div>
               </div>
             </div>
-
-            {appointment.counsel_type === "virtual" ? (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() =>
-                  window.open("https://meet.google.com/dcv-iuva-bni", "_blank")
-                }
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
-              >
-                <FaVideo />
-                Join Meeting
-              </motion.button>
-            ) : (
-              <div className="flex items-center gap-2 text-[#062341]/70">
-                <FaMapMarkerAlt className="text-[#0B6EC9]" />
-                <span className="text-sm">Admin Building Room 301A</span>
-              </div>
-            )}
           </div>
+
+          {appointment.counsel_type === "virtual" ? (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() =>
+                window.open("https://meet.google.com/dcv-iuva-bni", "_blank")
+              }
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+            >
+              <FaVideo />
+              Join Meeting
+            </motion.button>
+          ) : (
+            <div className="flex items-center gap-2 text-[#062341]/70">
+              <FaMapMarkerAlt className="text-[#0B6EC9]" />
+              <span className="text-sm">Admin Building Room 301A</span>
+            </div>
+          )}
         </motion.div>
       ) : (
         <motion.div
