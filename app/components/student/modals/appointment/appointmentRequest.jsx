@@ -10,6 +10,7 @@ import {
   FaPaperPlane,
   FaSpinner,
 } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const AppointmentRequest = () => {
   const [formData, setFormData] = useState({
@@ -92,122 +93,143 @@ const AppointmentRequest = () => {
   };
 
   return (
-    <div className="absolute flex items-center justify-center w-[90%] h-[80%] bg-gradient-to-br from-[#F0F8FF] to-[#E6F0F9] mt-[6%] rounded-lg shadow-lg overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#D8E8F6]">
-      <form onSubmit={handleSubmit} className="p-8 space-y-8 w-full max-w-4xl">
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-6">
-            {/* Text input */}
-            <div className="flex items-center space-x-4">
-              <FaGraduationCap className="text-[#0B6EC9] text-xl" />
-              <input
-                required
-                name="grade"
-                value={formData.grade}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-                type="text"
-                placeholder="Grade"
-              />
-            </div>
-            {/* Select input */}
-            <div className="flex items-center space-x-4">
-              <FaClipboardList className="text-[#0B6EC9] text-xl" />
-              <select
-                name="reason"
-                value={formData.reason}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-              >
-                <option value="" disabled>
-                  Select Reason
-                </option>
-                <option value="stress_management">Stress Management</option>
-                <option value="encouragement">Encouragement</option>
-                <option value="career_guidance">Career Guidance</option>
-                <option value="emotional_support">Emotional Support</option>
-              </select>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaExclamationTriangle className="text-[#0B6EC9] text-xl" />
-              <select
-                name="urgency"
-                value={formData.urgency}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-              >
-                <option value="" disabled>
-                  Select Urgency
-                </option>
-                <option value="less">Less Urgent</option>
-                <option value="somewhat">Somewhat Urgent</option>
-                <option value="very">Very Urgent</option>
-              </select>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaVideo className="text-[#0B6EC9] text-xl" />
-              <select
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-              >
-                <option value="" disabled>
-                  Select Type
-                </option>
-                <option value="virtual">Virtual/Online</option>
-                <option value="inperson">In Person</option>
-              </select>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaPhoneAlt className="text-[#0B6EC9] text-xl" />
-              <input
-                required
-                name="contact"
-                value={formData.contact}
-                onChange={handleChange}
-                className="flex-grow xl:h-[30px] 2xl:h-[50px] xl:text-[10pt] 2xl:text-[12pt] bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-                type="text"
-                placeholder="Contact"
-              />
+    <div className="min-h-[60vh] flex flex-col bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
+      <form onSubmit={handleSubmit} className="flex-grow flex flex-col p-6">
+        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-4">
+            <div className="h-full bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <FaGraduationCap className="text-[#0B6EC9] text-xl flex-shrink-0" />
+                  <input
+                    required
+                    name="grade"
+                    value={formData.grade}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] placeholder-[#062341]/50 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                    type="text"
+                    placeholder="Grade Level"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <FaClipboardList className="text-[#0B6EC9] text-xl flex-shrink-0" />
+                  <select
+                    name="reason"
+                    value={formData.reason}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                  >
+                    <option value="" disabled>
+                      Select Reason
+                    </option>
+                    <option value="stress_management">Stress Management</option>
+                    <option value="encouragement">Encouragement</option>
+                    <option value="career_guidance">Career Guidance</option>
+                    <option value="emotional_support">Emotional Support</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <FaExclamationTriangle className="text-[#0B6EC9] text-xl flex-shrink-0" />
+                  <select
+                    name="urgency"
+                    value={formData.urgency}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                  >
+                    <option value="" disabled>
+                      Select Urgency
+                    </option>
+                    <option value="less">Less Urgent</option>
+                    <option value="somewhat">Somewhat Urgent</option>
+                    <option value="very">Very Urgent</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="space-y-6">
-            {/* Textarea input */}
-            <div className="flex items-start space-x-4">
-              <FaStickyNote className="text-[#0B6EC9] text-xl mt-2" />
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="flex-grow xl:h-60 2xl:h-64 xl:text-[10pt] 2xl:text-[12pt] h-64 bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full xl:p-1 2xl:p-3"
-                placeholder="Additional Notes"
-              ></textarea>
+
+          {/* Right Column */}
+          <div className="space-y-4">
+            <div className="h-full bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <FaVideo className="text-[#0B6EC9] text-xl flex-shrink-0" />
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                  >
+                    <option value="" disabled>
+                      Select Type
+                    </option>
+                    <option value="virtual">Virtual/Online</option>
+                    <option value="inperson">In Person</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <FaPhoneAlt className="text-[#0B6EC9] text-xl flex-shrink-0" />
+                  <input
+                    required
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] placeholder-[#062341]/50 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                    type="text"
+                    placeholder="Contact Information"
+                  />
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <FaStickyNote className="text-[#0B6EC9] text-xl flex-shrink-0 mt-2" />
+                  <textarea
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] placeholder-[#062341]/50 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20 min-h-[120px] resize-none"
+                    placeholder="Additional Notes"
+                  ></textarea>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {errorMessage && (
-          <div className="text-red-500 text-center font-semibold">
-            {errorMessage}
-          </div>
+
+        {/* Messages */}
+        {(errorMessage || successMessage) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mt-6 p-4 rounded-xl text-center font-medium ${
+              errorMessage
+                ? "bg-red-100 text-red-600"
+                : "bg-green-100 text-green-600"
+            }`}
+          >
+            {errorMessage || successMessage}
+          </motion.div>
         )}
-        {successMessage && (
-          <div className="text-green-500 text-center font-semibold">
-            {successMessage}
-          </div>
-        )}
-        <div className="flex justify-center mt-8">
-          <button
+
+        {/* Submit Button */}
+        <div className="mt-6 flex justify-center">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center xl:h-[40px] 2xl:h-[60px] justify-center px-8 py-4 bg-gradient-to-r from-[#0B6EC9] to-[#1E90FF] text-white text-lg font-bold rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B6EC9] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl font-medium text-sm hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
           >
             {isSubmitting ? (
-              <FaSpinner className="animate-spin mr-3 text-xl" />
+              <FaSpinner className="animate-spin mr-2" />
             ) : (
-              <FaPaperPlane className="mr-3 text-xl" />
+              <FaPaperPlane className="mr-2" />
             )}
             {isSubmitting ? "Submitting..." : "Submit Request"}
-          </button>
+          </motion.button>
         </div>
       </form>
     </div>

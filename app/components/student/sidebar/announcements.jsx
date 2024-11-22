@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
 import ProgressiveImage from "../../UI/progressiveImage";
+import { motion } from "framer-motion";
 
 const StudentFeed = () => {
   const [feedItems, setFeedItems] = useState([]);
@@ -153,27 +154,26 @@ const StudentFeed = () => {
   };
 
   const isWithinDateRange = (date) => {
-    const eventDate = new Date(date);
+    const itemDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     switch (dateFilter) {
       case "today":
-        return (
-          eventDate >= today &&
-          eventDate < new Date(today.getTime() + 24 * 60 * 60 * 1000)
-        );
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        return itemDate >= today && itemDate <= todayEnd;
       case "week":
-        const weekStart = new Date(
-          today.setDate(today.getDate() - today.getDay())
-        );
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
         const weekEnd = new Date(weekStart);
-        weekEnd.setDate(weekEnd.getDate() + 7);
-        return eventDate >= weekStart && eventDate < weekEnd;
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+        return itemDate >= weekStart && itemDate <= weekEnd;
       case "month":
         return (
-          eventDate.getMonth() === today.getMonth() &&
-          eventDate.getFullYear() === today.getFullYear()
+          itemDate.getMonth() === today.getMonth() &&
+          itemDate.getFullYear() === today.getFullYear()
         );
       default:
         return true;
@@ -181,9 +181,18 @@ const StudentFeed = () => {
   };
 
   const filteredFeedItems = feedItems.filter((item) => {
+    // First filter by type (event/announcement)
     if (filter !== "all" && item.type !== filter) return false;
-    if (item.type === "event" && !isWithinDateRange(item.date_time))
-      return false;
+
+    // Then filter by date
+    if (dateFilter !== "all") {
+      if (item.type === "event") {
+        return isWithinDateRange(item.date_time);
+      } else {
+        // For announcements, use createdAt
+        return isWithinDateRange(item.createdAt);
+      }
+    }
     return true;
   });
 
@@ -245,194 +254,220 @@ const StudentFeed = () => {
 
   const renderFeedItem = (item) => {
     if (item.type === "event") {
-      const eventIsRegistered =
-        isRegistered(item.event_id) || item.isRegistered;
-      const eventPassed = isEventPassed(item.date_time);
+      const isRegistered = registeredEvents.includes(item.event_id);
+      const isClosed = new Date(item.date_time) < new Date();
+
       return (
-        <div
+        <motion.div
           key={item.event_id}
-          className="w-[90%] bg-white rounded-lg shadow-md p-6 mb-6 transition-all duration-300 hover:shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 overflow-hidden max-w-4xl mx-auto"
         >
-          <div className="flex justify-between items-start mb-3">
-            <h2 className="text-2xl font-bold text-[#0B6EC9]">{item.title}</h2>
-            <div className="flex items-center gap-2">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <FaCalendarAlt className="text-white text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-white/80">{item.department}</p>
+                </div>
+              </div>
               {item.forDepartment && (
-                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
                   {item.forDepartment} Only
                 </span>
               )}
-              {eventPassed && (
-                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                  Closed
-                </span>
-              )}
             </div>
           </div>
-          <div className="flex items-center text-gray-600 mb-3">
-            <FaCalendarAlt className="mr-2" />
-            <p>
-              {new Date(item.date_time).toLocaleString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-          </div>
-          {item.location && (
-            <div className="flex items-center text-gray-600 mb-3">
-              <FaMapMarkerAlt className="mr-2" />
-              <p>{item.location}</p>
-            </div>
-          )}
-          <p className="text-gray-700 mb-4">{item.description}</p>
-          {item.img_path && (
-            <div className="mb-4">
-              <ProgressiveImage
-                src={item.img_path}
-                alt={item.title}
-                className="w-full h-auto max-h-[300px] object-cover rounded-lg shadow-md"
-              />
-            </div>
-          )}
-          {item.link && (
-            <div className="flex items-center text-[#0B6EC9] mb-4 hover:underline">
-              <FaLink className="mr-2" />
-              <a href={item.link} target="_blank" rel="noopener noreferrer">
-                Event Link
-              </a>
-            </div>
-          )}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-gray-600">
-              <FaUserFriends className="mr-2" />
-              <p>{registrationCounts[item.event_id] || 0} registered</p>
-            </div>
-            {eventIsRegistered ? (
-              <button
-                className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md cursor-not-allowed flex items-center opacity-75"
-                disabled
-              >
-                <FaCheck className="mr-2" />
-                Registered
-              </button>
-            ) : eventPassed ? (
-              <button
-                className="bg-gray-400 text-white px-6 py-2 rounded-lg shadow-md cursor-not-allowed flex items-center"
-                disabled
-              >
-                <FaClock className="mr-2" />
-                Event Closed
-              </button>
-            ) : !item.canRegister ? (
-              <button
-                className="bg-gray-400 text-white px-6 py-2 rounded-lg shadow-md cursor-not-allowed flex items-center"
-                disabled
-              >
-                <FaLock className="mr-2" />
-                Department Restricted
-              </button>
-            ) : (
-              <button
-                className="bg-[#0B6EC9] text-white px-6 py-2 rounded-lg shadow-md hover:bg-[#062341] transition-colors duration-300 flex items-center"
-                onClick={() => handleRegister(item)}
-              >
-                <FaCalendarAlt className="mr-2" />
-                Register
-              </button>
+
+          <div className="p-4 space-y-4">
+            {item.img_path && (
+              <div className="rounded-lg overflow-hidden">
+                <ProgressiveImage
+                  src={item.img_path}
+                  alt={item.title}
+                  className="w-full h-48 object-cover"
+                />
+              </div>
             )}
+
+            <div className="bg-[#F8FAFC] p-3 rounded-xl border border-[#0B6EC9]/10 space-y-2">
+              <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                <FaClock className="text-[#0B6EC9] text-base" />
+                <span>{new Date(item.date_time).toLocaleString()}</span>
+                {isClosed && (
+                  <span className="ml-2 text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+                    Closed
+                  </span>
+                )}
+              </div>
+              {item.location && (
+                <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                  <FaMapMarkerAlt className="text-[#0B6EC9] text-base" />
+                  <span>{item.location}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                <FaUserFriends className="text-[#0B6EC9] text-base" />
+                <span>{registrationCounts[item.event_id] || 0} registered</span>
+              </div>
+            </div>
+
+            <p className="text-[#062341]/80 text-sm">{item.description}</p>
+
+            {item.link && (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#0B6EC9] text-sm hover:underline"
+              >
+                <FaLink />
+                <span>Event Link</span>
+              </a>
+            )}
+
+            <div className="flex justify-end">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleRegisterClick(item)}
+                disabled={isClosed || isRegistered}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                  isRegistered
+                    ? "bg-green-100 text-green-600 cursor-default"
+                    : isClosed
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white hover:from-[#095396] hover:to-[#084B87]"
+                }`}
+              >
+                {isRegistered ? (
+                  <>
+                    <FaCheck className="inline mr-2" />
+                    Registered
+                  </>
+                ) : isClosed ? (
+                  "Event Closed"
+                ) : (
+                  "Register Now"
+                )}
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Announcement rendering (similar styling)
+    return (
+      <motion.div
+        key={item.resource_id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 overflow-hidden max-w-4xl mx-auto"
+      >
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/10 p-3 rounded-lg">
+              <FaBullhorn className="text-white text-xl" />
+            </div>
+            <h3 className="text-lg font-semibold text-white">{item.title}</h3>
           </div>
         </div>
-      );
-    } else if (item.type === "announcement") {
-      return (
-        <div
-          key={item.resource_id}
-          className="w-[90%] bg-white rounded-lg shadow-md p-6 mb-6 transition-all duration-300 hover:shadow-lg"
-        >
-          <div className="flex items-center mb-3">
-            <FaBullhorn className="text-[#0B6EC9] mr-2" />
-            <h2 className="text-2xl font-bold text-[#0B6EC9]">{item.title}</h2>
-          </div>
-          <p className="text-gray-700 mb-4">{item.description}</p>
+
+        <div className="p-4 space-y-4">
           {item.img_path && (
-            <div className="mb-4">
+            <div className="rounded-lg overflow-hidden">
               <ProgressiveImage
                 src={item.img_path}
                 alt={item.title}
-                className="w-full h-auto max-h-[300px] object-cover rounded-lg shadow-md"
+                className="w-full h-48 object-cover"
               />
             </div>
           )}
+
+          <p className="text-[#062341]/80 text-sm">{item.description}</p>
+
           {item.link && (
-            <div className="flex items-center text-[#0B6EC9] mb-4 hover:underline">
-              <FaLink className="mr-2" />
-              <a href={item.link} target="_blank" rel="noopener noreferrer">
-                Related Link
-              </a>
-            </div>
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[#0B6EC9] text-sm hover:underline"
+            >
+              <FaLink />
+              <span>Related Link</span>
+            </a>
           )}
-          <div className="text-gray-600 text-sm">
+
+          <div className="text-[#062341]/60 text-xs">
             Posted on: {new Date(item.createdAt).toLocaleString()}
           </div>
         </div>
-      );
-    }
+      </motion.div>
+    );
   };
 
   return (
-    <>
-      <div
-        className="newsfeed absolute xl:w-[55%] xl:h-[85%] xl:translate-x-[41%] xl:translate-y-[15%] 2xl:translate-y-[13%] rounded-[20px] flex flex-col items-center overflow-y-auto bg-[#dfecf6] gap-2"
-        onScroll={handleScroll}
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "#0B6EC9 #dfecf6",
-        }}
-      >
-        <style jsx global>{`
-          .newsfeed::-webkit-scrollbar {
-            width: 8px;
-          }
-          .newsfeed::-webkit-scrollbar-track {
-            background: #dfecf6;
-            border-radius: 10px;
-          }
-          .newsfeed::-webkit-scrollbar-thumb {
-            background: #0b6ec9;
-            border-radius: 10px;
-          }
-          .newsfeed::-webkit-scrollbar-thumb:hover {
-            background: #062341;
-          }
-        `}</style>
-        <h1 className="text-3xl font-bold mb-6 text-[#0B6EC9] mt-[5%]">
-          Student Feed
-        </h1>
-        {renderFilterButtons()}
-        {filteredFeedItems.length === 0 && !loading ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <FaFilter className="text-6xl text-gray-400 mb-4" />
-            <p className="text-xl text-gray-600">
-              No items to display for the selected filters.
-            </p>
-            <p className="text-gray-500">
-              Try changing the filters or check back later!
-            </p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              Student Feed
+            </h1>
           </div>
-        ) : (
-          filteredFeedItems.map(renderFeedItem)
-        )}
-        {loading && (
-          <div className="flex justify-center items-center py-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0B6EC9]"></div>
+
+          <div className="p-8 sm:p-10 space-y-8">
+            {renderFilterButtons()}
+
+            <div
+              className="overflow-y-auto max-h-[calc(100vh-20rem)] scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent hover:scrollbar-thumb-[#0B6EC9]/40"
+              onScroll={handleScroll}
+            >
+              {filteredFeedItems.length === 0 && !loading ? (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <FaFilter className="text-6xl text-gray-400 mb-4" />
+                  <p className="text-xl text-gray-600">
+                    No items to display for the selected filters.
+                  </p>
+                  <p className="text-gray-500">
+                    Try changing the filters or check back later!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {filteredFeedItems.map(renderFeedItem)}
+                </div>
+              )}
+
+              {loading && (
+                <div className="flex justify-center items-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0B6EC9]"></div>
+                </div>
+              )}
+
+              {!hasMore && feedItems.length > 0 && (
+                <p className="text-center text-gray-500 py-4">
+                  No more items to load
+                </p>
+              )}
+            </div>
           </div>
-        )}
-        {!hasMore && feedItems.length > 0 && (
-          <p className="text-gray-500 py-4">No more items to load</p>
-        )}
+        </div>
       </div>
+
       {showRegisterModal && selectedEvent && (
         <RegisterEvent
           event={selectedEvent}
@@ -440,7 +475,7 @@ const StudentFeed = () => {
           onRegister={handleConfirmRegistration}
         />
       )}
-    </>
+    </motion.div>
   );
 };
 

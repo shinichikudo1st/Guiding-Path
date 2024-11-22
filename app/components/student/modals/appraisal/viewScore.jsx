@@ -5,6 +5,7 @@ import {
 } from "@/app/utils/evaluate";
 import { FaTimes, FaBook, FaSmile, FaBriefcase } from "react-icons/fa";
 import MeterBar from "../../../UI/meterBar";
+import { motion } from "framer-motion";
 
 const ViewScore = ({ areaScores, close }) => {
   const academic = evaluateAcademic(areaScores.academic_score);
@@ -16,78 +17,100 @@ const ViewScore = ({ areaScores, close }) => {
   const careerPercentage = (areaScores.career_exploration_score / 5) * 100;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50">
-      <div className="fixed inset-0 bg-black opacity-50 transition-opacity duration-300"></div>
-      <div className="relative bg-white w-[40%] max-h-[90%] rounded-lg shadow-lg z-50 overflow-y-auto transform transition-transform duration-300 scale-95 hover:scale-100 scrollbar-thin scrollbar-thumb-[#3B82F6] scrollbar-track-[#E5E7EB] scroll-smooth">
-        <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Evaluation Area Scores
-          </h2>
-          <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex justify-center items-center z-50"
+    >
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300" />
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="relative bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] max-h-[90vh] rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden z-50"
+      >
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-white">Evaluation Results</h2>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={close}
-            className="text-gray-500 hover:text-gray-700 transition-colors duration-300"
+            className="text-white/80 hover:text-white transition-colors duration-300"
           >
             <FaTimes size={24} />
-          </button>
+          </motion.button>
         </div>
-        <div className="flex flex-col gap-6 p-6">
-          <div className="flex flex-col items-center bg-gray-50 p-4 rounded-lg shadow-md hover:bg-gray-100 transition-colors duration-300">
-            <FaBook size={32} className="text-gray-700 mb-2" />
-            <span className="text-lg font-semibold text-gray-700">
-              Academic Assessment
-            </span>
-            <MeterBar color={academic.color} width={academicPercentage} />
-            <span className="mt-4 text-md font-medium text-gray-600">
-              {academic.evaluation}
-            </span>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Description: </span>
-              {academic.description}
-            </p>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Suggestion: </span>
-              {academic.suggestion}
-            </p>
-          </div>
-          <div className="flex flex-col items-center bg-gray-50 p-4 rounded-lg shadow-md hover:bg-gray-100 transition-colors duration-300">
-            <FaSmile size={32} className="text-gray-700 mb-2" />
-            <span className="text-lg font-semibold text-gray-700">
-              Socio-Emotional Well Being
-            </span>
-            <MeterBar color={emotional.color} width={emotionalPercentage} />
-            <span className="mt-4 text-md font-medium text-gray-600">
-              {emotional.evaluation}
-            </span>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Description: </span>
-              {emotional.description}
-            </p>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Suggestion: </span>
-              {emotional.suggestion}
-            </p>
-          </div>
-          <div className="flex flex-col items-center bg-gray-50 p-4 rounded-lg shadow-md hover:bg-gray-100 transition-colors duration-300">
-            <FaBriefcase size={32} className="text-gray-700 mb-2" />
-            <span className="text-lg font-semibold text-gray-700">
-              Career Exploration
-            </span>
-            <MeterBar color={career.color} width={careerPercentage} />
-            <span className="mt-4 text-md font-medium text-gray-600">
-              {career.evaluation}
-            </span>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Description: </span>
-              {career.description}
-            </p>
-            <p className="mt-2 text-sm text-gray-500 text-left">
-              <span className="font-semibold">Suggestion: </span>
-              {career.suggestion}
-            </p>
-          </div>
+
+        <div className="overflow-y-auto max-h-[calc(100vh-16rem)] p-6 space-y-6 scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent hover:scrollbar-thumb-[#0B6EC9]/40">
+          {[
+            {
+              icon: FaBook,
+              title: "Academic Assessment",
+              score: academic,
+              percentage: academicPercentage,
+            },
+            {
+              icon: FaSmile,
+              title: "Socio-Emotional Well Being",
+              score: emotional,
+              percentage: emotionalPercentage,
+            },
+            {
+              icon: FaBriefcase,
+              title: "Career Exploration",
+              score: career,
+              percentage: careerPercentage,
+            },
+          ].map((area, index) => (
+            <motion.div
+              key={area.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/10 overflow-hidden"
+            >
+              <div className="p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-[#0B6EC9] to-[#095396] rounded-xl flex items-center justify-center shadow-md">
+                    <area.icon className="text-2xl text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-[#062341]">
+                      {area.title}
+                    </h3>
+                    <p className="text-sm font-medium text-[#062341]/70">
+                      {area.score.evaluation}
+                    </p>
+                  </div>
+                </div>
+
+                <MeterBar color={area.score.color} width={area.percentage} />
+
+                <div className="space-y-3 bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#062341]">
+                      Description
+                    </h4>
+                    <p className="text-sm text-[#062341]/70">
+                      {area.score.description}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-[#062341]">
+                      Suggestion
+                    </h4>
+                    <p className="text-sm text-[#062341]/70">
+                      {area.score.suggestion}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

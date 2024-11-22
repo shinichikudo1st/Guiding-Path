@@ -28,6 +28,9 @@ export async function GET() {
           },
         },
       },
+      orderBy: {
+        date_time: "asc",
+      },
     });
 
     appointments = appointments.map((appointment) => {
@@ -42,9 +45,16 @@ export async function GET() {
         hour12: true,
       });
 
-      appointment.date_time = formattedDate;
+      return {
+        ...appointment,
+        raw_date: date.getTime(),
+        date_time: formattedDate,
+      };
+    });
 
-      return appointment;
+    appointments.sort((a, b) => {
+      const today = new Date().getTime();
+      return Math.abs(a.raw_date - today) - Math.abs(b.raw_date - today);
     });
 
     return NextResponse.json(

@@ -7,18 +7,21 @@ import {
   FaBook,
   FaIdCard,
   FaPhone,
+  FaQuoteLeft,
+  FaQuoteRight,
 } from "react-icons/fa";
-import LoadingSpinner from "../../UI/loadingSpinner";
 import EditModal from "../modals/editModal";
 import UploadProfilePicture from "../uploadProfilePicture";
 import UploadModal from "../modals/uploadModal";
 import { encrypt, decrypt } from "@/app/utils/security";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const [retrievingData, setRetrievingData] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [uploadModal, setUploadModal] = useState(false);
+  const [quote, setQuote] = useState({ text: "", author: "" });
   const inputFileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [isFileSelected, setIsFileSelected] = useState(false);
@@ -116,6 +119,21 @@ const Profile = () => {
     }
   };
 
+  const fetchDailyQuote = async () => {
+    try {
+      const response = await fetch(
+        "https://api.quotable.io/random?tags=inspirational,motivation"
+      );
+      const data = await response.json();
+      setQuote({ text: data.content, author: data.author });
+    } catch (error) {
+      setQuote({
+        text: "The future belongs to those who believe in the beauty of their dreams.",
+        author: "Eleanor Roosevelt",
+      });
+    }
+  };
+
   useEffect(() => {
     const storedProfile = sessionStorage.getItem("profileData");
     if (storedProfile) {
@@ -124,16 +142,143 @@ const Profile = () => {
         setProfileData(decryptedProfileData);
         setRetrievingData(false);
       } else {
-        //console.error("Failed to decrypt stored profile data");
         retrieveProfile();
       }
     } else {
       retrieveProfile();
     }
+    fetchDailyQuote();
   }, []);
 
+  const profileItems = [
+    { icon: FaUser, label: "Name", value: profileData?.name },
+    { icon: FaGraduationCap, label: "Year", value: profileData?.year },
+    { icon: FaBook, label: "Course", value: profileData?.course },
+    { icon: FaBook, label: "Department", value: profileData?.department },
+    { icon: FaIdCard, label: "ID Number", value: profileData?.idNumber },
+    { icon: FaPhone, label: "Contact", value: profileData?.contact },
+  ];
+
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+    >
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              My Profile
+            </h1>
+          </div>
+
+          <div className="p-8 sm:p-10">
+            <div className="flex justify-center mb-10">
+              <UploadProfilePicture
+                toggleUploadModal={toggleUploadModal}
+                picture={profileData?.profilePicture || null}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { icon: FaUser, label: "Name", value: profileData?.name },
+                {
+                  icon: FaGraduationCap,
+                  label: "Year",
+                  value: profileData?.year,
+                },
+                { icon: FaBook, label: "Course", value: profileData?.course },
+                {
+                  icon: FaBook,
+                  label: "Department",
+                  value: profileData?.department,
+                },
+                {
+                  icon: FaIdCard,
+                  label: "ID Number",
+                  value: profileData?.idNumber,
+                },
+                {
+                  icon: FaPhone,
+                  label: "Contact",
+                  value: profileData?.contact,
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center shadow-sm">
+                      <item.icon className="text-white text-lg" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <label className="text-xs text-[#062341]/70 font-medium">
+                        {item.label}
+                      </label>
+                      <p className="text-[#062341] font-semibold text-sm truncate">
+                        {item.value}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={editButton}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl font-semibold hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 shadow-md"
+              >
+                <FaEdit className="text-lg" />
+                Edit Profile
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={backButton}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#062341] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all duration-300 border border-[#0B6EC9]/20 shadow-sm"
+              >
+                <FaArrowLeft className="text-lg" />
+                Back
+              </motion.button>
+            </div>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden p-6"
+        >
+          <div className="flex flex-col items-center text-center space-y-3">
+            <h2 className="text-lg font-bold text-[#0B6EC9]">
+              Daily Inspiration
+            </h2>
+            <div className="relative max-w-2xl">
+              <FaQuoteLeft className="absolute -top-3 -left-3 text-[#0B6EC9]/20 text-2xl" />
+              <p className="text-base text-[#062341] font-medium px-6 py-2">
+                {quote.text}
+              </p>
+              <FaQuoteRight className="absolute -bottom-3 -right-3 text-[#0B6EC9]/20 text-2xl" />
+            </div>
+            <p className="text-sm text-[#062341]/70 font-medium">
+              ― {quote.author}
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
       {uploadModal && (
         <UploadModal
           toggleUploadModal={toggleUploadModal}
@@ -146,121 +291,14 @@ const Profile = () => {
           setIsFileSelected={setIsFileSelected}
         />
       )}
-      <div className="absolute bg-gradient-to-br from-[#f0f8ff] to-[#e6f2ff] xl:w-[55%] xl:h-[80%] xl:translate-x-[41%] xl:translate-y-[20%] 2xl:translate-y-[16%] rounded-[20px] flex flex-col justify-center items-center shadow-lg">
-        {editModal && (
-          <EditModal
-            editButton={editButton}
-            profileData={profileData}
-            retrieveProfile={retrieveProfile}
-          />
-        )}
-        {retrievingData ? (
-          <LoadingSpinner />
-        ) : (
-          profileData && (
-            <div className="h-[90%] w-[90%] flex flex-col pl-[30%] text-[#062341] xl:gap-[35px] 2xl:gap-[50px]">
-              <UploadProfilePicture
-                toggleUploadModal={toggleUploadModal}
-                picture={
-                  profileData.profilePicture !== ""
-                    ? profileData.profilePicture
-                    : null
-                }
-              />
-              <span className="xl:text-[20pt] 2xl:text-[28pt] font-bold text-[#062341]">
-                MY PROFILE
-              </span>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaUser className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
-                >
-                  Name:
-                </label>
-                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
-                  {profileData.name}
-                </span>
-              </div>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaGraduationCap className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
-                >
-                  Year:
-                </label>
-                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
-                  {profileData.year}
-                </span>
-              </div>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaBook className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
-                >
-                  Course:
-                </label>
-                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
-                  {profileData.course}
-                </span>
-              </div>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaBook className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
-                >
-                  Department:
-                </label>
-                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
-                  {profileData.department}
-                </span>
-              </div>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaIdCard className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[12pt] 2xl:text-[16pt]"
-                >
-                  ID Number:
-                </label>
-                <span className="font-medium xl:text-[12pt] 2xl:text-[16pt]">
-                  {profileData.idNumber}
-                </span>
-              </div>
-              <div className="flex gap-[10px] text-[16pt] 2xl:w-[90%] items-center">
-                <FaPhone className="text-[#0B6EC9] text-xl" />
-                <label
-                  htmlFor="name"
-                  className="font-semibold 2xl:w-[25%] xl:text-[13pt] 2xl:text-[16pt]"
-                >
-                  Contact:
-                </label>
-                <span className="font-medium xl:text-[13pt] 2xl:text-[16pt]">
-                  {profileData.contact}
-                </span>
-              </div>
-              <div className="flex gap-[10%] 2xl:mt-[5%]">
-                <button
-                  onClick={editButton}
-                  className="text-white bg-[#0B6EC9] hover:bg-[#095396] focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px] transition duration-300 ease-in-out flex items-center justify-center"
-                >
-                  <FaEdit className="mr-2" /> Edit
-                </button>
-                <button
-                  onClick={backButton}
-                  className="text-[#062341] bg-[#E6F0F9] hover:bg-[#C4E0F9] focus:ring-4 focus:ring-blue-300 font-bold rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 hover:text-[#062341] dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[35%] h-[50px] transition duration-300 ease-in-out flex items-center justify-center"
-                >
-                  <FaArrowLeft className="mr-2" /> Back
-                </button>
-              </div>
-            </div>
-          )
-        )}
-      </div>
-    </>
+      {editModal && (
+        <EditModal
+          editButton={editButton}
+          profileData={profileData}
+          retrieveProfile={retrieveProfile}
+        />
+      )}
+    </motion.div>
   );
 };
 
