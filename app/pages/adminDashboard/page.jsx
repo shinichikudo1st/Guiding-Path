@@ -29,6 +29,9 @@ const CounselorHome = lazy(() =>
 const ReferralCounselor = lazy(() =>
   import("@/app/components/counselor/sidebar/referralCounselor")
 );
+const AppraisalManagement = lazy(() =>
+  import("@/app/components/counselor/sidebar/appraisalManagement")
+);
 
 const AdminDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("otherButton");
@@ -41,6 +44,7 @@ const AdminDashboard = () => {
     create: CreateResources,
     otherButton: CounselorHome,
     referral: ReferralCounselor,
+    appraisal: AppraisalManagement,
   };
 
   const toggleComponent = (componentName) => {
@@ -61,6 +65,7 @@ const AdminDashboard = () => {
         profile={() => toggleComponent("profile")}
         create={() => toggleComponent("create")}
         referral={() => toggleComponent("referral")}
+        appraisal={() => toggleComponent("appraisal")}
         activeComponent={activeComponent}
       />
       <QuickViewCounselor

@@ -35,8 +35,7 @@ model Students {
   eventRegistrations Event_Registration[]
   referral          Referrals[]
   appointment       Appointments[]
-  evaluationTrend   Evaluation_Trends[]
-  appraisal         Appraisals[]
+  appraisals         StudentAppraisal[]
   request           Appointment_Requests[]
 }
 
@@ -71,6 +70,7 @@ model Counselors {
 
   referral          Referrals[]
   appointment       Appointments[]
+  appraisalTemplate AppraisalTemplate[]
 }
 
 model Appointment_Requests {
@@ -150,45 +150,6 @@ model User_Resources {
   @@id([user_id, resource_id])
 }
 
-model Evaluation_Trends {
-  student                     Students  @relation(fields: [student_id], references: [student_id])
-  student_id                  String
-  date                        DateTime
-  academic_average            Int
-  socio_emotional_average     Int
-  career_exploration_average  Int
-  overall_average             Int
-  @@id([student_id, date])
-}
-
-model Appraisals {
-  appraisal_id          Int         @id @default(autoincrement())
-  student               Students    @relation(fields: [student_id], references: [student_id])
-  student_id            String
-  date                  String
-  date_of_submission    DateTime
-  evaluationAreas       Evaluation_Areas[]
-  aggregateScores       Aggregate_Scores?
-}
-
-model Evaluation_Areas {
-  appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
-  appraisal_id        Int
-  area_name           String
-  content             String?
-  score               Int
-  @@id([appraisal_id, area_name])
-}
-
-model Aggregate_Scores {
-  appraisal           Appraisals  @relation(fields: [appraisal_id], references: [appraisal_id])
-  appraisal_id        Int         @id
-  academic_score      Int
-  socio_emotional_score Int
-  career_exploration_score  Int
-  overall_average Int
-}
-
 model Notifications {
   notification_id     Int         @id @default(autoincrement())
   user                Users?       @relation(fields: [user_id], references: [user_id])
@@ -199,3 +160,82 @@ model Notifications {
   isRead              Boolean     @default(false)
   createdAt           DateTime    @default(now())
 }
+
+model AppraisalTemplate {
+  id                Int       @id @default(autoincrement())
+  title             String
+  description       String
+  counselor         Counselors @relation(fields: [counselor_id], references: [counselor_id])
+  counselor_id      String
+  createdAt         DateTime  @default(now())
+  isActive          Boolean   @default(true)
+  forDepartment     String?   // Optional: target specific departments
+  categories        AppraisalCategory[]
+  studentResponses  StudentAppraisal[]
+  evaluationCriteria EvaluationCriteria[]
+}
+
+model AppraisalCategory {
+  id                Int       @id @default(autoincrement())
+  template          AppraisalTemplate @relation(fields: [template_id], references: [id])
+  template_id       Int
+  name              String
+  description       String?
+  questions         CategoryQuestion[]
+  responses         CategoryResponse[]
+  evaluationCriteria EvaluationCriteria[]
+}
+
+model CategoryQuestion {
+  id                Int       @id @default(autoincrement())
+  category          AppraisalCategory @relation(fields: [category_id], references: [id])
+  category_id       Int
+  question          String
+  isActive          Boolean   @default(true)
+  responses         QuestionResponse[]
+}
+
+model EvaluationCriteria {
+  id                Int       @id @default(autoincrement())
+  template          AppraisalTemplate @relation(fields: [template_id], references: [id])
+  template_id       Int
+  category          AppraisalCategory? @relation(fields: [category_id], references: [id])  // Made optional
+  category_id       Int?      // null means overall evaluation
+  minScore          Float
+  maxScore          Float
+  evaluation        String    // e.g., "Excellent", "Needs Improvement"
+  description       String
+  suggestion        String
+}
+
+model QuestionResponse {
+  id                Int       @id @default(autoincrement())
+  categoryResponse  CategoryResponse @relation(fields: [category_response_id], references: [id])
+  category_response_id Int
+  question          CategoryQuestion @relation(fields: [question_id], references: [id])
+  question_id       Int
+  response          Int      // 1-5 Likert scale
+}
+
+model CategoryResponse {
+  id                Int       @id @default(autoincrement())
+  appraisal         StudentAppraisal @relation(fields: [appraisal_id], references: [id])
+  appraisal_id      Int
+  category          AppraisalCategory @relation(fields: [category_id], references: [id])
+  category_id       Int
+  score             Float
+  questionResponses QuestionResponse[]
+}
+
+model StudentAppraisal {
+  id                Int       @id @default(autoincrement())
+  template          AppraisalTemplate @relation(fields: [template_id], references: [id])
+  template_id       Int
+  student           Students  @relation(fields: [student_id], references: [student_id])
+  student_id        String
+  submittedAt       DateTime  @default(now())
+  categoryResponses CategoryResponse[]
+  
+  @@unique([template_id, student_id])
+}
+

@@ -1,5 +1,6 @@
 import { FaEdit, FaFile, FaUserCircle, FaUserClock } from "react-icons/fa";
 import { MdGroups, MdManageAccounts } from "react-icons/md";
+import { BsChatFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 
 const CounselorSidebar = ({
@@ -9,6 +10,7 @@ const CounselorSidebar = ({
   profile,
   create,
   referral,
+  appraisal,
   activeComponent,
 }) => {
   const sidebarItems = [
@@ -38,6 +40,12 @@ const CounselorSidebar = ({
       onClick: generateReport,
     },
     { name: "referral", icon: MdGroups, label: "Referrals", onClick: referral },
+    {
+      name: "appraisal",
+      icon: BsChatFill,
+      label: "Appraisal Management",
+      onClick: appraisal,
+    },
   ];
 
   const getItemClassName = (itemName) => {
