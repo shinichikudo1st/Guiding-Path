@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   FaUser,
   FaChalkboardTeacher,
@@ -59,25 +60,19 @@ const ViewReferrals = () => {
 
   useEffect(() => {
     if (statusFilter === "all") {
-      setFilteredReferrals(referrals);
+      setFilteredReferrals(
+        [...referrals].sort(
+          (a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted)
+        )
+      );
     } else {
       setFilteredReferrals(
-        referrals.filter((referral) => referral.status === statusFilter)
+        referrals
+          .filter((referral) => referral.status === statusFilter)
+          .sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted))
       );
     }
   }, [statusFilter, referrals]);
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <FaSpinner className="animate-spin text-4xl text-[#0B6EC9]" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center">Error: {error}</div>;
-  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -101,137 +96,167 @@ const ViewReferrals = () => {
   const filterOptions = [
     { value: "all", label: "All" },
     { value: "pending", label: "Pending" },
-    { value: "confirmed", label: "Confirmed/In Progress" },
-    { value: "closed", label: "Closed/Completed" },
+    { value: "confirmed", label: "Confirmed" },
+    { value: "closed", label: "Closed" },
+    { value: "cancelled", label: "Cancelled" },
+    { value: "rejected", label: "Rejected" },
   ];
 
-  return (
-    <div className="w-full h-[85%] bg-[#E6F0F9] p-6 rounded-lg shadow-md overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#E6F0F9]">
-      {message && (
-        <div
-          className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform ${
-            message.type === "success"
-              ? "bg-green-100 text-green-800 border-l-4 border-green-500"
-              : "bg-red-100 text-red-800 border-l-4 border-red-500"
-          }`}
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-center gap-2 px-6 py-3 bg-[#0B6EC9]/10 text-[#0B6EC9] rounded-xl font-semibold"
         >
-          <div className="flex items-center">
-            {message.type === "success" ? (
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            )}
-            <p className="font-medium">{message.content}</p>
-          </div>
-        </div>
-      )}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-[#062341] mb-4 md:mb-0">
-          View Referrals
-        </h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {filterOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setStatusFilter(option.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-                statusFilter === option.value
-                  ? "bg-[#0B6EC9] text-white"
-                  : "bg-white text-[#0B6EC9] hover:bg-[#0B6EC9] hover:text-white"
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+          <FaSpinner className="animate-spin h-5 w-5" />
+          Loading Referrals...
+        </motion.div>
       </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      {/* Filter Navigation */}
+      <div className="flex flex-wrap justify-center gap-2 bg-[#E6F0F9] p-2 rounded-xl">
+        {filterOptions.map((option) => (
+          <motion.button
+            key={option.value}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setStatusFilter(option.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+              statusFilter === option.value
+                ? "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white shadow-md"
+                : "text-[#062341] hover:bg-white/50"
+            }`}
+          >
+            {option.label}
+          </motion.button>
+        ))}
+      </div>
+
+      {/* Referrals Grid */}
       {filteredReferrals.length === 0 ? (
-        <p className="text-center text-gray-500">No referrals found.</p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center min-h-[300px] text-center"
+        >
+          <FaClipboardList className="text-4xl text-[#0B6EC9]/30 mb-4" />
+          <h3 className="text-xl font-semibold text-[#062341]">
+            No Referrals Found
+          </h3>
+          <p className="text-[#062341]/70 mt-2">
+            No referrals match the selected filter
+          </p>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredReferrals.map((referral) => (
-            <div
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {filteredReferrals.map((referral, index) => (
+            <motion.div
               key={referral.referral_id}
-              className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl flex flex-col h-full"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden h-full"
             >
-              <div className="flex-grow">
-                <div className="flex items-center mb-4">
-                  <FaUser className="mr-3 text-[#0B6EC9] text-xl" />
-                  <span className="font-semibold text-lg">
-                    {referral.student?.student?.name || "N/A"}
-                  </span>
+              <div className="p-4 sm:p-6 flex flex-col h-full">
+                <div className="space-y-3 flex-grow">
+                  {/* Student Info */}
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <FaUser className="text-[#0B6EC9] text-base sm:text-lg flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#062341]/60">Student</p>
+                      <p className="font-semibold text-sm sm:text-base text-[#062341] line-clamp-1">
+                        {referral.student?.student?.name || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Teacher Info */}
+                  <div className="flex items-center gap-3">
+                    <FaChalkboardTeacher className="text-[#0B6EC9] text-lg flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#062341]/60">Teacher</p>
+                      <p className="text-[#062341]">
+                        {referral.teacher?.teacher?.name || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reason */}
+                  <div className="flex items-center gap-3">
+                    <FaClipboardList className="text-[#0B6EC9] text-lg flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#062341]/60">Reason</p>
+                      <p className="text-[#062341]">
+                        {referral.reason || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-3">
+                    <FaCalendarAlt className="text-[#0B6EC9] text-lg flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-[#062341]/60">
+                        Date Submitted
+                      </p>
+                      <p className="text-[#062341]">
+                        {referral.dateSubmitted
+                          ? new Date(
+                              referral.dateSubmitted
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Notes - with max height and scroll */}
+                  <div className="bg-white/50 rounded-lg p-2 sm:p-3 mt-2 max-h-24 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent">
+                    <p className="text-xs sm:text-sm text-[#062341]/70 italic line-clamp-3">
+                      "{referral.notes || "No additional notes"}"
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center mb-3">
-                  <FaChalkboardTeacher className="mr-3 text-[#0B6EC9] text-lg" />
-                  <span className="text-gray-700">
-                    {referral.teacher?.teacher?.name || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center mb-3">
-                  <FaClipboardList className="mr-3 text-[#0B6EC9] text-lg" />
-                  <span className="text-gray-700">
-                    {referral.reason || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center mb-4">
-                  <FaCalendarAlt className="mr-3 text-[#0B6EC9] text-lg" />
-                  <span className="text-gray-700">
-                    {referral.dateSubmitted
-                      ? new Date(referral.dateSubmitted).toLocaleDateString()
+
+                {/* Status and Actions */}
+                <div className="mt-4 pt-3 border-t border-[#0B6EC9]/10 flex justify-between items-center">
+                  {referral.status === "pending" && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handleCancelReferral(referral.referral_id)}
+                      className="px-4 py-1.5 rounded-full text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
+                    >
+                      Cancel
+                    </motion.button>
+                  )}
+                  <span
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
+                      referral.status
+                    )}`}
+                  >
+                    {referral.status
+                      ? referral.status.charAt(0).toUpperCase() +
+                        referral.status.slice(1).replace("_", " ")
                       : "N/A"}
                   </span>
                 </div>
-                <div className="mt-3 bg-gray-100 p-3 rounded-md">
-                  <p className="text-sm text-gray-600 italic">
-                    "{referral.notes || "No additional notes"}"
-                  </p>
-                </div>
               </div>
-              <div className="mt-4 flex justify-between items-center pt-4 border-t border-gray-200">
-                {referral.status === "pending" && (
-                  <button
-                    onClick={() => handleCancelReferral(referral.referral_id)}
-                    className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-600 hover:bg-red-200 transition-colors duration-200"
-                  >
-                    Cancel
-                  </button>
-                )}
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                    referral.status
-                  )}`}
-                >
-                  {referral.status
-                    ? referral.status.charAt(0).toUpperCase() +
-                      referral.status.slice(1).replace("_", " ")
-                    : "N/A"}
-                </span>
-              </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
