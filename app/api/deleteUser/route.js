@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 
 export async function DELETE(request) {
   const { counselorPassword, userID } = await request.json();
-
   const { sessionData } = await getSession();
 
   if (!sessionData) {
@@ -13,14 +12,12 @@ export async function DELETE(request) {
   }
 
   const counselor = await prisma.users.findUnique({
-    where: {
-      user_id: sessionData.id,
-    },
+    where: { user_id: sessionData.id },
   });
 
   const match = await bcrypt.compare(
     counselorPassword,
-    counselor.hashed_password
+    counselor.hashedPassword
   );
 
   if (!match) {
@@ -29,9 +26,7 @@ export async function DELETE(request) {
 
   try {
     const user = await prisma.users.findUnique({
-      where: {
-        user_id: userID,
-      },
+      where: { user_id: userID },
     });
 
     if (userID === sessionData.id) {
@@ -48,63 +43,6 @@ export async function DELETE(request) {
       );
     }
 
-    // Common deletions for all user types
-    const commonDeletions = [
-      prisma.notifications.deleteMany({
-        where: { user_id: userID },
-      }),
-      prisma.user_Resources.deleteMany({
-        where: { user_id: userID },
-      }),
-    ];
-
-    // Role-specific deletions
-    const roleDeletions = {
-      student: [
-        prisma.evaluation_Trends.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.appraisals.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.appointment_Requests.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.appointments.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.event_Registrations.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.referrals.deleteMany({
-          where: { student_id: userID },
-        }),
-        prisma.students.delete({
-          where: { student_id: userID },
-        }),
-      ],
-      teacher: [
-        prisma.referrals.deleteMany({
-          where: { teacher_id: userID },
-        }),
-        prisma.teachers.delete({
-          where: { teacher_id: userID },
-        }),
-      ],
-      counselor: [
-        prisma.referrals.deleteMany({
-          where: { counselor_id: userID },
-        }),
-        prisma.appointments.deleteMany({
-          where: { counselor_id: userID },
-        }),
-        prisma.counselors.delete({
-          where: { counselor_id: userID },
-        }),
-      ],
-    };
-
-    // Add after the user lookup
     if (user.role === "counselor") {
       const activeCounselors = await prisma.users.count({
         where: {
@@ -121,15 +59,154 @@ export async function DELETE(request) {
       }
     }
 
-    // Execute all relevant deletions
-    await prisma.$transaction([
-      ...commonDeletions,
-      ...(roleDeletions[user.role] || []),
-      // Delete the user record last
-      prisma.users.delete({
+    // Delete all related records in a transaction
+    await prisma.$transaction(async (prisma) => {
+      // Delete QuestionResponses related to student appraisals
+      if (user.role === "student") {
+        await prisma.questionResponse.deleteMany({
+          where: {
+            categoryResponse: {
+              appraisal: {
+                student_id: userID,
+              },
+            },
+          },
+        });
+
+        // Delete CategoryResponses
+        await prisma.categoryResponse.deleteMany({
+          where: {
+            appraisal: {
+              student_id: userID,
+            },
+          },
+        });
+
+        // Delete StudentAppraisals
+        await prisma.studentAppraisal.deleteMany({
+          where: {
+            student_id: userID,
+          },
+        });
+      }
+
+      // Delete counselor-specific records
+      if (user.role === "counselor") {
+        // Delete AppraisalTemplate and related records
+        const templates = await prisma.appraisalTemplate.findMany({
+          where: { counselor_id: userID },
+          select: { id: true },
+        });
+
+        const templateIds = templates.map((t) => t.id);
+
+        await prisma.questionResponse.deleteMany({
+          where: {
+            categoryResponse: {
+              appraisal: {
+                template_id: { in: templateIds },
+              },
+            },
+          },
+        });
+
+        await prisma.categoryResponse.deleteMany({
+          where: {
+            appraisal: {
+              template_id: { in: templateIds },
+            },
+          },
+        });
+
+        await prisma.studentAppraisal.deleteMany({
+          where: {
+            template_id: { in: templateIds },
+          },
+        });
+
+        await prisma.categoryQuestion.deleteMany({
+          where: {
+            category: {
+              template_id: { in: templateIds },
+            },
+          },
+        });
+
+        await prisma.evaluationCriteria.deleteMany({
+          where: {
+            template_id: { in: templateIds },
+          },
+        });
+
+        await prisma.appraisalCategory.deleteMany({
+          where: {
+            template_id: { in: templateIds },
+          },
+        });
+
+        await prisma.appraisalTemplate.deleteMany({
+          where: {
+            counselor_id: userID,
+          },
+        });
+      }
+
+      // Common deletions for all user types
+      await prisma.notifications.deleteMany({
         where: { user_id: userID },
-      }),
-    ]);
+      });
+
+      await prisma.user_Resources.deleteMany({
+        where: { user_id: userID },
+      });
+
+      // Role-specific table deletions
+      switch (user.role) {
+        case "student":
+          await prisma.event_Registration.deleteMany({
+            where: { student_id: userID },
+          });
+          await prisma.appointment_Requests.deleteMany({
+            where: { student_id: userID },
+          });
+          await prisma.appointments.deleteMany({
+            where: { student_id: userID },
+          });
+          await prisma.referrals.deleteMany({
+            where: { student_id: userID },
+          });
+          await prisma.students.delete({
+            where: { student_id: userID },
+          });
+          break;
+
+        case "teacher":
+          await prisma.referrals.deleteMany({
+            where: { teacher_id: userID },
+          });
+          await prisma.teachers.delete({
+            where: { teacher_id: userID },
+          });
+          break;
+
+        case "counselor":
+          await prisma.referrals.deleteMany({
+            where: { counselor_id: userID },
+          });
+          await prisma.appointments.deleteMany({
+            where: { counselor_id: userID },
+          });
+          await prisma.counselors.delete({
+            where: { counselor_id: userID },
+          });
+          break;
+      }
+
+      // Finally, delete the user
+      await prisma.users.delete({
+        where: { user_id: userID },
+      });
+    });
 
     return NextResponse.json(
       { message: "User deleted successfully" },
