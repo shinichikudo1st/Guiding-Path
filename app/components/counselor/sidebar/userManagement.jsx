@@ -141,6 +141,10 @@ const UserManagement = () => {
     retrieveUsers();
   };
 
+  const handleModifySuccess = () => {
+    retrieveUsers(); // Fetch updated user list
+  };
+
   const renderTableRow = (user) => (
     <>
       <td className="py-4 px-4">
@@ -389,7 +393,11 @@ const UserManagement = () => {
 
       {/* Modals */}
       {isModifyUserModalOpen && (
-        <ModifyUser onClose={closeModifyUserModal} userID={selectedUserId} />
+        <ModifyUser
+          onClose={closeModifyUserModal}
+          userID={selectedUserId}
+          onSuccess={handleModifySuccess}
+        />
       )}
       {isArchiveUserModalOpen && (
         <ArchiveUser

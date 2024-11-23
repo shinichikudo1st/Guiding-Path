@@ -2,8 +2,9 @@ import { useState } from "react";
 import { FaTimes, FaSpinner } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-const ModifyUser = ({ onClose, userID }) => {
+const ModifyUser = ({ onClose, userID, onSuccess }) => {
   const [selectedRole, setSelectedRole] = useState("");
+  const [counselorPassword, setCounselorPassword] = useState("");
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -11,12 +12,16 @@ const ModifyUser = ({ onClose, userID }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(``, {
+      const response = await fetch(`/api/modifyUser`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ role: selectedRole }),
+        body: JSON.stringify({
+          role: selectedRole,
+          id: userID,
+          counselorPassword,
+        }),
       });
 
       if (response.ok) {
@@ -25,6 +30,7 @@ const ModifyUser = ({ onClose, userID }) => {
           message: "User role updated successfully",
         });
         setTimeout(() => {
+          onSuccess?.();
           onClose();
         }, 2000);
       } else {
@@ -41,6 +47,9 @@ const ModifyUser = ({ onClose, userID }) => {
       });
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
     }
   };
 
@@ -101,6 +110,26 @@ const ModifyUser = ({ onClose, userID }) => {
           onSubmit={handleSubmit}
           className="space-y-6"
         >
+          <div className="mb-6">
+            <motion.label
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="block text-gray-700 text-sm font-semibold mb-2"
+            >
+              Enter your password to confirm
+            </motion.label>
+            <motion.input
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              type="password"
+              value={counselorPassword}
+              onChange={(e) => setCounselorPassword(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+          </div>
           <div>
             <motion.label
               initial={{ opacity: 0 }}
