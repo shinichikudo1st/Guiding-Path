@@ -87,6 +87,16 @@ const CounselorHome = () => {
         <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
           <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
             <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              Monthly Overview
+            </h1>
+          </div>
+          <div className="p-8 sm:p-10">
+            <DashboardReport />
+          </div>
+        </div>
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
               Today's Appointments
             </h1>
           </div>
@@ -204,17 +214,6 @@ const CounselorHome = () => {
             appointment={singleAppointment}
           />
         )}
-
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center">
-              Monthly Overview
-            </h1>
-          </div>
-          <div className="p-8 sm:p-10">
-            <DashboardReport />
-          </div>
-        </div>
       </div>
     </motion.div>
   );

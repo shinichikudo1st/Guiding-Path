@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import {
-  FaUserTie,
-  FaChartBar,
-  FaCalendarAlt,
-  FaExclamationTriangle,
-} from "react-icons/fa";
+import { FaUserTie, FaChartBar, FaExclamationTriangle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
