@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaEye, FaUsers } from "react-icons/fa";
+import { FaTrash, FaEye, FaUsers } from "react-icons/fa";
 import DetailView from "./manage/detailView";
 import ViewResponse from "./manage/viewResponse";
 import { motion } from "framer-motion";
@@ -15,6 +15,7 @@ const ManageAppraisal = () => {
   const [selectedAppraisal, setSelectedAppraisal] = useState(null);
   const [viewMode, setViewMode] = useState("list");
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchAppraisals(currentPage);
@@ -54,6 +55,7 @@ const ManageAppraisal = () => {
   };
 
   const handleConfirmDelete = async () => {
+    setIsDeleting(true);
     try {
       const response = await fetch("/api/appraisal/getAll", {
         method: "DELETE",
@@ -67,11 +69,12 @@ const ManageAppraisal = () => {
         throw new Error("Failed to delete appraisal");
       }
 
-      // Refresh the list
-      fetchAppraisals(currentPage);
+      await fetchAppraisals(currentPage);
       setDeleteConfirmation(null);
     } catch (error) {
       console.error("Error deleting appraisal:", error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -111,53 +114,50 @@ const ManageAppraisal = () => {
                 {appraisals.map((appraisal) => (
                   <div
                     key={appraisal.id}
-                    className="bg-white p-4 rounded-lg shadow-sm border border-gray-100"
+                    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-[#0B6EC9]/30 transition-all duration-300"
                   >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#062341]">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-grow">
+                        <h3 className="text-xl font-semibold text-[#062341] mb-2">
                           {appraisal.title}
                         </h3>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-gray-600 mb-4">
                           {appraisal.description}
                         </p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-sm text-gray-500">
+                        <div className="flex items-center gap-4">
+                          <span className="px-3 py-1.5 bg-[#0B6EC9]/10 text-[#0B6EC9] rounded-full text-sm font-medium">
                             {appraisal.categories.length} Categories
                           </span>
-                          <span className="text-sm text-gray-500">•</span>
-                          <span className="text-sm text-gray-500">
+                          <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                             {appraisal.studentResponses.length} Responses
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+
+                      <div className="flex gap-3">
                         <button
                           onClick={() => handleViewDetails(appraisal)}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                          className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg shadow-sm hover:shadow transition-all duration-300"
                           title="View Details"
                         >
-                          <FaEye />
+                          <FaEye className="text-lg" />
+                          <span className="font-medium">Details</span>
                         </button>
                         <button
                           onClick={() => handleViewResponses(appraisal)}
-                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+                          className="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg shadow-sm hover:shadow transition-all duration-300"
                           title="View Responses"
                         >
-                          <FaUsers />
-                        </button>
-                        <button
-                          className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg"
-                          title="Edit"
-                        >
-                          <FaEdit />
+                          <FaUsers className="text-lg" />
+                          <span className="font-medium">Responses</span>
                         </button>
                         <button
                           onClick={() => handleDelete(appraisal)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                          className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white hover:bg-red-700 rounded-lg shadow-sm hover:shadow transition-all duration-300"
                           title="Delete"
                         >
-                          <FaTrash />
+                          <FaTrash className="text-lg" />
+                          <span className="font-medium">Delete</span>
                         </button>
                       </div>
                     </div>
@@ -227,6 +227,7 @@ const ManageAppraisal = () => {
             appraisal={deleteConfirmation}
             onConfirm={handleConfirmDelete}
             onCancel={() => setDeleteConfirmation(null)}
+            isDeleting={isDeleting}
           />
         )}
       </div>
