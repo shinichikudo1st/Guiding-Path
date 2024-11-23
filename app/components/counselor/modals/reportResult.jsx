@@ -1,20 +1,17 @@
 import React, { useRef } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import html2canvas from "html2canvas";
 import {
   FaCalendarAlt,
   FaChartBar,
   FaUserTie,
-  FaClipboardCheck,
   FaBook,
   FaChartLine,
   FaCalendar,
   FaUsers,
   FaUserGraduate,
   FaChalkboardTeacher,
-  FaGraduationCap,
-  FaHeartbeat,
-  FaBriefcase,
+  FaFileCsv,
 } from "react-icons/fa"; // Import icons
 import {
   Chart as ChartJS,
@@ -51,13 +48,33 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
 
   const exportAsImage = async (reportRef, reportName) => {
     if (reportRef.current) {
-      const canvas = await html2canvas(reportRef.current);
+      const canvas = await html2canvas(reportRef.current, {
+        backgroundColor: null, // Set to null for transparent background
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
       const image = canvas.toDataURL("image/png", 1.0);
       const link = document.createElement("a");
       link.download = `${reportName}_report_${startDate}_to_${endDate}.png`;
       link.href = image;
       link.click();
     }
+  };
+
+  const exportToCSV = () => {
+    const csvContent = reportData
+      .map((report) => {
+        // Customize CSV content based on report data structure
+        return `Report Name: ${report.name}, Data: ${JSON.stringify(report)}`;
+      })
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `report-data-${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
   };
 
   return (
@@ -231,73 +248,7 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
                   )}
                 </div>
               );
-            case "appraisal":
-              const appraisalRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={appraisalRef}
-                    className="bg-purple-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-purple-800 mb-6 flex items-center">
-                      <FaClipboardCheck className="mr-3" />
-                      Appraisal Report
-                    </h3>
-                    {report.appraisalByDate === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No appraisal data available for the selected date range.
-                      </p>
-                    ) : (
-                      // Existing content when data is available
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-purple-800 mb-2">
-                            Total Appraisals
-                          </h4>
-                          <p className="text-4xl font-bold text-purple-600">
-                            {report.appraisalByDate}
-                          </p>
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-purple-800 mb-2">
-                            Average Scores by Area
-                          </h4>
-                          <ul className="list-disc list-inside">
-                            {report.appraisalAreaAverage.map((area, idx) => (
-                              <li key={idx} className="text-sm text-purple-600">
-                                {area.area_name}:{" "}
-                                {area.average_score.toFixed(2)}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    )}
-                    <div className="mt-8">
-                      <h4 className="text-xl font-medium text-gray-700 mb-4">
-                        Appraisal Area Averages
-                      </h4>
-                      <Bar
-                        data={getAppraisalChartData(
-                          report.appraisalAreaAverage
-                        )}
-                        options={appraisalChartOptions}
-                      />
-                    </div>
-                  </div>
-                  {report.appraisalByDate > 0 && (
-                    <button
-                      onClick={() => exportAsImage(appraisalRef, "appraisal")}
-                      className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
-                    >
-                      Export Appraisal Report
-                    </button>
-                  )}
-                </div>
-              );
+
             case "resource":
               const resourceRef = useRef(null);
               return (
@@ -370,80 +321,7 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
                   )}
                 </div>
               );
-            case "evaluationTrends":
-              const evaluationTrendsRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={evaluationTrendsRef}
-                    className="bg-indigo-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-indigo-800 mb-6 flex items-center">
-                      <FaChartLine className="mr-3" />
-                      Evaluation Trends Report
-                    </h3>
-                    {report.totalEvaluations === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No evaluation trends data available for the selected
-                        date range.
-                      </p>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                          <EvaluationCategoryCard
-                            title="Academic Categories"
-                            icon={
-                              <FaGraduationCap className="text-3xl text-blue-500" />
-                            }
-                            categories={report.academicCategories}
-                            colorClass="bg-blue-100"
-                          />
-                          <EvaluationCategoryCard
-                            title="Socio-Emotional Categories"
-                            icon={
-                              <FaHeartbeat className="text-3xl text-red-500" />
-                            }
-                            categories={report.socioEmotionalCategories}
-                            colorClass="bg-red-100"
-                          />
-                          <EvaluationCategoryCard
-                            title="Career Exploration Categories"
-                            icon={
-                              <FaBriefcase className="text-3xl text-green-500" />
-                            }
-                            categories={report.careerExplorationCategories}
-                            colorClass="bg-green-100"
-                          />
-                        </div>
-                        <div className="mt-8 bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-gray-700 mb-4">
-                            Evaluation Trends Over Time
-                          </h4>
-                          <Line
-                            data={getEvaluationTrendsChartData(
-                              report.evaluationTrendsData
-                            )}
-                            options={evaluationTrendsChartOptions}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  {report.totalEvaluations > 0 && (
-                    <button
-                      onClick={() =>
-                        exportAsImage(evaluationTrendsRef, "evaluation_trends")
-                      }
-                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-                    >
-                      Export Evaluation Trends Report
-                    </button>
-                  )}
-                </div>
-              );
+
             case "eventRegistration":
               const eventRegistrationRef = useRef(null);
               return (
@@ -687,12 +565,21 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
               return null;
           }
         })}
-        <button
-          onClick={onClose}
-          className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Close
-        </button>
+        <div className="flex justify-center mt-8 space-x-4">
+          <button
+            onClick={onClose}
+            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Close
+          </button>
+          <button
+            onClick={exportToCSV}
+            className="px-6 py-3 bg-yellow-600 text-white rounded-md shadow-lg hover:bg-yellow-700 transition-transform transform hover:scale-105 z-10"
+          >
+            <FaFileCsv className="mr-2" />
+            Export Data as CSV
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -797,41 +684,6 @@ const getTopReasons = (referralByReason, count) => {
     .map((item) => ({ reason: item.reason, count: item._count.reason }));
 };
 
-const getAppraisalChartData = (appraisalAreaAverage) => {
-  const labels = appraisalAreaAverage.map((item) => item.area_name);
-  const data = appraisalAreaAverage.map((item) => item.average_score);
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: "Average Score",
-        data,
-        backgroundColor: "rgba(128, 0, 128, 0.5)",
-      },
-    ],
-  };
-};
-
-const appraisalChartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-    },
-    title: {
-      display: true,
-      text: "Appraisal Area Averages",
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      max: 5, // Assuming the maximum score is 5
-    },
-  },
-};
-
 // Add these new functions at the end of the file
 const getPopularResourcesChartData = (popularResources) => {
   const labels = popularResources.map((item) => `Resource ${item.resource_id}`);
@@ -864,59 +716,6 @@ const popularResourcesChartOptions = {
   scales: {
     y: {
       beginAtZero: true,
-    },
-  },
-};
-
-const getEvaluationTrendsChartData = (trends) => {
-  const labels = trends.map((trend) =>
-    new Date(trend.date).toLocaleDateString()
-  );
-  const datasets = [
-    {
-      label: "Academic",
-      data: trends.map((trend) => trend.academic_average),
-      borderColor: "rgba(255, 99, 132, 1)",
-      backgroundColor: "rgba(255, 99, 132, 0.2)",
-    },
-    {
-      label: "Socio-Emotional",
-      data: trends.map((trend) => trend.socio_emotional_average),
-      borderColor: "rgba(54, 162, 235, 1)",
-      backgroundColor: "rgba(54, 162, 235, 0.2)",
-    },
-    {
-      label: "Career Exploration",
-      data: trends.map((trend) => trend.career_exploration_average),
-      borderColor: "rgba(255, 206, 86, 1)",
-      backgroundColor: "rgba(255, 206, 86, 0.2)",
-    },
-    {
-      label: "Overall Average",
-      data: trends.map((trend) => trend.overall_average),
-      borderColor: "rgba(75, 192, 192, 1)",
-      backgroundColor: "rgba(75, 192, 192, 0.2)",
-    },
-  ];
-
-  return { labels, datasets };
-};
-
-const evaluationTrendsChartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-    },
-    title: {
-      display: true,
-      text: "Evaluation Trends Over Time",
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      max: 5,
     },
   },
 };
