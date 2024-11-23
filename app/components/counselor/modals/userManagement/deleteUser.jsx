@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaTimes, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DeleteUser = ({ onClose, userID, onSuccess }) => {
   const [password, setPassword] = useState("");
@@ -35,25 +36,63 @@ const DeleteUser = ({ onClose, userID, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-800"></div>
-        <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden"
+      >
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.5 }}
+          className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-800"
+        />
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <FaTimes size={24} />
-        </button>
-        <div className="flex items-center mb-6">
+        </motion.button>
+        <motion.div
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="flex items-center mb-6"
+        >
           <FaExclamationTriangle className="text-red-600 mr-4" size={32} />
           <h2 className="text-3xl font-bold text-gray-800">Delete User</h2>
-        </div>
-        <p className="text-gray-600 mb-6">
+        </motion.div>
+        <motion.p
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-gray-600 mb-6"
+        >
           Warning: This action cannot be undone. All user data will be
           permanently deleted from the system.
-        </p>
-        <form onSubmit={handleDelete} className="space-y-4">
-          <div>
+        </motion.p>
+        <motion.form
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          onSubmit={handleDelete}
+          className="space-y-4"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -68,18 +107,35 @@ const DeleteUser = ({ onClose, userID, onSuccess }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600"
               required
             />
-          </div>
-          {error && <div className="text-red-600 text-sm">{error}</div>}
-          <div className="flex justify-end space-x-4">
-            <button
+          </motion.div>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-red-600 text-sm"
+            >
+              {error}
+            </motion.div>
+          )}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-end space-x-4"
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
               disabled={isLoading}
             >
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={!password || isLoading}
               className={`px-4 py-2 rounded-md text-sm font-medium text-white transition-all ${
@@ -88,15 +144,15 @@ const DeleteUser = ({ onClose, userID, onSuccess }) => {
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              {isLoading ? (
+              {isLoading && (
                 <FaSpinner className="animate-spin inline-block mr-2" />
-              ) : null}
+              )}
               {isLoading ? "Deleting..." : "Delete Permanently"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </motion.button>
+          </motion.div>
+        </motion.form>
+      </motion.div>
+    </motion.div>
   );
 };
 
