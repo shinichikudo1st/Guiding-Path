@@ -13,17 +13,26 @@ const UserNavbar = ({ profile }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
   const [userInfo, setUserInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const interval = setInterval(fetchUnreadCount, 2000);
     fetchUnreadCount();
     fetchUserInfo();
+    return () => clearInterval(interval);
   }, []);
 
   const fetchUnreadCount = async () => {
-    const response = await fetch("/api/notificationOption");
-    if (response.ok) {
-      const data = await response.json();
-      setUnreadCount(data.notifications.filter((n) => !n.isRead).length);
+    try {
+      const response = await fetch("/api/notificationCount");
+      if (response.ok) {
+        const data = await response.json();
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
