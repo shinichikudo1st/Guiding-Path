@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import AvailableAppraisal from "../modals/appraisal/available";
-import CompletedAppraisal from "../modals/appraisal/completed";
+import CreateAppraisal from "../modals/appraisal/createAppraisal";
+import ManageAppraisal from "../modals/appraisal/manageAppraisal";
+import AppraisalReport from "../modals/appraisal/appraisalReport";
 
-const Appraisal = () => {
-  const [activeTab, setActiveTab] = useState("available");
+const AppraisalManagement = () => {
+  const [activeTab, setActiveTab] = useState("create");
 
   const tabs = [
-    { id: "available", label: "Available Appraisals" },
-    { id: "completed", label: "Completed Appraisals" },
+    { id: "create", label: "Create Appraisal" },
+    { id: "manage", label: "Manage Appraisals" },
+    { id: "reports", label: "View Reports" },
   ];
 
   return (
@@ -23,7 +25,7 @@ const Appraisal = () => {
         <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
           <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
             <h1 className="text-3xl sm:text-4xl font-bold text-center">
-              Self-Appraisal
+              Appraisal Management
             </h1>
           </div>
 
@@ -34,13 +36,13 @@ const Appraisal = () => {
                 <span
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`text-base sm:text-lg w-1/2 py-3 ${
+                  className={`text-base sm:text-lg w-1/3 py-3 ${
                     activeTab === tab.id
                       ? "bg-[#0B6EC9] text-white"
                       : "text-[#818487]"
                   } cursor-pointer hover:bg-[#0B6EC9] hover:text-white transition-all duration-300 text-center font-bold
-                    ${tab.id === "available" && "rounded-l-full"}
-                    ${tab.id === "completed" && "rounded-r-full"}
+                    ${tab.id === "create" && "rounded-l-full"}
+                    ${tab.id === "reports" && "rounded-r-full"}
                   `}
                 >
                   {tab.label}
@@ -50,8 +52,9 @@ const Appraisal = () => {
 
             {/* Content Area */}
             <div className="min-h-[60vh]">
-              {activeTab === "available" && <AvailableAppraisal />}
-              {activeTab === "completed" && <CompletedAppraisal />}
+              {activeTab === "create" && <CreateAppraisal />}
+              {activeTab === "manage" && <ManageAppraisal />}
+              {activeTab === "reports" && <AppraisalReport />}
             </div>
           </div>
         </div>
@@ -60,4 +63,4 @@ const Appraisal = () => {
   );
 };
 
-export default Appraisal;
+export default AppraisalManagement;

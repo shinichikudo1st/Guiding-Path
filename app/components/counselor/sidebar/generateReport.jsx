@@ -70,11 +70,9 @@ const GenerateReport = () => {
 
   const reportOptions = [
     { id: "appointment", label: "Appointment" },
-    { id: "appraisal", label: "Appraisal" },
     { id: "referral", label: "Referral" },
     { id: "systemUsage", label: "System Usage" },
     { id: "resource", label: "Resource" },
-    { id: "evaluationTrends", label: "Evaluation Trends" },
     { id: "eventRegistration", label: "Event Registration" },
     { id: "userManagement", label: "User Management" },
   ];

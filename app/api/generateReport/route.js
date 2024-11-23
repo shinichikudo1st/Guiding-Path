@@ -1,11 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
-import {
-  evaluateAcademic,
-  evaluateSocioEmotional,
-  evaluateCareer,
-} from "@/app/utils/evaluate";
 
 export async function POST(request) {
   const { selectedReports, startDate, endDate } = await request.json();
@@ -25,11 +20,9 @@ export async function POST(request) {
   try {
     const reportFunctions = {
       appointment: getAppointmentReport,
-      appraisal: getAppraisalReport,
       referral: getReferralReport,
       systemUsage: getSystemUsageReport,
       resource: getResourceReport,
-      evaluationTrends: getEvaluationTrendsReport,
       eventRegistration: getEventRegistrationReport,
       userManagement: getUserManagementReport,
     };
@@ -208,50 +201,10 @@ async function getReferralReport(startDate, endDate) {
   };
 }
 
-async function getAppraisalReport(startDate, endDate) {
-  const formattedStartDate = new Date(startDate);
-  const formattedEndDate = new Date(endDate);
-
-  const [appraisalByDate, appraisalAreaAverage] = await Promise.all([
-    prisma.appraisals.count({
-      where: {
-        date_of_submission: {
-          gte: formattedStartDate,
-          lte: formattedEndDate,
-        },
-      },
-    }),
-    prisma.evaluation_Areas.groupBy({
-      by: ["area_name"],
-      where: {
-        appraisal: {
-          date_of_submission: {
-            gte: formattedStartDate,
-            lte: formattedEndDate,
-          },
-        },
-        area_name: {
-          in: [
-            "Academic Self-Assessment",
-            "Socio-Emotional Well Being",
-            "Career Path Exploration",
-          ],
-        },
-      },
-      _sum: { score: true },
-      _count: { area_name: true },
-    }),
-  ]);
-
-  const areaAverage = appraisalAreaAverage.map((area) => ({
-    area_name: area.area_name,
-    average_score: area._sum.score / area._count.area_name,
-  }));
-
+async function getSystemUsageReport(startDate, endDate) {
   return {
-    name: "appraisal",
-    appraisalByDate,
-    appraisalAreaAverage: areaAverage,
+    name: "systemUsage",
+    // No additional data needed as the frontend will display a "Coming Soon" message
   };
 }
 
@@ -316,72 +269,6 @@ async function getResourceReport(startDate, endDate) {
     popularResources,
     likedResources,
     newResources,
-  };
-}
-
-async function getEvaluationTrendsReport(startDate, endDate) {
-  const formattedStartDate = new Date(startDate);
-  const formattedEndDate = new Date(endDate);
-
-  const evaluationTrendsData = await prisma.evaluation_Trends.findMany({
-    where: {
-      date: {
-        gte: formattedStartDate,
-        lte: formattedEndDate,
-      },
-    },
-    orderBy: {
-      date: "asc",
-    },
-  });
-
-  // Initialize category counters
-  const academicCategories = {
-    "Very Low Academic Performance": 0,
-    "Low Academic Performance": 0,
-    "Moderate Academic Performance": 0,
-    "High Academic Performance": 0,
-    "Very High Academic Performance": 0,
-  };
-
-  const socioEmotionalCategories = {
-    "Depressed/Highly Anxious": 0,
-    "Stressed/Low Emotional Well-being": 0,
-    "Neutral/Stable": 0,
-    "Emotionally Well-balanced": 0,
-    "Highly Resilient/Emotionally Strong": 0,
-  };
-
-  const careerExplorationCategories = {
-    "Lack of Career Direction": 0,
-    "Uncertain Career Goals": 0,
-    "Moderate Career Clarity": 0,
-    "Clear Career Path": 0,
-    "Strong Career Focus and Direction": 0,
-  };
-
-  // Count evaluations for each category
-  evaluationTrendsData.forEach((evaluation) => {
-    const academicCategory = evaluateAcademic(evaluation.academic_average);
-    const socioEmotionalCategory = evaluateSocioEmotional(
-      evaluation.socio_emotional_average
-    );
-    const careerCategory = evaluateCareer(
-      evaluation.career_exploration_average
-    );
-
-    academicCategories[academicCategory.evaluation]++;
-    socioEmotionalCategories[socioEmotionalCategory.evaluation]++;
-    careerExplorationCategories[careerCategory.evaluation]++;
-  });
-
-  return {
-    name: "evaluationTrends",
-    totalEvaluations: evaluationTrendsData.length,
-    academicCategories,
-    socioEmotionalCategories,
-    careerExplorationCategories,
-    evaluationTrendsData,
   };
 }
 
@@ -586,12 +473,5 @@ async function getUserManagementReport(startDate, endDate) {
     eventParticipation,
     appointmentStats,
     referralStats,
-  };
-}
-
-async function getSystemUsageReport(startDate, endDate) {
-  return {
-    name: "systemUsage",
-    // No additional data needed as the frontend will display a "Coming Soon" message
   };
 }
