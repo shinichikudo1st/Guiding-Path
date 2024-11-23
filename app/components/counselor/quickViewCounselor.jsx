@@ -53,7 +53,7 @@ const QuickViewCounselor = ({ referral, appointment, todayAppointment }) => {
   const cards = [
     {
       icon: FaCalendarDay,
-      title: "Today's Appointment",
+      title: "Dashboard",
       count: todayAppointmentCount,
       description: "Today's scheduled appointments",
       onClick: todayAppointment,

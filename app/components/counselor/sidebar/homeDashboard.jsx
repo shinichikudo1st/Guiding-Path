@@ -11,6 +11,7 @@ import {
   FaVideo,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import DashboardReport from "../modals/dashboardReport";
 
 const CounselorHome = () => {
   const [appointments, setAppointments] = useState([]);
@@ -82,7 +83,7 @@ const CounselorHome = () => {
       className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
       style={{ marginLeft: "16rem", marginRight: "16rem" }}
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
           <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
             <h1 className="text-3xl sm:text-4xl font-bold text-center">
@@ -196,14 +197,25 @@ const CounselorHome = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {viewAppointment && (
-        <AppointmentSingleDashboard
-          closeButton={closeButton}
-          appointment={singleAppointment}
-        />
-      )}
+        {viewAppointment && (
+          <AppointmentSingleDashboard
+            closeButton={closeButton}
+            appointment={singleAppointment}
+          />
+        )}
+
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+              Monthly Overview
+            </h1>
+          </div>
+          <div className="p-8 sm:p-10">
+            <DashboardReport />
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 };
