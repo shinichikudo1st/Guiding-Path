@@ -4,53 +4,70 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   const { sessionData } = await getSession();
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "4");
+  const skip = (page - 1) * limit;
 
   if (!sessionData) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const appraisals = await prisma.appraisalTemplate.findMany({
-      where: {
-        counselor_id: sessionData.id,
-      },
-      include: {
-        categories: {
-          include: {
-            questions: true,
-            evaluationCriteria: true,
-          },
+    const [appraisals, total] = await Promise.all([
+      prisma.appraisalTemplate.findMany({
+        where: {
+          counselor_id: sessionData.id,
         },
-        evaluationCriteria: {
-          where: {
-            category_id: null, // Get overall criteria only
+        include: {
+          categories: {
+            include: {
+              questions: true,
+              evaluationCriteria: true,
+            },
           },
-        },
-        studentResponses: {
-          include: {
-            student: {
-              include: {
-                student: {
-                  select: {
-                    name: true,
+          evaluationCriteria: {
+            where: {
+              category_id: null,
+            },
+          },
+          studentResponses: {
+            include: {
+              student: {
+                include: {
+                  student: {
+                    select: {
+                      name: true,
+                    },
                   },
                 },
               },
-            },
-            categoryResponses: {
-              include: {
-                questionResponses: true,
+              categoryResponses: {
+                include: {
+                  questionResponses: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.appraisalTemplate.count({
+        where: {
+          counselor_id: sessionData.id,
+        },
+      }),
+    ]);
 
-    return NextResponse.json(appraisals);
+    return NextResponse.json({
+      appraisals,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error("Error fetching appraisals:", error);
     return NextResponse.json(
