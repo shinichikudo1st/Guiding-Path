@@ -1,5 +1,6 @@
 import { useState } from "react";
 import GeneralAppraisalReport from "./appraisalReport/generalReport";
+import StudentAppraisalReport from "./appraisalReport/studentAppraisalReport";
 import { motion } from "framer-motion";
 
 const AppraisalReport = () => {
@@ -7,7 +8,7 @@ const AppraisalReport = () => {
 
   const reports = [
     { id: "general", label: "General Report" },
-    { id: "individual", label: "Individual Reports" },
+    { id: "student", label: "Student Reports" },
   ];
 
   return (
@@ -35,6 +36,7 @@ const AppraisalReport = () => {
         transition={{ duration: 0.3 }}
       >
         {activeReport === "general" && <GeneralAppraisalReport />}
+        {activeReport === "student" && <StudentAppraisalReport />}
       </motion.div>
     </div>
   );
