@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaArrowLeft, FaClipboardList, FaCheck } from "react-icons/fa";
+import { FaArrowLeft, FaCheck } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const LIKERT_SCALE = [
