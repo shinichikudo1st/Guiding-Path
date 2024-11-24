@@ -23,7 +23,8 @@ model Users {
   counselor           Counselors?
   teacher             Teachers?
   userResources       User_Resources[]
-  notification        Notifications[]
+  notifications       Notifications[]
+  notificationStatus  NotificationStatus[]
 }
 
 model Students {
@@ -151,14 +152,28 @@ model User_Resources {
 }
 
 model Notifications {
-  notification_id     Int         @id @default(autoincrement())
-  user                Users?       @relation(fields: [user_id], references: [user_id])
-  user_id             String?
-  title               String
-  content             String
-  date                DateTime
-  isRead              Boolean     @default(false)
-  createdAt           DateTime    @default(now())
+  notification_id     Int                 @id @default(autoincrement())
+  user_id            String?             // sender or "000"/"001" for broadcast
+  title              String
+  content            String
+  date               DateTime
+  createdAt          DateTime            @default(now())
+  notificationStatus NotificationStatus[]
+  user               Users?              @relation(fields: [user_id], references: [user_id])
+}
+
+model NotificationStatus {
+  id              Int           @id @default(autoincrement())
+  notification    Notifications @relation(fields: [notification_id], references: [notification_id])
+  notification_id Int
+  user            Users         @relation(fields: [user_id], references: [user_id])
+  user_id         String
+  isRead          Boolean       @default(false)
+  isDeleted       Boolean       @default(false)
+  readAt          DateTime?
+  deletedAt       DateTime?
+
+  @@unique([notification_id, user_id])
 }
 
 model AppraisalTemplate {

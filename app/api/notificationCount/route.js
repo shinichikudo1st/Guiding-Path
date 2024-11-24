@@ -8,7 +8,6 @@ export async function GET() {
     return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
   }
 
-  // Build the OR conditions based on user role
   const roleConditions = [{ user_id: sessionData.id }];
 
   if (sessionData.role === "student") {
@@ -20,12 +19,22 @@ export async function GET() {
   }
 
   try {
-    const unreadCount = await prisma.notifications.count({
+    const notifications = await prisma.notifications.findMany({
       where: {
         OR: roleConditions,
-        isRead: false,
+      },
+      include: {
+        notificationStatus: {
+          where: {
+            user_id: sessionData.id,
+          },
+        },
       },
     });
+
+    const unreadCount = notifications.filter(
+      (notification) => notification.notificationStatus.length === 0
+    ).length;
 
     return NextResponse.json({ unreadCount }, { status: 200 });
   } catch (error) {
