@@ -4,10 +4,10 @@ import {
   FaMapMarkerAlt,
   FaUserFriends,
   FaLink,
-  FaTimes,
-  FaCheckCircle,
-  FaExclamationCircle,
+  FaSpinner,
 } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 const RegisterEvent = ({ event, onClose, onRegister }) => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -26,7 +26,7 @@ const RegisterEvent = ({ event, onClose, onRegister }) => {
 
       if (response.ok) {
         setRegistrationStatus("success");
-        onRegister(event.event_id); // Call the onRegister callback with the event ID
+        onRegister(event.event_id);
         setTimeout(() => {
           onClose();
         }, 1000);
@@ -45,118 +45,107 @@ const RegisterEvent = ({ event, onClose, onRegister }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-80 h-screen w-screen"></div>
-      <div className="relative bg-white w-full max-w-4xl mx-auto p-8 rounded-lg shadow-2xl z-50 overflow-y-auto max-h-[90vh]">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-        >
-          <FaTimes className="h-6 w-6" />
-        </button>
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="relative w-[95%] max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden"
+      >
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 relative">
+          <h2 className="text-white text-xl font-semibold">
+            Event Registration
+          </h2>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onClose}
+            className="absolute right-4 top-4 text-white/90 hover:text-white transition-colors"
+          >
+            <IoClose size={24} />
+          </motion.button>
+        </div>
 
-        <h2 className="text-3xl font-semibold mb-6 text-center text-[#0B6EC9]">
-          Event Registration
-        </h2>
+        <div className="flex-grow overflow-y-auto p-6 space-y-6 max-h-[calc(100vh-16rem)]">
+          <h3 className="text-xl font-semibold text-[#062341]">
+            {event.title}
+          </h3>
 
-        <div className="space-y-6">
-          <h3 className="text-2xl font-bold text-[#062341]">{event.title}</h3>
-
-          <div className="flex items-center text-gray-600">
-            <FaCalendarAlt className="mr-2 text-[#0B6EC9]" />
-            <p>
-              {new Date(event.date_time).toLocaleString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-          </div>
-
-          {event.location && (
-            <div className="flex items-center text-gray-600">
-              <FaMapMarkerAlt className="mr-2 text-[#0B6EC9]" />
-              <p>{event.location}</p>
+          <div className="bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10 space-y-4">
+            <div className="flex items-center gap-2 text-[#062341]/80">
+              <FaCalendarAlt className="text-[#0B6EC9]" />
+              <span>
+                {new Date(event.date_time).toLocaleString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
             </div>
-          )}
 
-          <p className="text-gray-700 bg-gray-100 p-4 rounded-lg">
-            {event.description}
-          </p>
-
-          {event.link && (
-            <div className="flex items-center text-blue-500 hover:underline">
-              <FaLink className="mr-2" />
-              <a
-                href={event.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-blue-700 transition-colors duration-200"
-              >
-                Event Link
-              </a>
-            </div>
-          )}
-
-          {event.attendees && (
-            <div className="flex items-center text-gray-600">
-              <FaUserFriends className="mr-2 text-[#0B6EC9]" />
-              <p>{event.attendees} attending</p>
-            </div>
-          )}
-
-          <div className="flex justify-end mt-8">
-            {registrationStatus === "success" ? (
-              <div className="flex items-center text-green-500">
-                <FaCheckCircle className="mr-2" />
-                <span>Registration Successful!</span>
+            {event.location && (
+              <div className="flex items-center gap-2 text-[#062341]/80">
+                <FaMapMarkerAlt className="text-[#0B6EC9]" />
+                <span>{event.location}</span>
               </div>
-            ) : registrationStatus === "error" ? (
-              <div className="flex items-center text-red-500">
-                <FaExclamationCircle className="mr-2" />
-                <span>Registration Failed. Please try again.</span>
+            )}
+
+            {event.attendees && (
+              <div className="flex items-center gap-2 text-[#062341]/80">
+                <FaUserFriends className="text-[#0B6EC9]" />
+                <span>{event.attendees} attending</span>
               </div>
-            ) : (
-              <button
-                onClick={handleRegister}
-                disabled={isRegistering}
-                className={`bg-[#0B6EC9] text-white px-8 py-3 rounded-lg shadow-md hover:bg-[#062341] transition-all duration-300 text-lg font-semibold ${
-                  isRegistering ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-              >
-                {isRegistering ? (
-                  <span className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Registering...
-                  </span>
-                ) : (
-                  "Confirm Registration"
-                )}
-              </button>
             )}
           </div>
+
+          <div className="bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
+            <p className="text-[#062341]/80">{event.description}</p>
+          </div>
+
+          {event.link && (
+            <a
+              href={event.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-[#0B6EC9] hover:text-[#095396] transition-colors"
+            >
+              <FaLink />
+              <span>Event Link</span>
+            </a>
+          )}
         </div>
-      </div>
+
+        <div className="p-4 bg-white border-t border-[#0B6EC9]/10">
+          {registrationStatus === "success" ? (
+            <div className="text-center text-green-600 font-medium">
+              Registration Successful!
+            </div>
+          ) : registrationStatus === "error" ? (
+            <div className="text-center text-red-600 font-medium">
+              Registration Failed. Please try again.
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleRegister}
+              disabled={isRegistering}
+              className="w-full bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white py-2 px-4 rounded-xl font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {isRegistering ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  <span>Registering...</span>
+                </>
+              ) : (
+                <>Confirm Registration</>
+              )}
+            </motion.button>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };
