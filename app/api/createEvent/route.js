@@ -19,12 +19,6 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
     }
 
-    let img_path = null;
-    if (image) {
-      const blob = await put(image.name, image, { access: "public" });
-      img_path = blob.url;
-    }
-
     if (!title || !description || !date_time || !location) {
       return NextResponse.json(
         { message: "Missing required fields" },
@@ -32,14 +26,29 @@ export async function POST(request) {
       );
     }
 
-    const formatDate = new Date(date_time);
+    const eventDate = new Date(date_time);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (eventDate < today) {
+      return NextResponse.json(
+        { message: "Event cannot be scheduled in the past" },
+        { status: 400 }
+      );
+    }
+
+    let img_path = null;
+    if (image) {
+      const blob = await put(image.name, image, { access: "public" });
+      img_path = blob.url;
+    }
 
     await Promise.all([
       prisma.events.create({
         data: {
           title,
           description,
-          date_time: formatDate,
+          date_time: eventDate,
           location,
           link: link || null,
           img_path,

@@ -22,6 +22,10 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(event.img_path);
   const [department, setDepartment] = useState(event.forDepartment);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -35,6 +39,10 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   }, [event]);
 
   const handleEdit = async () => {
+    setIsSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
     const formData = new FormData();
     formData.append("event_id", currentEvent.event_id);
     formData.append("title", title);
@@ -47,39 +55,62 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
       formData.append("image", selectedImage);
     }
 
-    const response = await fetch(`/api/eventOption`, {
-      method: "PUT",
-      body: formData,
-    });
+    try {
+      const response = await fetch(`/api/eventOption`, {
+        method: "PUT",
+        body: formData,
+      });
 
-    if (response.ok) {
-      setIsEditing(false);
-      const updatedEvent = await response.json();
-      setCurrentEvent(updatedEvent);
-      setPreviewImage(updatedEvent.img_path);
-      if (typeof onEventChange === "function") {
-        onEventChange(updatedEvent);
+      if (response.ok) {
+        const updatedEvent = await response.json();
+        setCurrentEvent(updatedEvent);
+        setPreviewImage(updatedEvent.img_path);
+        setSuccessMessage("Event updated successfully!");
+        setTimeout(() => {
+          setIsEditing(false);
+          if (typeof onEventChange === "function") {
+            onEventChange(updatedEvent);
+          }
+        }, 2000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.message || "Failed to update event");
       }
-    } else {
-      alert("Failed to update event");
+    } catch (error) {
+      setErrorMessage("An error occurred while updating the event");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    const response = await fetch(
-      `/api/eventOption?id=${currentEvent.event_id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    setIsDeleting(true);
+    setErrorMessage("");
 
-    if (response.ok) {
-      if (typeof onEventChange === "function") {
-        onEventChange(null);
+    try {
+      const response = await fetch(
+        `/api/eventOption?id=${currentEvent.event_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setSuccessMessage("Event deleted successfully!");
+        setTimeout(() => {
+          if (typeof onEventChange === "function") {
+            onEventChange(null);
+          }
+          closeButton();
+        }, 2000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.message || "Failed to delete event");
       }
-      closeButton();
-    } else {
-      alert("Failed to delete event");
+    } catch (error) {
+      setErrorMessage("An error occurred while deleting the event");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -113,6 +144,21 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
             </button>
           </div>
         </div>
+
+        {/* Notifications */}
+        {(errorMessage || successMessage) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mx-6 mt-4 p-4 rounded-xl text-center font-medium ${
+              errorMessage
+                ? "bg-red-100 text-red-600 border border-red-200"
+                : "bg-green-100 text-green-600 border border-green-200"
+            }`}
+          >
+            {errorMessage || successMessage}
+          </motion.div>
+        )}
 
         {/* Content */}
         <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
@@ -308,31 +354,69 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleEdit}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300"
+                disabled={isSaving}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 disabled:opacity-50"
               >
-                <FaUpload className="mr-2" />
-                Save Changes
+                {isSaving ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
+                    />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <FaUpload className="mr-2" />
+                    Save Changes
+                  </>
+                )}
               </motion.button>
             ) : (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setIsEditing(true)}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
-              >
-                <FaEdit className="mr-2" />
-                Edit
-              </motion.button>
+              <>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                >
+                  <FaEdit className="mr-2" />
+                  Edit
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 disabled:opacity-50"
+                >
+                  {isDeleting ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                        className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
+                      />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <FaTrash className="mr-2" />
+                      Delete
+                    </>
+                  )}
+                </motion.button>
+              </>
             )}
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleDelete}
-              className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300"
-            >
-              <FaTrash className="mr-2" />
-              Delete
-            </motion.button>
           </div>
         </div>
       </motion.div>
