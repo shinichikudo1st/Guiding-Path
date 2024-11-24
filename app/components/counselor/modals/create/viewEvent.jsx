@@ -24,8 +24,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [department, setDepartment] = useState(event.forDepartment);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [internalError, setInternalError] = useState("");
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -38,24 +37,53 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     setDepartment(event.forDepartment);
   }, [event]);
 
-  const handleEdit = async () => {
-    setIsSaving(true);
-    setErrorMessage("");
-    setSuccessMessage("");
+  const validateForm = () => {
+    setInternalError("");
+    const eventDate = new Date(dateTime);
+    const now = new Date();
 
-    const formData = new FormData();
-    formData.append("event_id", currentEvent.event_id);
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("date_time", dateTime);
-    formData.append("location", location);
-    formData.append("link", link);
-    formData.append("forDepartment", department);
-    if (selectedImage) {
-      formData.append("image", selectedImage);
+    if (eventDate < now) {
+      setInternalError("Cannot select a past date");
+      return false;
+    }
+    if (!title.trim()) {
+      setInternalError("Title is required");
+      return false;
+    }
+    if (!description.trim()) {
+      setInternalError("Description is required");
+      return false;
+    }
+    if (!dateTime) {
+      setInternalError("Date and time is required");
+      return false;
+    }
+    if (!location.trim()) {
+      setInternalError("Location is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleEdit = async () => {
+    if (!validateForm()) {
+      return;
     }
 
+    setIsSaving(true);
     try {
+      const formData = new FormData();
+      formData.append("event_id", currentEvent.event_id);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("date_time", new Date(dateTime).toISOString());
+      formData.append("location", location);
+      formData.append("link", link);
+      formData.append("forDepartment", department);
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
       const response = await fetch(`/api/eventOption`, {
         method: "PUT",
         body: formData,
@@ -65,19 +93,14 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
         const updatedEvent = await response.json();
         setCurrentEvent(updatedEvent);
         setPreviewImage(updatedEvent.img_path);
-        setSuccessMessage("Event updated successfully!");
-        setTimeout(() => {
-          setIsEditing(false);
-          if (typeof onEventChange === "function") {
-            onEventChange(updatedEvent);
-          }
-        }, 2000);
+        onEventChange();
+        closeButton("Event updated successfully");
       } else {
         const data = await response.json();
-        setErrorMessage(data.message || "Failed to update event");
+        setInternalError(data.message || "Failed to update event");
       }
     } catch (error) {
-      setErrorMessage("An error occurred while updating the event");
+      setInternalError("An error occurred while updating the event");
     } finally {
       setIsSaving(false);
     }
@@ -85,28 +108,20 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    setErrorMessage("");
-
     try {
       const response = await fetch(
         `/api/eventOption?id=${currentEvent.event_id}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
-
       if (response.ok) {
-        if (typeof onEventChange === "function") {
-          onEventChange(null);
-        }
-        closeButton();
+        onEventChange();
+        closeButton("Event deleted successfully");
       } else {
-        const data = await response.json();
-        setErrorMessage(data.message || "Failed to delete event");
-        setIsDeleting(false);
+        closeButton("Failed to delete event", true);
       }
     } catch (error) {
-      setErrorMessage("An error occurred while deleting the event");
+      closeButton("An error occurred while deleting the event", true);
+    } finally {
       setIsDeleting(false);
     }
   };
@@ -127,6 +142,12 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
         exit={{ opacity: 0, scale: 0.95 }}
         className="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-xl"
       >
+        {/* Add error message display */}
+        {internalError && (
+          <div className="p-4 bg-red-50 border-b border-red-100">
+            <p className="text-red-600 text-sm">{internalError}</p>
+          </div>
+        )}
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
           <div className="flex justify-between items-center">
@@ -141,21 +162,6 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
             </button>
           </div>
         </div>
-
-        {/* Notifications */}
-        {(errorMessage || successMessage) && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mx-6 mt-4 p-4 rounded-xl text-center font-medium ${
-              errorMessage
-                ? "bg-red-100 text-red-600 border border-red-200"
-                : "bg-green-100 text-green-600 border border-green-200"
-            }`}
-          >
-            {errorMessage || successMessage}
-          </motion.div>
-        )}
 
         {/* Content */}
         <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">

@@ -21,39 +21,66 @@ const EventModal = ({ closeButton }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  const validateForm = () => {
+    const eventDate = new Date(dateTime);
+    const now = new Date();
+
+    if (eventDate < now) {
+      setErrorMessage("Cannot select a past date");
+      return false;
+    }
+    if (!title.trim()) {
+      setErrorMessage("Title is required");
+      return false;
+    }
+    if (!description.trim()) {
+      setErrorMessage("Description is required");
+      return false;
+    }
+    if (!dateTime) {
+      setErrorMessage("Date and time is required");
+      return false;
+    }
+    if (!location.trim()) {
+      setErrorMessage("Location is required");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage("");
-    setSuccessMessage("");
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("date_time", dateTime);
-    formData.append("location", location);
-    formData.append("link", link);
-    formData.append("forDepartment", forDepartment);
-    if (selectedImage) {
-      formData.append("image", selectedImage);
+    if (!validateForm()) {
+      return;
     }
 
+    setIsLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("date_time", dateTime);
+      formData.append("location", location);
+      formData.append("link", link);
+      formData.append("forDepartment", forDepartment);
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
       const response = await fetch("/api/createEvent", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        closeButton();
+        closeButton("Event created successfully");
       } else {
         const data = await response.json();
-        setErrorMessage(data.message || "Failed to create event.");
-        setIsLoading(false);
+        setErrorMessage(data.message || "Failed to create event");
       }
     } catch (error) {
-      console.error("Error creating event:", error);
-      setErrorMessage("An error occurred while creating the event.");
+      setErrorMessage("An error occurred while creating the event");
+    } finally {
       setIsLoading(false);
     }
   };
