@@ -4,8 +4,6 @@ import { encrypt, decrypt } from "@/app/utils/security";
 import {
   FaCalendarAlt,
   FaMapMarkerAlt,
-  FaUserMd,
-  FaPhoneAlt,
   FaClipboardList,
   FaTimes,
   FaSpinner,
@@ -17,6 +15,8 @@ const PendingAppointment = () => {
   const [loading, setLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: "", message: "" });
 
   const retrievePendingAppointments = async () => {
     setLoading(true);
@@ -56,6 +56,8 @@ const PendingAppointment = () => {
   };
 
   const handleConfirmCancel = async () => {
+    setCancelLoading(true);
+
     try {
       const response = await fetch(`/api/cancelAppointment`, {
         method: "PUT",
@@ -66,12 +68,28 @@ const PendingAppointment = () => {
       });
 
       if (response.ok) {
-        // Refresh appointments after successful cancellation
+        setStatusMessage({
+          type: "success",
+          message: "Appointment cancelled successfully",
+        });
         retrievePendingAppointments();
+        setTimeout(() => {
+          setStatusMessage({ type: "", message: "" });
+        }, 3000);
+      } else {
+        setStatusMessage({
+          type: "error",
+          message: "Failed to cancel appointment",
+        });
       }
     } catch (error) {
       console.error("Error cancelling appointment:", error);
+      setStatusMessage({
+        type: "error",
+        message: "An error occurred while cancelling the appointment",
+      });
     } finally {
+      setCancelLoading(false);
       setShowConfirmModal(false);
       setSelectedAppointmentId(null);
     }
@@ -191,12 +209,14 @@ const PendingAppointment = () => {
             <p className="text-[#062341]/70 mb-6">
               Are you sure you want to cancel this appointment?
             </p>
+
             <div className="flex justify-end gap-3">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowConfirmModal(false)}
                 className="px-4 py-2 text-[#062341]/70 hover:text-[#062341] font-medium rounded-lg hover:bg-[#F8FAFC] transition-all duration-300"
+                disabled={cancelLoading}
               >
                 No, Keep it
               </motion.button>
@@ -204,12 +224,35 @@ const PendingAppointment = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleConfirmCancel}
-                className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300"
+                disabled={cancelLoading}
+                className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center gap-2"
               >
-                Yes, Cancel
+                {cancelLoading ? (
+                  <>
+                    <FaSpinner className="animate-spin" />
+                    Cancelling...
+                  </>
+                ) : (
+                  <>Yes, Cancel</>
+                )}
               </motion.button>
             </div>
           </motion.div>
+        </motion.div>
+      )}
+
+      {/* Status Message */}
+      {statusMessage.message && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`m-4 p-3 rounded-lg text-sm ${
+            statusMessage.type === "success"
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {statusMessage.message}
         </motion.div>
       )}
     </div>
