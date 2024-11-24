@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { FaLock, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
+import { FaEye, FaEyeSlash, FaSpinner, FaTimes } from "react-icons/fa";
 import DOMPurify from "dompurify";
+import { motion } from "framer-motion";
+import { createPortal } from "react-dom";
 
 const ChangePassword = ({ onClose }) => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -62,6 +63,13 @@ const ChangePassword = ({ onClose }) => {
     setSuccess("");
     setIsLoading(true);
 
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      setIsLoading(false);
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError("New Password and Confirm Password do not match");
       setIsLoading(false);
@@ -103,24 +111,95 @@ const ChangePassword = ({ onClose }) => {
     setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  return (
-    <div className="fixed inset-0 flex justify-center items-center z-10 bg-black bg-opacity-75">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-96 z-20">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Change Password</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+    if (!minLength) return "Password must be at least 8 characters long";
+    if (!hasUpperCase)
+      return "Password must contain at least one uppercase letter";
+    if (!hasLowerCase)
+      return "Password must contain at least one lowercase letter";
+    if (!hasNumber) return "Password must contain at least one number";
+    if (!hasSpecialChar)
+      return "Password must contain at least one special character";
+    return null;
+  };
+
+  return createPortal(
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex justify-center items-center z-[100] bg-black bg-opacity-50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden"
+      >
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.5 }}
+          className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"
+        />
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <FaTimes size={24} />
+        </motion.button>
+
+        <motion.h2
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-3xl font-bold mb-6 text-gray-800"
+        >
+          Change Password
+        </motion.h2>
+
+        {(error || success) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className={`mb-6 p-3 rounded-lg ${
+              success
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
           >
-            <IoMdClose size={24} />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit}>
-          {["current", "new", "confirm"].map((field) => (
-            <div key={field} className="mb-4">
+            {error || success}
+          </motion.div>
+        )}
+
+        <motion.form
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
+          {["current", "new", "confirm"].map((field, index) => (
+            <motion.div
+              key={field}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+              className="relative"
+            >
               <label
                 htmlFor={`${field}Password`}
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-gray-700 text-sm font-semibold mb-2"
               >
                 {field.charAt(0).toUpperCase() + field.slice(1)} Password
               </label>
@@ -136,37 +215,53 @@ const ChangePassword = ({ onClose }) => {
                       : confirmPassword
                   }
                   onChange={(e) => handleInputChange(field, e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   required
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <FaLock className="text-gray-400 mr-2" />
-                  <button
-                    type="button"
-                    onClick={() => togglePasswordVisibility(field)}
-                    className="text-gray-400 focus:outline-none"
-                  >
-                    {showPasswords[field] ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => togglePasswordVisibility(field)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                >
+                  {showPasswords[field] ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-          {error && <p className="text-red-500 text-sm mt-2 mb-2">{error}</p>}
-          {success && (
-            <p className="text-green-500 text-sm mt-2 mb-2">{success}</p>
-          )}
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-4 flex items-center justify-center"
-            disabled={isLoading}
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="flex justify-end space-x-4 pt-4"
           >
-            {isLoading ? <FaSpinner className="animate-spin mr-2" /> : null}
-            {isLoading ? "Changing Password..." : "Change Password"}
-          </button>
-        </form>
-      </div>
-    </div>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
+              disabled={isLoading}
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isLoading}
+              className="px-6 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 disabled:opacity-50"
+            >
+              {isLoading && (
+                <FaSpinner className="animate-spin inline-block mr-2" />
+              )}
+              {isLoading ? "Changing..." : "Change Password"}
+            </motion.button>
+          </motion.div>
+        </motion.form>
+      </motion.div>
+    </motion.div>,
+    document.body
   );
 };
 
