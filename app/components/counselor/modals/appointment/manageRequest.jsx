@@ -14,12 +14,17 @@ const ManageRequest = ({
   initialRequests,
 }) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
 
   const handleRejectRequest = async () => {
+    setIsRejecting(true);
     try {
-      const response = await fetch(`/api/deleteRequest?id=${requestID}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/deleteRequest?id=${requestID}&student_id=${renderRequest.student_id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         initialRequests();
@@ -29,6 +34,8 @@ const ManageRequest = ({
       }
     } catch (error) {
       console.error("Error rejecting request:", error);
+    } finally {
+      setIsRejecting(false);
     }
   };
 
@@ -119,9 +126,27 @@ const ManageRequest = ({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleRejectRequest}
-              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-xl font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+              disabled={isRejecting}
+              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-xl font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm disabled:opacity-50"
             >
-              <IoClose /> Reject Request
+              {isRejecting ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                  />
+                  <span>Rejecting...</span>
+                </>
+              ) : (
+                <>
+                  <IoClose /> Reject Request
+                </>
+              )}
             </motion.button>
           </div>
         </div>

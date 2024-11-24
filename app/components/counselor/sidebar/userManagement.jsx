@@ -1,7 +1,6 @@
 import { IoMdSearch } from "react-icons/io";
 import {
   FaUsersCog,
-  FaUserEdit,
   FaUserMinus,
   FaChevronLeft,
   FaChevronRight,
@@ -10,6 +9,7 @@ import {
   FaSpinner,
   FaEdit,
   FaArchive,
+  FaBoxOpen,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -17,6 +17,7 @@ import DOMPurify from "dompurify";
 import ModifyUser from "../modals/userManagement/modifyUser";
 import ArchiveUser from "../modals/userManagement/archiveUser";
 import DeleteUser from "../modals/userManagement/deleteUser";
+import UnarchiveUser from "../modals/userManagement/unarchiveUser";
 import { motion } from "framer-motion";
 
 const UserManagement = () => {
@@ -32,6 +33,8 @@ const UserManagement = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
+  const [isUnarchiveUserModalOpen, setIsUnarchiveUserModalOpen] =
+    useState(false);
 
   const retrieveUsers = async () => {
     setLoading(true);
@@ -110,8 +113,22 @@ const UserManagement = () => {
     setSelectedUserId(null);
   };
 
+  const openUnarchiveUserModal = (userId) => {
+    setSelectedUserId(userId);
+    setIsUnarchiveUserModalOpen(true);
+  };
+
+  const closeUnarchiveUserModal = () => {
+    setIsUnarchiveUserModalOpen(false);
+    setSelectedUserId(null);
+  };
+
   const handleArchiveSuccess = () => {
     retrieveUsers(); // Fetch updated user list
+  };
+
+  const handleUnarchiveSuccess = () => {
+    retrieveUsers();
   };
 
   const toggleArchived = () => {
@@ -122,6 +139,10 @@ const UserManagement = () => {
   const handleDeleteUser = async () => {
     closeDeleteUserModal();
     retrieveUsers();
+  };
+
+  const handleModifySuccess = () => {
+    retrieveUsers(); // Fetch updated user list
   };
 
   const renderTableRow = (user) => (
@@ -165,7 +186,28 @@ const UserManagement = () => {
           >
             <FaEdit />
           </motion.button>
-          {!showArchived ? (
+          {showArchived ? (
+            <>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openUnarchiveUserModal(user.user_id)}
+                className="p-2 rounded-xl bg-green-100 text-green-600 hover:bg-green-200 transition-all duration-300"
+                title="Unarchive User"
+              >
+                <FaBoxOpen />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => openDeleteUserModal(user.user_id)}
+                className="p-2 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
+                title="Delete User"
+              >
+                <FaTrash />
+              </motion.button>
+            </>
+          ) : (
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -174,16 +216,6 @@ const UserManagement = () => {
               title="Archive User"
             >
               <FaArchive />
-            </motion.button>
-          ) : (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => openDeleteUserModal(user.user_id)}
-              className="p-2 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-300"
-              title="Delete User"
-            >
-              <FaTrash />
             </motion.button>
           )}
         </div>
@@ -361,7 +393,11 @@ const UserManagement = () => {
 
       {/* Modals */}
       {isModifyUserModalOpen && (
-        <ModifyUser onClose={closeModifyUserModal} userID={selectedUserId} />
+        <ModifyUser
+          onClose={closeModifyUserModal}
+          userID={selectedUserId}
+          onSuccess={handleModifySuccess}
+        />
       )}
       {isArchiveUserModalOpen && (
         <ArchiveUser
@@ -375,6 +411,13 @@ const UserManagement = () => {
           onClose={closeDeleteUserModal}
           userID={selectedUserId}
           onSuccess={handleDeleteUser}
+        />
+      )}
+      {isUnarchiveUserModalOpen && (
+        <UnarchiveUser
+          userId={selectedUserId}
+          onClose={closeUnarchiveUserModal}
+          onSuccess={handleUnarchiveSuccess}
         />
       )}
     </motion.div>

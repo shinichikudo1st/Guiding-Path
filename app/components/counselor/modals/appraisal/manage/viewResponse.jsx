@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FaArrowLeft, FaUserGraduate } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import StudentResponseDetail from "./studentResponse";
 
 const ViewResponse = ({ appraisal, onBack }) => {
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -33,12 +34,6 @@ const ViewResponse = ({ appraisal, onBack }) => {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const getEvaluationForScore = (score, evaluationCriteria) => {
-    return evaluationCriteria.find(
-      (criteria) => score >= criteria.minScore && score <= criteria.maxScore
-    );
   };
 
   return (

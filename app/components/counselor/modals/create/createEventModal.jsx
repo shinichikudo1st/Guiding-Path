@@ -18,38 +18,71 @@ const EventModal = ({ closeButton }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [forDepartment, setForDepartment] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const validateForm = () => {
+    const eventDate = new Date(dateTime);
+    const now = new Date();
+
+    if (eventDate < now) {
+      setErrorMessage("Cannot select a past date");
+      return false;
+    }
+    if (!title.trim()) {
+      setErrorMessage("Title is required");
+      return false;
+    }
+    if (!description.trim()) {
+      setErrorMessage("Description is required");
+      return false;
+    }
+    if (!dateTime) {
+      setErrorMessage("Date and time is required");
+      return false;
+    }
+    if (!location.trim()) {
+      setErrorMessage("Location is required");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("date_time", dateTime);
-    formData.append("location", location);
-    formData.append("link", link);
-    formData.append("forDepartment", forDepartment);
-    if (selectedImage) {
-      formData.append("image", selectedImage);
+    if (!validateForm()) {
+      return;
     }
 
+    setIsLoading(true);
     try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("date_time", dateTime);
+      formData.append("location", location);
+      formData.append("link", link);
+      formData.append("forDepartment", forDepartment);
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
       const response = await fetch("/api/createEvent", {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        alert("Event created successfully!");
-        closeButton();
+        closeButton("Event created successfully");
       } else {
-        alert("Failed to create event.");
+        const data = await response.json();
+        setErrorMessage(data.message || "Failed to create event");
       }
     } catch (error) {
-      console.error("Error creating event:", error);
-      alert("An error occurred while creating the event.");
+      setErrorMessage("An error occurred while creating the event");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleImageChange = (e) => {
@@ -80,6 +113,21 @@ const EventModal = ({ closeButton }) => {
             </button>
           </div>
         </div>
+
+        {/* Notifications */}
+        {(errorMessage || successMessage) && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-6 p-4 rounded-xl text-center font-medium ${
+              errorMessage
+                ? "bg-red-100 text-red-600 border border-red-200"
+                : "bg-green-100 text-green-600 border border-green-200"
+            }`}
+          >
+            {errorMessage || successMessage}
+          </motion.div>
+        )}
 
         {/* Content */}
         <div className="p-6 max-h-[calc(80vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">

@@ -15,6 +15,7 @@ const LoginModal = ({
   closeModal,
 }) => {
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [logging, setLogging] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
@@ -30,6 +31,16 @@ const LoginModal = ({
       return () => clearTimeout(timer);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,6 +93,7 @@ const LoginModal = ({
   const handleSignup = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
     setIsCreatingAccount(true);
 
     const formData = new FormData(e.target);
@@ -101,7 +113,9 @@ const LoginModal = ({
     try {
       const response = await fetch("/api/userOption", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
 
@@ -111,13 +125,14 @@ const LoginModal = ({
         throw new Error(result.message || "An error occurred during signup");
       }
 
-      console.log(result.message);
-      setIsCreatingAccount(false);
-      toggleLogin(); // Switch to login modal after successful signup
-      setError("Account created successfully. Please log in.");
+      setSuccess("Account created successfully! You can now login.");
+      setTimeout(() => {
+        toggleLogin();
+      }, 2000);
     } catch (error) {
-      console.error("Signup error:", error);
+      console.error(error);
       setError(error.message);
+    } finally {
       setIsCreatingAccount(false);
     }
   };
@@ -224,9 +239,18 @@ const LoginModal = ({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg"
+                className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm"
               >
                 {error}
+              </motion.div>
+            )}
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm"
+              >
+                {success}
               </motion.div>
             )}
 
@@ -389,9 +413,18 @@ const LoginModal = ({
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg"
+                className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm"
               >
                 {error}
+              </motion.div>
+            )}
+            {success && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm"
+              >
+                {success}
               </motion.div>
             )}
 

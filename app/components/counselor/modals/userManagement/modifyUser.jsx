@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { FaTimes, FaSpinner } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
-const ModifyUser = ({ onClose, userID }) => {
+const ModifyUser = ({ onClose, userID, onSuccess }) => {
   const [selectedRole, setSelectedRole] = useState("");
+  const [counselorPassword, setCounselorPassword] = useState("");
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -10,12 +12,16 @@ const ModifyUser = ({ onClose, userID }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(``, {
+      const response = await fetch(`/api/modifyUser`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ role: selectedRole }),
+        body: JSON.stringify({
+          role: selectedRole,
+          id: userID,
+          counselorPassword,
+        }),
       });
 
       if (response.ok) {
@@ -24,6 +30,7 @@ const ModifyUser = ({ onClose, userID }) => {
           message: "User role updated successfully",
         });
         setTimeout(() => {
+          onSuccess?.();
           onClose();
         }, 2000);
       } else {
@@ -40,24 +47,53 @@ const ModifyUser = ({ onClose, userID }) => {
       });
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-        <button
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 relative overflow-hidden"
+      >
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.5 }}
+          className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500"
+        />
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
         >
           <FaTimes size={24} />
-        </button>
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">
+        </motion.button>
+        <motion.h2
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-3xl font-bold mb-6 text-gray-800"
+        >
           Modify User Role
-        </h2>
+        </motion.h2>
         {notification && (
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
             className={`mb-6 p-3 rounded-lg ${
               notification.type === "success"
                 ? "bg-green-100 text-green-700"
@@ -65,19 +101,55 @@ const ModifyUser = ({ onClose, userID }) => {
             }`}
           >
             {notification.message}
-          </div>
+          </motion.div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.form
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
+          <div className="mb-6">
+            <motion.label
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="block text-gray-700 text-sm font-semibold mb-2"
+            >
+              Enter your password to confirm
+            </motion.label>
+            <motion.input
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              type="password"
+              value={counselorPassword}
+              onChange={(e) => setCounselorPassword(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+          </div>
           <div>
-            <label className="block text-gray-700 text-sm font-semibold mb-3">
+            <motion.label
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="block text-gray-700 text-sm font-semibold mb-3"
+            >
               Select New Role
-            </label>
+            </motion.label>
             <div className="flex justify-between space-x-3">
-              {["teacher", "student", "counselor"].map((role) => (
-                <button
+              {["teacher", "student", "counselor"].map((role, index) => (
+                <motion.button
                   key={role}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
                   type="button"
                   onClick={() => setSelectedRole(role)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all ${
                     selectedRole === role
                       ? "bg-blue-600 text-white shadow-lg transform scale-105"
@@ -86,20 +158,29 @@ const ModifyUser = ({ onClose, userID }) => {
                   disabled={isLoading}
                 >
                   {role.charAt(0).toUpperCase() + role.slice(1)}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
-          <div className="flex justify-end space-x-4">
-            <button
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="flex justify-end space-x-4"
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="button"
               onClick={onClose}
               className="px-6 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
               disabled={isLoading}
             >
               Cancel
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={!selectedRole || isLoading}
               className={`px-6 py-2 rounded-lg text-sm font-medium text-white transition-all ${
@@ -108,15 +189,15 @@ const ModifyUser = ({ onClose, userID }) => {
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
-              {isLoading ? (
+              {isLoading && (
                 <FaSpinner className="animate-spin inline-block mr-2" />
-              ) : null}
+              )}
               {isLoading ? "Updating..." : "Update Role"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </motion.button>
+          </motion.div>
+        </motion.form>
+      </motion.div>
+    </motion.div>
   );
 };
 

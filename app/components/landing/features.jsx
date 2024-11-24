@@ -1,32 +1,35 @@
 import { motion } from "framer-motion";
 import {
-  FaUserGraduate,
   FaCalendarCheck,
-  FaChartLine,
-  FaComments,
+  FaClipboardList,
+  FaChartBar,
+  FaUserFriends,
 } from "react-icons/fa";
 
 const features = [
   {
-    icon: <FaUserGraduate className="w-8 h-8" />,
-    title: "Academic Guidance",
-    description:
-      "Get personalized academic advice and support from experienced counselors.",
-  },
-  {
     icon: <FaCalendarCheck className="w-8 h-8" />,
     title: "Appointment Scheduling",
-    description: "Easily schedule and manage counseling appointments online.",
+    description:
+      "Schedule and manage counseling sessions with ease, both virtual and in-person.",
   },
   {
-    icon: <FaChartLine className="w-8 h-8" />,
-    title: "Progress Tracking",
-    description: "Monitor your academic progress and achievements over time.",
+    icon: <FaClipboardList className="w-8 h-8" />,
+    title: "Student Appraisal",
+    description:
+      "Comprehensive student evaluation system to track academic and personal growth.",
   },
   {
-    icon: <FaComments className="w-8 h-8" />,
-    title: "Communication Hub",
-    description: "Stay connected with counselors and receive timely updates.",
+    icon: <FaChartBar className="w-8 h-8" />,
+    title: "Generate Reports",
+    description:
+      "Create detailed analytics and insights for better decision-making.",
+  },
+  {
+    icon: <FaUserFriends className="w-8 h-8" />,
+    title: "Student Referral",
+    description:
+      "Streamlined system for teachers to refer students who need guidance.",
   },
 ];
 

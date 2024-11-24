@@ -15,6 +15,8 @@ const CreateEvent = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchEvents = async () => {
     setIsLoading(true);
@@ -45,24 +47,60 @@ const CreateEvent = () => {
     setViewModal(true);
   };
 
-  const handleCreateModalClose = () => {
+  const handleCreateModalClose = (message, isError = false) => {
     setCreateModal(false);
+    if (message) {
+      if (isError) {
+        setErrorMessage(message);
+      } else {
+        setSuccessMessage(message);
+      }
+      setTimeout(() => {
+        setErrorMessage("");
+        setSuccessMessage("");
+      }, 3000);
+    }
     setRefreshKey((oldKey) => oldKey + 1);
   };
 
-  const handleEventChange = () => {
+  const handleEventChange = (message, isError = false) => {
     setRefreshKey((oldKey) => oldKey + 1);
     setViewModal(false);
+    if (message) {
+      if (isError) {
+        setErrorMessage(message);
+      } else {
+        setSuccessMessage(message);
+      }
+      setTimeout(() => {
+        setErrorMessage("");
+        setSuccessMessage("");
+      }, 3000);
+    }
   };
 
   return (
     <>
+      {(errorMessage || successMessage) && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+            errorMessage
+              ? "bg-red-100 text-red-600 border border-red-200"
+              : "bg-green-100 text-green-600 border border-green-200"
+          }`}
+        >
+          {errorMessage || successMessage}
+        </motion.div>
+      )}
       {createModal && <EventModal closeButton={handleCreateModalClose} />}
       {viewModal && (
         <ViewEventModal
           event={selectedEvent}
-          closeButton={() => setViewModal(false)}
-          onEventChange={handleEventChange}
+          closeButton={handleEventChange}
+          onEventChange={() => setRefreshKey((oldKey) => oldKey + 1)}
         />
       )}
       <div className="relative flex flex-col min-h-[calc(60vh-2rem)]">

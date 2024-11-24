@@ -70,3 +70,34 @@ export async function POST(request) {
     );
   }
 }
+
+export async function PUT(request) {
+  const { userID } = await request.json();
+  const { sessionData } = await getSession();
+
+  if (!sessionData) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await prisma.users.update({
+      where: {
+        user_id: userID,
+      },
+      data: {
+        status: "active",
+      },
+    });
+
+    return NextResponse.json(
+      { message: "User unarchived successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Unarchive user error:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

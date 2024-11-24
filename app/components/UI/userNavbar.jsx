@@ -15,15 +15,21 @@ const UserNavbar = ({ profile }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
+    const interval = setInterval(fetchUnreadCount, 2000);
     fetchUnreadCount();
     fetchUserInfo();
+    return () => clearInterval(interval);
   }, []);
 
   const fetchUnreadCount = async () => {
-    const response = await fetch("/api/notificationOption");
-    if (response.ok) {
-      const data = await response.json();
-      setUnreadCount(data.notifications.filter((n) => !n.isRead).length);
+    try {
+      const response = await fetch("/api/notificationCount");
+      if (response.ok) {
+        const data = await response.json();
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (error) {
+      console.error("Error fetching unread count:", error);
     }
   };
 
@@ -141,6 +147,7 @@ const UserNavbar = ({ profile }) => {
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
             onNotificationChange={handleNotificationChange}
+            unreadCount={unreadCount}
           />
         </div>
 

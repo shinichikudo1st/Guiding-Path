@@ -23,15 +23,25 @@ export async function POST(request) {
   }
 
   try {
-    const newAnnouncement = await prisma.resources.create({
-      data: {
-        title,
-        description: content,
-        link,
-        img_path,
-        category: "resource",
-      },
-    });
+    const [newAnnouncement] = await Promise.all([
+      prisma.resources.create({
+        data: {
+          title,
+          description: content,
+          link,
+          img_path,
+          category: "resource",
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: "001",
+          title: "New Resource Posted",
+          content: `${title} has been added to the resources`,
+          date: new Date(),
+        },
+      }),
+    ]);
 
     return NextResponse.json(
       {

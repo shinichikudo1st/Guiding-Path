@@ -28,14 +28,13 @@ const AnnouncementModal = ({ closeButton }) => {
       });
 
       if (response.ok) {
-        closeButton();
+        closeButton("Announcement created successfully");
       } else {
-        console.error("Failed to create announcement");
+        closeButton("Failed to create announcement", true);
       }
     } catch (error) {
-      console.error("Error creating announcement:", error);
+      closeButton("An error occurred while creating the announcement", true);
     }
-    setIsLoading(false);
   };
 
   const handleImageChange = (e) => {

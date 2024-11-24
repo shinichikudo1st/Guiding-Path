@@ -889,22 +889,4 @@ const counselorsByDepartmentChartOptions = {
   },
 };
 
-// Add this new component for the evaluation category cards
-const EvaluationCategoryCard = ({ title, icon, categories, colorClass }) => (
-  <div className={`p-6 rounded-lg shadow ${colorClass}`}>
-    <div className="flex items-center mb-4">
-      {icon}
-      <h4 className="text-xl font-medium text-gray-800 ml-3">{title}</h4>
-    </div>
-    <ul className="space-y-2">
-      {Object.entries(categories).map(([category, count]) => (
-        <li key={category} className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">{category}</span>
-          <span className="text-sm font-semibold text-gray-800">{count}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
 export default ReportResult;

@@ -1,53 +1,135 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { BsCheckCircle, BsTrash } from "react-icons/bs";
 import { motion } from "framer-motion";
 
-const Notifications = ({ isOpen, onNotificationChange }) => {
+const Notifications = ({ isOpen, onNotificationChange, unreadCount }) => {
   const [notifications, setNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const notificationsEndRef = useRef(null);
 
-  // Demo-friendly polling interval
-  const DEMO_POLLING_INTERVAL = 2000; // 2 seconds for snappy demo updates
+  const fetchNotifications = useCallback(
+    async (pageNum) => {
+      if (pageNum === 1) setIsLoading(true);
+      else setIsFetchingMore(true);
 
-  const fetchNotifications = useCallback(async () => {
-    const response = await fetch("/api/notificationOption");
-    if (response.ok) {
-      const data = await response.json();
-      setNotifications(data.notifications);
-      onNotificationChange();
-    }
-  }, [onNotificationChange]);
+      try {
+        const response = await fetch(`/api/notificationOption?page=${pageNum}`);
+        if (response.ok) {
+          const data = await response.json();
+          setNotifications((prev) =>
+            pageNum === 1
+              ? data.notifications
+              : [...prev, ...data.notifications]
+          );
+          setHasMore(data.hasMore);
+          onNotificationChange();
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      } finally {
+        setIsLoading(false);
+        setIsFetchingMore(false);
+      }
+    },
+    [onNotificationChange]
+  );
 
   useEffect(() => {
-    fetchNotifications(); // Initial fetch
+    if (isOpen) {
+      setPage(1);
+      fetchNotifications(1);
+    }
+  }, [isOpen, fetchNotifications]);
 
-    // Aggressive polling for demo purposes
-    const interval = setInterval(fetchNotifications, DEMO_POLLING_INTERVAL);
-    return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  const handleScroll = useCallback(
+    (e) => {
+      const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+      if (
+        scrollHeight - scrollTop <= clientHeight * 1.5 &&
+        hasMore &&
+        !isFetchingMore
+      ) {
+        setPage((prev) => prev + 1);
+        fetchNotifications(page + 1);
+      }
+    },
+    [hasMore, isFetchingMore, fetchNotifications, page]
+  );
 
   const markAsRead = async (id) => {
-    const response = await fetch("/api/notificationOption", {
-      method: "PUT",
-      body: JSON.stringify({ notificationId: id }),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (response.ok) {
-      fetchNotifications();
+    try {
+      const response = await fetch("/api/notificationOption", {
+        method: "PUT",
+        body: JSON.stringify({ notificationId: id }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        // Update local state immediately
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notification) =>
+            notification.notification_id === id
+              ? { ...notification, isRead: true }
+              : notification
+          )
+        );
+        // Update the unread count in parent component
+        onNotificationChange();
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
     }
   };
 
   const deleteNotification = async (id) => {
-    const response = await fetch("/api/notificationOption", {
-      method: "DELETE",
-      body: JSON.stringify({ notificationId: id }),
-      headers: { "Content-Type": "application/json" },
-    });
-    if (response.ok) {
-      fetchNotifications();
+    try {
+      const response = await fetch("/api/notificationOption", {
+        method: "DELETE",
+        body: JSON.stringify({ notificationId: id }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        // Update local state immediately
+        setNotifications((prevNotifications) =>
+          prevNotifications.filter(
+            (notification) => notification.notification_id !== id
+          )
+        );
+        // Update the unread count in parent component
+        onNotificationChange();
+      }
+    } catch (error) {
+      console.error("Error deleting notification:", error);
     }
   };
 
   if (!isOpen) return null;
+
+  const LoadingSkeleton = () => (
+    <div className="animate-pulse p-4 space-y-3">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="bg-white rounded-xl p-4 shadow-sm border border-[#0B6EC9]/5"
+        >
+          <div className="flex justify-between items-start">
+            <div className="flex-grow pr-4 space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-100 rounded w-full"></div>
+              <div className="h-2 bg-gray-50 rounded w-1/4 mt-2"></div>
+            </div>
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-8 h-8 bg-gray-100 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <motion.div
@@ -62,19 +144,18 @@ const Notifications = ({ isOpen, onNotificationChange }) => {
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-white">Notifications</h3>
           <span className="text-sm text-white/90 bg-white/10 px-3 py-1 rounded-full">
-            {notifications?.filter((n) => !n.isRead).length || 0} unread
+            {unreadCount || 0} unread
           </span>
         </div>
       </div>
 
       {/* Notifications List */}
-      <div className="max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100">
-        {!notifications ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="px-6 py-3 text-base font-medium text-white bg-gradient-to-r from-[#0B6EC9] to-[#095396] rounded-xl animate-pulse">
-              Loading notifications...
-            </div>
-          </div>
+      <div
+        className="max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100"
+        onScroll={handleScroll}
+      >
+        {isLoading ? (
+          <LoadingSkeleton />
         ) : notifications.length === 0 ? (
           <div className="flex items-center justify-center h-32">
             <p className="text-[#062341] font-medium">No notifications</p>
@@ -135,6 +216,8 @@ const Notifications = ({ isOpen, onNotificationChange }) => {
                 </div>
               </motion.div>
             ))}
+            {isFetchingMore && <LoadingSkeleton />}
+            <div ref={notificationsEndRef} />
           </div>
         )}
       </div>

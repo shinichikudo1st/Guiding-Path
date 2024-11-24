@@ -100,6 +100,9 @@ const ReferStudent = () => {
           reason: "",
           additionalNotes: "",
         });
+        setSelectedStudent(null);
+        setSearch("");
+        setSearchResults([]);
       } else {
         showNotification(
           result.message || "Error submitting referral",
@@ -245,14 +248,20 @@ const ReferStudent = () => {
               <FaClipboardList className="text-[#0B6EC9]" />
               Reason for Referral
             </label>
-            <motion.textarea
-              whileFocus={{ scale: 1.01 }}
+            <select
               name="reason"
               value={formData.reason}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9] focus:ring-1 focus:ring-[#0B6EC9] transition-all duration-300 outline-none bg-white/50 min-h-[100px] resize-none"
-              placeholder="Enter the reason for referral..."
-            />
+              className="w-full px-4 py-3 rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9] focus:ring-1 focus:ring-[#0B6EC9] transition-all duration-300 outline-none bg-white/50"
+            >
+              <option value="" disabled>
+                Select Reason
+              </option>
+              <option value="career_guidance">Career Guidance</option>
+              <option value="emotional_support">Emotional Support</option>
+              <option value="encouragement">Encouragement</option>
+              <option value="stress_management">Stress Management</option>
+            </select>
           </div>
 
           <div className="space-y-4">

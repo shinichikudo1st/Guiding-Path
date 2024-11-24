@@ -1,7 +1,7 @@
 import { FaExclamationTriangle } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-const DeleteConfirmation = ({ appraisal, onConfirm, onCancel }) => {
+const DeleteConfirmation = ({ appraisal, onConfirm, onCancel, isDeleting }) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -42,15 +42,24 @@ const DeleteConfirmation = ({ appraisal, onConfirm, onCancel }) => {
           <div className="flex items-center gap-3 justify-end pt-4">
             <button
               onClick={onCancel}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              disabled={isDeleting}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+              disabled={isDeleting}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Delete Template
+              {isDeleting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                <>Delete Template</>
+              )}
             </button>
           </div>
         </div>

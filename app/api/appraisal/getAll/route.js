@@ -44,7 +44,12 @@ export async function GET(req) {
               },
               categoryResponses: {
                 include: {
-                  questionResponses: true,
+                  category: true,
+                  questionResponses: {
+                    include: {
+                      question: true,
+                    },
+                  },
                 },
               },
             },
@@ -159,18 +164,71 @@ export async function DELETE(request) {
   }
 
   try {
+    // First, delete all related QuestionResponses
+    await prisma.questionResponse.deleteMany({
+      where: {
+        categoryResponse: {
+          appraisal: {
+            template_id: id,
+          },
+        },
+      },
+    });
+
+    // Delete CategoryResponses
+    await prisma.categoryResponse.deleteMany({
+      where: {
+        appraisal: {
+          template_id: id,
+        },
+      },
+    });
+
+    // Delete StudentAppraisals
+    await prisma.studentAppraisal.deleteMany({
+      where: {
+        template_id: id,
+      },
+    });
+
+    // Delete CategoryQuestions
+    await prisma.categoryQuestion.deleteMany({
+      where: {
+        category: {
+          template_id: id,
+        },
+      },
+    });
+
+    // Delete EvaluationCriteria
+    await prisma.evaluationCriteria.deleteMany({
+      where: {
+        template_id: id,
+      },
+    });
+
+    // Delete AppraisalCategories
+    await prisma.appraisalCategory.deleteMany({
+      where: {
+        template_id: id,
+      },
+    });
+
+    // Finally, delete the AppraisalTemplate
     await prisma.appraisalTemplate.delete({
       where: { id },
     });
 
     return NextResponse.json(
-      { message: "Appraisal template deleted successfully" },
+      {
+        message: "Appraisal template and all related data deleted successfully",
+      },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error deleting appraisal template:", error);
     return NextResponse.json(
-      { error: "Failed to delete appraisal template" },
+      { error: "Failed to delete appraisal template and related data" },
       { status: 500 }
     );
   }
