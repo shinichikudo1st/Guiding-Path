@@ -56,6 +56,15 @@ export async function POST(request) {
           })),
         });
       }
+
+      await prisma.notifications.create({
+        data: {
+          user_id: "000",
+          title: "New Appraisal",
+          content: `Complete the ${title} appraisal test`,
+          date: new Date(),
+        },
+      });
     });
 
     // Wait for all category and question creations to complete

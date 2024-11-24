@@ -8,10 +8,21 @@ export async function GET() {
     return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
   }
 
+  // Build the OR conditions based on user role
+  const roleConditions = [{ user_id: sessionData.id }];
+
+  if (sessionData.role === "student") {
+    roleConditions.push({ user_id: "000" });
+  }
+
+  if (sessionData.role === "student" || sessionData.role === "teacher") {
+    roleConditions.push({ user_id: "001" });
+  }
+
   try {
     const unreadCount = await prisma.notifications.count({
       where: {
-        OR: [{ user_id: sessionData.id }, { user_id: "000" }],
+        OR: roleConditions,
         isRead: false,
       },
     });
