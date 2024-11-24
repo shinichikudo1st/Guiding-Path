@@ -18,8 +18,6 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     if (announcement) {
@@ -28,39 +26,26 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
     }
   }, [announcement]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
   const handleDelete = async () => {
     setIsDeleting(true);
-    setErrorMessage("");
-
     try {
       const response = await fetch(
         `/api/announcementOption?id=${announcementData.resource_id}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
       if (response.ok) {
         onUpdate();
-        closeModal();
+        closeModal("Announcement deleted successfully");
       } else {
-        setErrorMessage("Failed to delete announcement");
-        setIsDeleting(false);
+        closeModal("Failed to delete announcement", true);
       }
     } catch (error) {
-      setErrorMessage("An error occurred while deleting the announcement");
-      setIsDeleting(false);
+      closeModal("An error occurred while deleting the announcement", true);
     }
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-    setErrorMessage("");
-    setSuccessMessage("");
-
     try {
       const formData = new FormData();
       formData.append("resource_id", announcementData.resource_id);
@@ -79,14 +64,12 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
         const updatedAnnouncement = await response.json();
         setAnnouncementData(updatedAnnouncement.announcement);
         onUpdate();
-        closeModal();
+        closeModal("Announcement updated successfully");
       } else {
-        setErrorMessage("Failed to update announcement");
-        setIsSaving(false);
+        closeModal("Failed to update announcement", true);
       }
     } catch (error) {
-      setErrorMessage("An error occurred while updating the announcement");
-      setIsSaving(false);
+      closeModal("An error occurred while updating the announcement", true);
     }
   };
 
