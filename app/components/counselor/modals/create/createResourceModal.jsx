@@ -9,9 +9,27 @@ const ResourceModal = ({ closeButton }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [link, setLink] = useState("");
+  const [internalError, setInternalError] = useState("");
+
+  const validateForm = () => {
+    setInternalError("");
+    if (!title.trim()) {
+      setInternalError("Title is required");
+      return false;
+    }
+    if (!content.trim()) {
+      setInternalError("Content is required");
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -28,14 +46,16 @@ const ResourceModal = ({ closeButton }) => {
       });
 
       if (response.ok) {
-        closeButton();
+        closeButton("Resource created successfully");
       } else {
-        console.error("Failed to create resource");
+        const data = await response.json();
+        setInternalError(data.message || "Failed to create resource");
       }
     } catch (error) {
-      console.error("Error creating resource:", error);
+      setInternalError("An error occurred while creating the resource");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleImageChange = (e) => {
@@ -54,6 +74,11 @@ const ResourceModal = ({ closeButton }) => {
         exit={{ opacity: 0, scale: 0.95 }}
         className="bg-white rounded-2xl w-full max-w-2xl mx-4 overflow-hidden shadow-xl"
       >
+        {internalError && (
+          <div className="p-4 bg-red-50 border-b border-red-100">
+            <p className="text-red-600 text-sm">{internalError}</p>
+          </div>
+        )}
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
           <div className="flex justify-between items-center">

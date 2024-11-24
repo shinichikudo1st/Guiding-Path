@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
+const ViewResourceModal = ({ resource, closeModal }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [resourceData, setResourceData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -18,8 +18,7 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [internalError, setInternalError] = useState("");
 
   useEffect(() => {
     if (resource) {
@@ -28,9 +27,22 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
     }
   }, [resource]);
 
+  const validateForm = () => {
+    setInternalError("");
+    if (!resourceData.title.trim()) {
+      setInternalError("Title is required");
+      return false;
+    }
+    if (!resourceData.description.trim()) {
+      setInternalError("Description is required");
+      return false;
+    }
+    return true;
+  };
+
   const handleDelete = async () => {
     setIsDeleting(true);
-    setErrorMessage("");
+    setInternalError("");
 
     try {
       const response = await fetch(
@@ -41,24 +53,25 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
       );
 
       if (response.ok) {
-        onUpdate();
-        closeModal();
+        closeModal("Resource deleted successfully");
       } else {
         const data = await response.json();
-        setErrorMessage(data.message || "Failed to delete resource");
-        setIsDeleting(false);
+        setInternalError(data.message || "Failed to delete resource");
       }
     } catch (error) {
-      setErrorMessage("An error occurred while deleting the resource");
+      setInternalError("An error occurred while deleting the resource");
+    } finally {
       setIsDeleting(false);
     }
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
-    setErrorMessage("");
-    setSuccessMessage("");
+    if (!validateForm()) {
+      return;
+    }
 
+    setIsSaving(true);
+    setInternalError("");
     try {
       const formData = new FormData();
       formData.append("resource_id", resourceData.resource_id);
@@ -77,18 +90,13 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
       if (response.ok) {
         const updatedResource = await response.json();
         setResourceData(updatedResource.resource);
-        setSuccessMessage("Resource updated successfully!");
-        setTimeout(() => {
-          setSuccessMessage("");
-          setIsEditing(false);
-          onUpdate();
-        }, 2000);
+        closeModal("Resource updated successfully");
       } else {
         const data = await response.json();
-        setErrorMessage(data.message || "Failed to update resource");
+        setInternalError(data.message || "Failed to update resource");
       }
     } catch (error) {
-      setErrorMessage("An error occurred while updating the resource");
+      setInternalError("An error occurred while updating the resource");
     } finally {
       setIsSaving(false);
     }
@@ -115,6 +123,11 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
         exit={{ opacity: 0, scale: 0.95 }}
         className="relative w-[95%] max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden"
       >
+        {internalError && (
+          <div className="p-4 bg-red-50 border-b border-red-100">
+            <p className="text-red-600 text-sm">{internalError}</p>
+          </div>
+        )}
         {/* Header */}
         <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6">
           <div className="flex justify-between items-center">
@@ -131,22 +144,6 @@ const ViewResourceModal = ({ resource, closeModal, onUpdate }) => {
         </div>
 
         <div className="relative">
-          {/* Notifications */}
-          {(errorMessage || successMessage) && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className={`absolute top-0 left-0 right-0 z-10 m-4 p-4 rounded-xl text-center font-medium shadow-lg ${
-                errorMessage
-                  ? "bg-red-100 text-red-600 border border-red-200"
-                  : "bg-green-100 text-green-600 border border-green-200"
-              }`}
-            >
-              {errorMessage || successMessage}
-            </motion.div>
-          )}
-
           {/* Content */}
           <div className="p-6">
             {isEditing ? (
