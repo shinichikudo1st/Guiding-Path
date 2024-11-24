@@ -2,11 +2,16 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request) {
   const { sessionData } = await getSession();
   if (!sessionData) {
     return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
   }
+
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get("page") || "1");
+  const pageSize = 10;
+  const skip = (page - 1) * pageSize;
 
   try {
     const notifications = await prisma.notifications.findMany({
@@ -16,9 +21,23 @@ export async function GET() {
       orderBy: {
         createdAt: "desc",
       },
+      skip,
+      take: pageSize,
     });
 
-    return NextResponse.json({ notifications }, { status: 200 });
+    const totalCount = await prisma.notifications.count({
+      where: {
+        OR: [{ user_id: sessionData.id }, { user_id: "000" }],
+      },
+    });
+
+    return NextResponse.json(
+      {
+        notifications,
+        hasMore: skip + notifications.length < totalCount,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return NextResponse.json(
