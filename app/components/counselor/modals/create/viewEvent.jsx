@@ -96,20 +96,17 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
       );
 
       if (response.ok) {
-        setSuccessMessage("Event deleted successfully!");
-        setTimeout(() => {
-          if (typeof onEventChange === "function") {
-            onEventChange(null);
-          }
-          closeButton();
-        }, 2000);
+        if (typeof onEventChange === "function") {
+          onEventChange(null);
+        }
+        closeButton();
       } else {
         const data = await response.json();
         setErrorMessage(data.message || "Failed to delete event");
+        setIsDeleting(false);
       }
     } catch (error) {
       setErrorMessage("An error occurred while deleting the event");
-    } finally {
       setIsDeleting(false);
     }
   };

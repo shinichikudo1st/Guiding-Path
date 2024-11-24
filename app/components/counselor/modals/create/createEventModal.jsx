@@ -45,18 +45,15 @@ const EventModal = ({ closeButton }) => {
       });
 
       if (response.ok) {
-        setSuccessMessage("Event created successfully!");
-        setTimeout(() => {
-          closeButton();
-        }, 2000);
+        closeButton();
       } else {
         const data = await response.json();
         setErrorMessage(data.message || "Failed to create event.");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error creating event:", error);
       setErrorMessage("An error occurred while creating the event.");
-    } finally {
       setIsLoading(false);
     }
   };
