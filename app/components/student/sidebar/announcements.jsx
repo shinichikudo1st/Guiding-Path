@@ -8,7 +8,6 @@ import {
   FaBullhorn,
   FaFilter,
   FaClock,
-  FaLock,
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
 import ProgressiveImage from "../../UI/progressiveImage";
@@ -336,7 +335,7 @@ const StudentFeed = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => handleRegisterClick(item)}
+                onClick={() => handleRegister(item)}
                 disabled={isClosed || isRegistered}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                   isRegistered

@@ -102,15 +102,22 @@ const AppointmentRequest = () => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <FaGraduationCap className="text-[#0B6EC9] text-xl flex-shrink-0" />
-                  <input
+                  <select
                     required
                     name="grade"
                     value={formData.grade}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] placeholder-[#062341]/50 focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
-                    type="text"
-                    placeholder="Grade Level"
-                  />
+                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+                  >
+                    <option value="" disabled>
+                      Select Year Level
+                    </option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="5th Year">5th Year</option>
+                  </select>
                 </div>
 
                 <div className="flex items-center gap-3">
