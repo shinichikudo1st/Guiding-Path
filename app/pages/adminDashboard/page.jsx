@@ -51,12 +51,19 @@ const AdminDashboard = () => {
     setActiveComponent(componentName);
   };
 
+  const handlePageChange = (page) => {
+    setActiveComponent(page);
+  };
+
   const ActiveComponent = components[activeComponent];
 
   return (
     <main className="h-[100vh] w-full bg-[#D9E7F3]">
       <Background />
-      <UserNavbar profile={() => toggleComponent("profile")} />
+      <UserNavbar
+        profile={() => toggleComponent("profile")}
+        onPageChange={handlePageChange}
+      />
       <CounselorSidebar
         otherButton={() => toggleComponent("otherButton")}
         userManagement={() => toggleComponent("userManagement")}
