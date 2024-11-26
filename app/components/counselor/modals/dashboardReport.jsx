@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
-import { FaUserTie, FaChartBar, FaExclamationTriangle } from "react-icons/fa";
+import { Bar, Pie, Doughnut } from "react-chartjs-2";
+import {
+  FaUserTie,
+  FaChartBar,
+  FaExclamationTriangle,
+  FaClipboardList,
+  FaInbox,
+} from "react-icons/fa";
 import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
@@ -24,41 +30,46 @@ ChartJS.register(
   Legend
 );
 
+const CACHE_KEY = "dashboardData";
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 const DashboardReport = () => {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchMonthlyReport = async () => {
+    const fetchDashboardData = async () => {
       try {
-        // Get first and last day of current month
-        const now = new Date();
-        const startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-          .toISOString()
-          .split("T")[0];
-        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-          .toISOString()
-          .split("T")[0];
+        // Check cache first
+        const cachedData = sessionStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > CACHE_DURATION;
 
-        const response = await fetch("/api/generateReport", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            selectedReports: ["appointment", "referral"],
-            startDate,
-            endDate,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch report data");
+          if (!isExpired) {
+            setReportData(data);
+            setLoading(false);
+            return;
+          }
         }
 
+        // Fetch fresh data if cache is missing or expired
+        const response = await fetch("/api/dashboardReport");
+        if (!response.ok) throw new Error("Failed to fetch dashboard data");
+
         const data = await response.json();
-        setReportData(data.reportData);
+
+        // Store in cache with timestamp
+        sessionStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            data,
+            timestamp: Date.now(),
+          })
+        );
+
+        setReportData(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -66,15 +77,11 @@ const DashboardReport = () => {
       }
     };
 
-    fetchMonthlyReport();
+    fetchDashboardData();
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0B6EC9]"></div>
-      </div>
-    );
+    return <DashboardReportSkeleton />;
   }
 
   if (error) {
@@ -92,6 +99,8 @@ const DashboardReport = () => {
 
   const appointmentData = reportData.find((r) => r.name === "appointment");
   const referralData = reportData.find((r) => r.name === "referral");
+  const appraisalData = reportData.find((r) => r.name === "appraisal");
+  const requestData = reportData.find((r) => r.name === "request");
 
   return (
     <motion.div
@@ -164,6 +173,70 @@ const DashboardReport = () => {
           )}
         </div>
       </div>
+
+      {/* Appraisal Summary */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <FaClipboardList className="text-white text-xl mr-2" />
+            <h3 className="text-white text-lg font-semibold">
+              Monthly Appraisals
+            </h3>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <p className="text-4xl font-bold text-[#0B6EC9]">
+                {appraisalData?.totalAppraisals || 0}
+              </p>
+              <p className="text-sm text-gray-600">Total Appraisals</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-bold text-green-600">
+                {appraisalData?.averageScores?._avg?.score?.toFixed(1) || 0}
+              </p>
+              <p className="text-sm text-gray-600">Average Score</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Request Summary */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <FaInbox className="text-white text-xl mr-2" />
+            <h3 className="text-white text-lg font-semibold">
+              Appointment Requests
+            </h3>
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <p className="text-4xl font-bold text-[#0B6EC9]">
+                {requestData?.totalRequests || 0}
+              </p>
+              <p className="text-sm text-gray-600">Total Requests</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-bold text-yellow-600">
+                {requestData?.pendingRequests || 0}
+              </p>
+              <p className="text-sm text-gray-600">Pending</p>
+            </div>
+          </div>
+          {requestData?.requestsByUrgency && (
+            <div className="mt-4 h-48">
+              <Doughnut
+                data={getRequestUrgencyChartData(requestData.requestsByUrgency)}
+                options={doughnutChartOptions}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 };
@@ -189,6 +262,20 @@ const getReferralChartData = (referralByReason) => ({
         "rgba(34, 197, 94, 0.6)",
         "rgba(234, 179, 8, 0.6)",
         "rgba(239, 68, 68, 0.6)",
+      ],
+    },
+  ],
+});
+
+const getRequestUrgencyChartData = (requestsByUrgency) => ({
+  labels: requestsByUrgency.map((item) => item.urgency),
+  datasets: [
+    {
+      data: requestsByUrgency.map((item) => item._count),
+      backgroundColor: [
+        "rgba(239, 68, 68, 0.6)", // red for urgent
+        "rgba(234, 179, 8, 0.6)", // yellow for medium
+        "rgba(34, 197, 94, 0.6)", // green for low
       ],
     },
   ],
@@ -223,6 +310,118 @@ const pieChartOptions = {
       text: "Referrals by Reason",
     },
   },
+};
+
+const doughnutChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "right",
+      labels: {
+        boxWidth: 12,
+      },
+    },
+    title: {
+      display: true,
+      text: "Requests by Urgency",
+    },
+  },
+};
+
+const DashboardReportSkeleton = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+    >
+      {/* Appointments Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+          <div className="mt-4 h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+
+      {/* Referrals Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="text-center mb-4">
+            <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+            <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+          </div>
+          <div className="h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+
+      {/* Appraisal Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Request Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+          <div className="mt-4 h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 export default DashboardReport;

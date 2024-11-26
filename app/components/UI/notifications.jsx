@@ -2,7 +2,13 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { BsCheckCircle, BsTrash } from "react-icons/bs";
 import { motion } from "framer-motion";
 
-const Notifications = ({ isOpen, onNotificationChange, unreadCount }) => {
+const Notifications = ({
+  isOpen,
+  onNotificationChange,
+  unreadCount,
+  onNotificationClick,
+  onClose,
+}) => {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -107,6 +113,41 @@ const Notifications = ({ isOpen, onNotificationChange, unreadCount }) => {
     }
   };
 
+  const handleNotificationClick = (notification) => {
+    markAsRead(notification.notification_id);
+
+    switch (notification.title) {
+      case "New Referral Request":
+        onNotificationClick("referral");
+        break;
+      case "New Appointment Request":
+        onNotificationClick("appointment");
+        break;
+      case "New Event":
+        onNotificationClick("announcement");
+        break;
+      case "Appointment Request":
+        onNotificationClick("appointment");
+        break;
+      case "Referred Appointment":
+        onNotificationClick("appointment");
+        break;
+      case "New Announcement":
+        onNotificationClick("announcement");
+        break;
+      case "New Resource Posted":
+        onNotificationClick("resources");
+        break;
+      case "New Appraisal":
+        onNotificationClick("appraisal");
+        break;
+      default:
+        break;
+    }
+    // Close notifications after handling click
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const LoadingSkeleton = () => (
@@ -167,11 +208,13 @@ const Notifications = ({ isOpen, onNotificationChange, unreadCount }) => {
                 key={notification.notification_id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`bg-white rounded-xl p-4 shadow-sm border ${
+                whileHover={{ scale: 1.02, backgroundColor: "#F8FAFC" }}
+                className={`bg-white rounded-xl p-4 shadow-sm border cursor-pointer transform transition-all duration-200 hover:shadow-md ${
                   notification.isRead
                     ? "border-[#0B6EC9]/5"
                     : "border-[#0B6EC9]/20"
                 }`}
+                onClick={() => handleNotificationClick(notification)}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-grow pr-4">

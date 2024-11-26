@@ -6,7 +6,7 @@ import OpenSettings from "./openSettings";
 import OpenLogout from "./openLogout";
 import Notifications from "./notifications";
 
-const UserNavbar = ({ profile }) => {
+const UserNavbar = ({ profile, onPageChange }) => {
   const [isLogoutToggled, setIsLogoutToggled] = useState(false);
   const [isSettingsToggled, setIsSettingsToggled] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -148,6 +148,7 @@ const UserNavbar = ({ profile }) => {
             onClose={() => setIsNotificationsOpen(false)}
             onNotificationChange={handleNotificationChange}
             unreadCount={unreadCount}
+            onNotificationClick={onPageChange}
           />
         </div>
 
