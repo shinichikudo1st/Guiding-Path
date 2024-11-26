@@ -123,6 +123,24 @@ const Notifications = ({
       case "New Appointment Request":
         onNotificationClick("appointment");
         break;
+      case "New Event":
+        onNotificationClick("announcement");
+        break;
+      case "Appointment Request":
+        onNotificationClick("appointment");
+        break;
+      case "Referred Appointment":
+        onNotificationClick("appointment");
+        break;
+      case "New Announcement":
+        onNotificationClick("announcement");
+        break;
+      case "New Resource Posted":
+        onNotificationClick("resources");
+        break;
+      case "New Appraisal":
+        onNotificationClick("appraisal");
+        break;
       default:
         break;
     }
