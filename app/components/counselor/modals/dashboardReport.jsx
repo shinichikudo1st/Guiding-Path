@@ -30,6 +30,9 @@ ChartJS.register(
   Legend
 );
 
+const CACHE_KEY = "dashboardData";
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 const DashboardReport = () => {
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,10 +41,34 @@ const DashboardReport = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        // Check cache first
+        const cachedData = sessionStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const isExpired = Date.now() - timestamp > CACHE_DURATION;
+
+          if (!isExpired) {
+            setReportData(data);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Fetch fresh data if cache is missing or expired
         const response = await fetch("/api/dashboardReport");
         if (!response.ok) throw new Error("Failed to fetch dashboard data");
 
         const data = await response.json();
+
+        // Store in cache with timestamp
+        sessionStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            data,
+            timestamp: Date.now(),
+          })
+        );
+
         setReportData(data);
       } catch (err) {
         setError(err.message);
