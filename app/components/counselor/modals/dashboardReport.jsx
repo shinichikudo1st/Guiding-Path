@@ -54,11 +54,7 @@ const DashboardReport = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0B6EC9]"></div>
-      </div>
-    );
+    return <DashboardReportSkeleton />;
   }
 
   if (error) {
@@ -304,6 +300,101 @@ const doughnutChartOptions = {
       text: "Requests by Urgency",
     },
   },
+};
+
+const DashboardReportSkeleton = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+    >
+      {/* Appointments Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-16 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+          <div className="mt-4 h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+
+      {/* Referrals Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="text-center mb-4">
+            <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+            <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+          </div>
+          <div className="h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+
+      {/* Appraisal Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Request Summary Skeleton */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4">
+          <div className="flex items-center">
+            <div className="w-6 h-6 bg-white/20 rounded mr-2 animate-pulse" />
+            <div className="h-6 w-48 bg-white/20 rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+            <div className="text-center">
+              <div className="h-10 w-20 bg-gray-200 rounded mx-auto mb-2 animate-pulse" />
+              <div className="h-4 w-24 bg-gray-200 rounded mx-auto animate-pulse" />
+            </div>
+          </div>
+          <div className="mt-4 h-48 bg-gray-100 rounded animate-pulse" />
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 export default DashboardReport;
