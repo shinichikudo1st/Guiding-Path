@@ -1,4 +1,10 @@
-import { FaBell, FaBookOpen, FaUserCircle, FaUserClock } from "react-icons/fa";
+import {
+  FaBell,
+  FaBookOpen,
+  FaUserCircle,
+  FaUserClock,
+  FaCalendar,
+} from "react-icons/fa";
 import { BsChatFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 
@@ -9,6 +15,7 @@ const StudentSidebar = ({
   viewAnnouncement,
   activeComponent,
   viewResources,
+  viewEvent,
 }) => {
   const sidebarItems = [
     {
@@ -28,6 +35,12 @@ const StudentSidebar = ({
       icon: FaBell,
       label: "Announcements",
       onClick: viewAnnouncement,
+    },
+    {
+      name: "event",
+      icon: FaCalendar,
+      label: "Events",
+      onClick: viewEvent,
     },
     {
       name: "resources",

@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(request) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page");
-  const pageSize = 10;
+  const pageSize = 5;
   const { sessionData } = await getSession();
 
   const pageNumber = parseInt(page);
