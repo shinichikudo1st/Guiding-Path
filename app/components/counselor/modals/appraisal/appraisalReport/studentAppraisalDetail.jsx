@@ -4,15 +4,21 @@ import {
   FaChartBar,
   FaClipboardList,
   FaExclamationCircle,
+  FaLightbulb,
 } from "react-icons/fa";
+import AppraisalProgressGraph from "./appraisalProgressGraph";
 
 const StudentAppraisalDetail = ({ student, onBack }) => {
   const getScoreColor = (score) => {
-    if (score >= 4.5) return "bg-green-500";
-    if (score >= 4.0) return "bg-lime-300";
-    if (score >= 3.0) return "bg-yellow-500";
-    if (score >= 2.0) return "bg-orange-500";
-    return "bg-red-500";
+    if (score >= 4.5)
+      return "bg-green-500/90 border-2 border-green-600 text-white drop-shadow-lg hover:bg-green-500";
+    if (score >= 4.0)
+      return "bg-lime-300/90 border-2 border-lime-400 text-gray-800 drop-shadow-lg hover:bg-lime-300";
+    if (score >= 3.0)
+      return "bg-yellow-500/90 border-2 border-yellow-600 text-gray-800 drop-shadow-lg hover:bg-yellow-500";
+    if (score >= 2.0)
+      return "bg-orange-500/90 border-2 border-orange-600 text-white drop-shadow-lg hover:bg-orange-500";
+    return "bg-red-500/90 border-2 border-red-600 text-white drop-shadow-lg hover:bg-red-500";
   };
 
   const formatDate = (date) => {
@@ -21,6 +27,135 @@ const StudentAppraisalDetail = ({ student, onBack }) => {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const getOverallEvaluation = (score) => {
+    if (score >= 4.5)
+      return {
+        evaluation: "Excellent!",
+        description:
+          "Student demonstrates exceptional performance and consistent growth across all areas.",
+        suggestion:
+          "Consider providing mentoring opportunities and advanced challenges to maintain engagement.",
+      };
+    if (score >= 4.0)
+      return {
+        evaluation: "Very Good",
+        description:
+          "Student shows strong performance and steady improvement in most areas.",
+        suggestion:
+          "Focus on specific areas for refinement while maintaining current strengths.",
+      };
+    if (score >= 3.0)
+      return {
+        evaluation: "Satisfactory",
+        description:
+          "Student meets basic expectations with potential for improvement.",
+        suggestion:
+          "Identify key areas for development and create targeted improvement plans.",
+      };
+    if (score >= 2.0)
+      return {
+        evaluation: "Needs Improvement",
+        description:
+          "Student shows inconsistent performance with significant room for growth.",
+        suggestion:
+          "Regular counseling sessions and structured support recommended.",
+      };
+    return {
+      evaluation: "Requires Attention",
+      description: "Student needs immediate support and intervention.",
+      suggestion:
+        "Implement comprehensive support plan with regular progress monitoring.",
+    };
+  };
+
+  const renderDevelopmentSection = () => {
+    if (student.appraisals.length === 0) return null;
+
+    const averageScore =
+      student.appraisals.reduce(
+        (acc, appraisal) =>
+          acc +
+          appraisal.categoryResponses.reduce((sum, cr) => sum + cr.score, 0) /
+            appraisal.categoryResponses.length,
+        0
+      ) / student.appraisals.length;
+
+    const evaluation = getOverallEvaluation(averageScore);
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        <AppraisalProgressGraph appraisals={student.appraisals} />
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between items-center pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#0B6EC9]/10 flex items-center justify-center">
+                  <FaLightbulb className="text-[#0B6EC9] text-xl" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#062341]">
+                  Overall Assessment
+                </h3>
+              </div>
+              <span
+                className={`px-4 py-2 rounded-full text-lg font-bold ${getScoreColor(
+                  averageScore
+                )} transition-all duration-200 backdrop-blur-sm`}
+              >
+                {averageScore.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-gradient-to-br from-[#0B6EC9]/5 to-transparent p-4 rounded-lg">
+                <h4 className="font-semibold text-[#062341] mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#0B6EC9]" />
+                  Current Status
+                </h4>
+                <div className={`text-lg font-medium mb-2 text-[#0B6EC9]`}>
+                  {evaluation.evaluation}
+                </div>
+                <p className="text-gray-600 text-sm">
+                  {evaluation.description}
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-[#0B6EC9]/5 to-transparent p-4 rounded-lg">
+                <h4 className="font-semibold text-[#062341] mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#0B6EC9]" />
+                  Action Plan
+                </h4>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <FaClipboardList className="text-[#0B6EC9]" />
+                  </div>
+                  <p className="text-gray-600 text-sm">
+                    {evaluation.suggestion}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {student.appraisals.length > 1 && (
+              <div className="pt-4 mt-2 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <FaChartBar className="text-[#0B6EC9]" />
+                  <span>
+                    Based on {student.appraisals.length} completed appraisals
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    );
   };
 
   return (
@@ -40,6 +175,8 @@ const StudentAppraisalDetail = ({ student, onBack }) => {
           <p className="text-gray-600">{student.student.email}</p>
         </div>
       </div>
+
+      {renderDevelopmentSection()}
 
       {/* Empty State or Appraisal List */}
       {student.appraisals.length === 0 ? (
@@ -92,12 +229,12 @@ const StudentAppraisalDetail = ({ student, onBack }) => {
                   <div className="flex items-center gap-2">
                     <FaChartBar className="text-[#0B6EC9]" />
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(
+                      className={`px-3 py-1.5 rounded-full text-sm font-semibold ${getScoreColor(
                         appraisal.categoryResponses.reduce(
                           (acc, cr) => acc + cr.score,
                           0
                         ) / appraisal.categoryResponses.length
-                      )} text-white`}
+                      )} transition-all duration-200 backdrop-blur-sm`}
                     >
                       {(
                         appraisal.categoryResponses.reduce(
@@ -122,9 +259,9 @@ const StudentAppraisalDetail = ({ student, onBack }) => {
                       <div className="mt-2 flex items-center gap-2">
                         <span className="text-sm text-gray-500">Score:</span>
                         <span
-                          className={`px-2 py-1 rounded-full text-sm font-medium ${getScoreColor(
+                          className={`px-2.5 py-1 rounded-full text-sm font-semibold ${getScoreColor(
                             categoryResponse.score
-                          )} text-white`}
+                          )} transition-all duration-200 backdrop-blur-sm`}
                         >
                           {categoryResponse.score.toFixed(2)}
                         </span>
