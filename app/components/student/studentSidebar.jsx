@@ -37,6 +37,12 @@ const StudentSidebar = ({
       onClick: viewAnnouncement,
     },
     {
+      name: "event",
+      icon: FaCalendar,
+      label: "Events",
+      onClick: viewEvent,
+    },
+    {
       name: "resources",
       icon: FaBookOpen,
       label: "Resources",
@@ -47,12 +53,6 @@ const StudentSidebar = ({
       icon: BsChatFill,
       label: "Appraisal",
       onClick: viewAppraisal,
-    },
-    {
-      name: "event",
-      icon: FaCalendar,
-      label: "Events",
-      onClick: viewEvent,
     },
   ];
 

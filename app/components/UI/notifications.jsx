@@ -124,7 +124,7 @@ const Notifications = ({
         onNotificationClick("appointment");
         break;
       case "New Event":
-        onNotificationClick("announcement");
+        onNotificationClick("event");
         break;
       case "Appointment Request":
         onNotificationClick("appointment");
