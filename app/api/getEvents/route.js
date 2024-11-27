@@ -12,13 +12,16 @@ export async function GET(request) {
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page")) || 1;
-    const pageSize = 10;
+    const pageSize = 5;
     const skip = (page - 1) * pageSize;
 
     const [events, student] = await Promise.all([
       prisma.events.findMany({
         skip,
         take: pageSize,
+        orderBy: {
+          date_time: "desc",
+        },
       }),
       prisma.students.findUnique({
         where: {
