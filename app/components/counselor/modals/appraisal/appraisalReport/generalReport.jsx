@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Bar } from "react-chartjs-2";
 import { motion } from "framer-motion";
-import { FaSpinner, FaDownload, FaFileCsv } from "react-icons/fa";
+import { FaSpinner, FaDownload, FaFileCsv, FaArrowUp } from "react-icons/fa";
 import html2canvas from "html2canvas";
 import {
   Chart as ChartJS,
@@ -190,6 +190,75 @@ const GeneralAppraisalReport = () => {
             </h3>
             <p className="text-3xl font-bold text-[#0B6EC9]">
               {reportData.totalStudents}
+            </p>
+          </motion.div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-md"
+          >
+            <h3 className="text-lg font-semibold text-[#062341] mb-2">
+              Score Trend
+            </h3>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-2xl font-bold ${
+                  reportData.trendAnalysis.trend === "improving"
+                    ? "text-green-500"
+                    : reportData.trendAnalysis.trend === "declining"
+                    ? "text-red-500"
+                    : "text-yellow-500"
+                }`}
+              >
+                {reportData.trendAnalysis.percentageChange.toFixed(1)}%
+              </span>
+              <FaArrowUp
+                className={`${
+                  reportData.trendAnalysis.trend === "improving"
+                    ? "text-green-500 rotate-0"
+                    : reportData.trendAnalysis.trend === "declining"
+                    ? "text-red-500 rotate-180"
+                    : "text-yellow-500 rotate-90"
+                } transition-transform`}
+              />
+            </div>
+            <p className="text-sm text-gray-600 mt-1">vs previous period</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-md"
+          >
+            <h3 className="text-lg font-semibold text-[#062341] mb-2">
+              Participation Rate
+            </h3>
+            <div className="text-2xl font-bold text-[#0B6EC9]">
+              {reportData.participationMetrics.participationRate.toFixed(1)}%
+            </div>
+            <p className="text-sm text-gray-600 mt-1">
+              {reportData.participationMetrics.participated} of{" "}
+              {reportData.participationMetrics.totalEligible} students
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-xl shadow-md"
+          >
+            <h3 className="text-lg font-semibold text-[#062341] mb-2">
+              Critical Cases
+            </h3>
+            <div className="text-2xl font-bold text-red-500">
+              {reportData.criticalMetrics.totalCritical}
+            </div>
+            <p className="text-sm text-gray-600 mt-1">
+              {reportData.criticalMetrics.criticalRate.toFixed(1)}% of total
+              appraisals
             </p>
           </motion.div>
         </div>

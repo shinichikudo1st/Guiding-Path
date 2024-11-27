@@ -134,10 +134,104 @@ export async function GET(req) {
       };
     });
 
+    // Add to the existing GET function after calculating basic metrics
+    const trendAnalysis = {
+      previousPeriodAverage: 0,
+      currentPeriodAverage: averageScore,
+      trend: "stable",
+      percentageChange: 0,
+    };
+
+    // Calculate previous period metrics
+    const previousStartDate =
+      timeFilter === "week"
+        ? new Date(startDate.getTime() - 7 * 24 * 60 * 60 * 1000)
+        : new Date(startDate.getFullYear(), startDate.getMonth() - 1, 1);
+
+    const previousPeriodData = await prisma.studentAppraisal.findMany({
+      where: {
+        submittedAt: {
+          gte: previousStartDate,
+          lt: startDate,
+        },
+      },
+      include: {
+        categoryResponses: true,
+      },
+    });
+
+    if (previousPeriodData.length > 0) {
+      const previousScores = previousPeriodData.flatMap((a) =>
+        a.categoryResponses.map((cr) => cr.score)
+      );
+      trendAnalysis.previousPeriodAverage =
+        previousScores.reduce((a, b) => a + b, 0) / previousScores.length;
+      trendAnalysis.percentageChange =
+        ((averageScore - trendAnalysis.previousPeriodAverage) /
+          trendAnalysis.previousPeriodAverage) *
+        100;
+      trendAnalysis.trend =
+        trendAnalysis.percentageChange > 0
+          ? "improving"
+          : trendAnalysis.percentageChange < 0
+          ? "declining"
+          : "stable";
+    }
+
+    // Calculate participation metrics
+    const totalStudentsInSystem = await prisma.students.count();
+    const participationMetrics = {
+      totalEligible: totalStudentsInSystem,
+      participated: totalStudents,
+      participationRate: (totalStudents / totalStudentsInSystem) * 100,
+    };
+
+    // Identify critical cases
+    const criticalCases = await prisma.studentAppraisal.findMany({
+      where: {
+        submittedAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+        categoryResponses: {
+          some: {
+            score: {
+              lt: 3.0,
+            },
+          },
+        },
+      },
+      include: {
+        student: {
+          include: {
+            student: true,
+          },
+        },
+        categoryResponses: true,
+      },
+    });
+
+    const criticalMetrics = {
+      totalCritical: criticalCases.length,
+      criticalRate: (criticalCases.length / totalAppraisals) * 100,
+      criticalStudents: criticalCases
+        .map((c) => ({
+          name: c.student.student.name,
+          averageScore:
+            c.categoryResponses.reduce((acc, cr) => acc + cr.score, 0) /
+            c.categoryResponses.length,
+        }))
+        .slice(0, 5), // Top 5 most critical cases
+    };
+
+    // Add to the response
     return NextResponse.json({
       totalAppraisals,
       totalStudents,
       averageScore,
+      trendAnalysis,
+      participationMetrics,
+      criticalMetrics,
       appraisalDistribution: processedDistribution,
     });
   } catch (error) {
