@@ -10,6 +10,8 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { FaDownload } from "react-icons/fa";
+import html2canvas from "html2canvas";
 
 // Register ChartJS components
 ChartJS.register(
@@ -22,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-const AppraisalProgressGraph = ({ appraisals }) => {
+const AppraisalProgressGraph = ({ appraisals, studentName }) => {
   const [timeFilter, setTimeFilter] = useState("all"); // all, weekly, monthly, yearly
 
   const filteredData = useMemo(() => {
@@ -117,12 +119,43 @@ const AppraisalProgressGraph = ({ appraisals }) => {
     },
   };
 
+  const exportAsImage = async () => {
+    const graphElement = document.getElementById("progress-graph");
+    if (graphElement) {
+      const canvas = await html2canvas(graphElement);
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = `${studentName.replace(
+        /\s+/g,
+        "-"
+      )}-progress-tracking.png`;
+      link.click();
+    }
+  };
+
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div
+      id="progress-graph"
+      className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+    >
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-semibold text-[#062341]">
-          Progress Tracking
-        </h3>
+        <div className="flex items-center gap-3">
+          <div>
+            <h3 className="text-xl font-semibold text-[#062341]">
+              Progress Tracking
+            </h3>
+            <p className="text-sm text-gray-600">{studentName}</p>
+          </div>
+          <button
+            onClick={exportAsImage}
+            className="flex items-center gap-2 px-4 py-2 bg-[#0B6EC9] text-white rounded-lg hover:bg-[#095396] transition-colors"
+            title="Export as Image"
+          >
+            <FaDownload className="w-4 h-4" />
+            <span>Export Graph</span>
+          </button>
+        </div>
         <div className="flex gap-2">
           <button
             onClick={() => setTimeFilter("weekly")}

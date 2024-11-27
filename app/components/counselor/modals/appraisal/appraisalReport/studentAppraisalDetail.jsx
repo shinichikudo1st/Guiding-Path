@@ -90,7 +90,10 @@ const StudentAppraisalDetail = ({ student, onBack }) => {
         animate={{ opacity: 1, y: 0 }}
         className="space-y-6"
       >
-        <AppraisalProgressGraph appraisals={student.appraisals} />
+        <AppraisalProgressGraph
+          appraisals={student.appraisals}
+          studentName={student.student.name}
+        />
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
           <div className="flex flex-col space-y-4">
