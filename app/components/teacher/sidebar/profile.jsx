@@ -111,6 +111,11 @@ const ProfileTeacher = () => {
 
       const result = await response.json();
       setProfileData(result.userInfo);
+      const encryptedProfileData = encrypt(result.userInfo);
+      if (encryptedProfileData) {
+        sessionStorage.setItem("profileData", encryptedProfileData);
+        //console.log("Profile data encrypted and stored");
+      }
     } catch (error) {
       console.error("Error retrieving profile:", error);
     } finally {
@@ -119,7 +124,18 @@ const ProfileTeacher = () => {
   };
 
   useEffect(() => {
-    retrieveProfile();
+    const storedProfile = sessionStorage.getItem("profileData");
+    if (storedProfile) {
+      const decryptedProfileData = decrypt(storedProfile);
+      if (decryptedProfileData) {
+        setProfileData(decryptedProfileData);
+        setRetrievingData(false);
+      } else {
+        retrieveProfile();
+      }
+    } else {
+      retrieveProfile();
+    }
     fetchDailyQuote();
   }, []);
 
