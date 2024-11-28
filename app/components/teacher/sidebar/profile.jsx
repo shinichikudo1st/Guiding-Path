@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 
 const ProfileTeacher = () => {
   const [retrievingData, setRetrievingData] = useState(true);
+
   const [profileData, setProfileData] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [uploadModal, setUploadModal] = useState(false);
@@ -144,10 +145,10 @@ const ProfileTeacher = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
+      className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6"
     >
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto space-y-6 md:space-y-8">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
           <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
             <h1 className="text-2xl md:text-4xl font-bold text-center">
               My Profile
@@ -155,21 +156,23 @@ const ProfileTeacher = () => {
           </div>
 
           {retrievingData ? (
-            <div className="p-8 flex justify-center">
-              <LoadingSpinner />
-            </div>
+            <LoadingSpinner />
           ) : (
-            <div className="p-4 md:p-10">
-              <div className="flex justify-center mb-6 md:mb-10">
+            <div className="p-6 md:p-8">
+              <div className="flex flex-col items-center mb-8">
                 <UploadProfilePicture
                   toggleUploadModal={toggleUploadModal}
                   picture={profileData?.profilePicture || null}
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                 {[
-                  { icon: FaUser, label: "Name", value: profileData?.name },
+                  {
+                    icon: FaUser,
+                    label: "Name",
+                    value: profileData?.name,
+                  },
                   {
                     icon: FaBuilding,
                     label: "Department",
@@ -191,17 +194,17 @@ const ProfileTeacher = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white/50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+                    className="bg-white/50 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-300"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center shadow-sm">
-                        <item.icon className="text-white text-2xl" />
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center shadow-sm">
+                        <item.icon className="text-white text-xl md:text-2xl" />
                       </div>
                       <div className="flex-1">
                         <label className="text-sm text-[#062341]/70 font-medium">
                           {item.label}
                         </label>
-                        <p className="text-[#062341] font-semibold text-xl">
+                        <p className="text-[#062341] font-semibold text-base md:text-xl">
                           {item.value}
                         </p>
                       </div>

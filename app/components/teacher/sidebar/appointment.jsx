@@ -72,18 +72,29 @@ const TeacherAppointment = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
-      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+      className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6"
+      style={{
+        marginLeft: "0",
+        marginRight: "0",
+        "@media (min-width: 768px)": {
+          marginLeft: "4rem",
+          marginRight: "4rem",
+        },
+        "@media (min-width: 1280px)": {
+          marginLeft: "16rem",
+          marginRight: "16rem",
+        },
+      }}
     >
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto space-y-6 md:space-y-8">
+        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-xl md:rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center">
               Referred Appointments
             </h1>
           </div>
 
-          <div className="p-8 sm:p-10">
+          <div className="p-4 md:p-6 lg:p-8">
             <div className="flex-grow overflow-auto scrollbar-thin scrollbar-thumb-[#0B6EC9] scrollbar-track-[#dfecf6] max-h-[calc(100vh-20rem)]">
               {loading ? (
                 <div className="flex items-center justify-center w-full h-40">
@@ -104,18 +115,18 @@ const TeacherAppointment = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white/50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300"
+                      className="bg-white/50 rounded-lg md:rounded-xl p-3 md:p-4 lg:p-6 shadow-sm hover:shadow-md transition-all duration-300"
                     >
-                      <div className="flex flex-col md:flex-row items-center gap-6">
-                        {/* Student Section with Label */}
+                      <div className="flex flex-col lg:flex-col xl:flex-row items-start md:items-center gap-4 xl:gap-6">
+                        {/* Student Section */}
                         <div className="flex-1 w-full">
                           <div className="mb-2">
-                            <span className="text-xs font-semibold text-[#0B6EC9] bg-[#0B6EC9]/10 px-3 py-1 rounded-full">
+                            <span className="text-xs font-semibold text-[#0B6EC9] bg-[#0B6EC9]/10 px-2 md:px-3 py-1 rounded-full">
                               Student
                             </span>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 relative">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className="w-10 h-10 md:w-12 md:h-12 relative">
                               <Image
                                 priority
                                 alt="student profile"
@@ -125,11 +136,11 @@ const TeacherAppointment = () => {
                               />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-[#062341] flex items-center gap-2">
+                              <h3 className="text-sm md:text-base lg:text-lg font-semibold text-[#062341] flex items-center gap-2">
                                 <FaUserGraduate className="text-[#0B6EC9]" />
                                 {appointment.student.student.name}
                               </h3>
-                              <p className="text-sm text-[#062341]/70 flex items-center gap-1">
+                              <p className="text-xs md:text-sm text-[#062341]/70 flex items-center gap-1">
                                 <FaEnvelope className="text-[#0B6EC9]" />
                                 {appointment.student.student.email}
                               </p>
@@ -137,18 +148,19 @@ const TeacherAppointment = () => {
                           </div>
                         </div>
 
-                        {/* Divider */}
-                        <div className="hidden md:block w-px h-20 bg-[#0B6EC9]/10"></div>
+                        {/* Dividers */}
+                        <div className="hidden xl:block w-px h-20 bg-[#0B6EC9]/10"></div>
+                        <div className="block xl:hidden w-full h-px bg-[#0B6EC9]/10"></div>
 
-                        {/* Counselor Section with Label */}
+                        {/* Counselor Section */}
                         <div className="flex-1 w-full">
                           <div className="mb-2">
-                            <span className="text-xs font-semibold text-[#0B6EC9] bg-[#0B6EC9]/10 px-3 py-1 rounded-full">
+                            <span className="text-xs font-semibold text-[#0B6EC9] bg-[#0B6EC9]/10 px-2 md:px-3 py-1 rounded-full">
                               Counselor
                             </span>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 relative">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <div className="w-10 h-10 md:w-12 md:h-12 relative">
                               <Image
                                 priority
                                 alt="counselor profile"
@@ -160,11 +172,11 @@ const TeacherAppointment = () => {
                               />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-[#062341] flex items-center gap-2">
+                              <h3 className="text-sm md:text-base lg:text-lg font-semibold text-[#062341] flex items-center gap-2">
                                 <FaUserMd className="text-[#0B6EC9]" />
                                 {appointment.counselor.counselor.name}
                               </h3>
-                              <p className="text-sm text-[#062341]/70 flex items-center gap-1">
+                              <p className="text-xs md:text-sm text-[#062341]/70 flex items-center gap-1">
                                 <FaCalendarAlt className="text-[#0B6EC9]" />
                                 {formatDate(appointment.date_time)}
                               </p>
@@ -192,9 +204,9 @@ const TeacherAppointment = () => {
               )}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination - remains mostly the same with adjusted spacing */}
             {appointments.length > 0 && (
-              <div className="flex justify-center items-center gap-4 mt-6">
+              <div className="flex justify-center items-center gap-2 md:gap-4 mt-4 md:mt-6">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
