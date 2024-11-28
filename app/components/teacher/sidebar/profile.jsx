@@ -110,32 +110,16 @@ const ProfileTeacher = () => {
       }
 
       const result = await response.json();
-      console.log(result.message);
       setProfileData(result.userInfo);
-
-      const encryptedProfileData = encrypt(result.userInfo);
-      if (encryptedProfileData) {
-        sessionStorage.setItem("profileData", encryptedProfileData);
-        //console.log("Profile data encrypted and stored");
-      }
-
+    } catch (error) {
+      console.error("Error retrieving profile:", error);
+    } finally {
       setRetrievingData(false);
-    } catch (error) {}
+    }
   };
 
   useEffect(() => {
-    const storedProfile = sessionStorage.getItem("profileData");
-    if (storedProfile) {
-      const decryptedProfileData = decrypt(storedProfile);
-      if (decryptedProfileData) {
-        setProfileData(decryptedProfileData);
-        setRetrievingData(false);
-      } else {
-        retrieveProfile();
-      }
-    } else {
-      retrieveProfile();
-    }
+    retrieveProfile();
     fetchDailyQuote();
   }, []);
 
@@ -145,12 +129,11 @@ const ProfileTeacher = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
-      style={{ marginLeft: "16rem", marginRight: "16rem" }}
     >
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
               My Profile
             </h1>
           </div>
@@ -160,8 +143,8 @@ const ProfileTeacher = () => {
               <LoadingSpinner />
             </div>
           ) : (
-            <div className="p-8 sm:p-10">
-              <div className="flex justify-center mb-10">
+            <div className="p-4 md:p-10">
+              <div className="flex justify-center mb-6 md:mb-10">
                 <UploadProfilePicture
                   toggleUploadModal={toggleUploadModal}
                   picture={profileData?.profilePicture || null}
