@@ -94,12 +94,15 @@ const AppointmentRequest = () => {
 
   return (
     <div className="min-h-[60vh] flex flex-col bg-white/50 rounded-xl shadow-md border border-[#0B6EC9]/10 overflow-hidden">
-      <form onSubmit={handleSubmit} className="flex-grow flex flex-col p-6">
-        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-grow flex flex-col p-4 md:p-6"
+      >
+        <div className="flex-grow grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
           {/* Left Column */}
           <div className="space-y-4">
             <div className="h-full bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 <div className="flex items-center gap-3">
                   <FaGraduationCap className="text-[#0B6EC9] text-xl flex-shrink-0" />
                   <select
@@ -161,7 +164,7 @@ const AppointmentRequest = () => {
           {/* Right Column */}
           <div className="space-y-4">
             <div className="h-full bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6">
                 <div className="flex items-center gap-3">
                   <FaVideo className="text-[#0B6EC9] text-xl flex-shrink-0" />
                   <select

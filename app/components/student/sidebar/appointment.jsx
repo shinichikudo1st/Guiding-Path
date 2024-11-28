@@ -8,7 +8,7 @@ const Appointment = () => {
   const [activeTab, setActiveTab] = useState("request");
 
   const tabs = [
-    { id: "appointments", label: "Appointments" },
+    { id: "appointments", label: "Calendar" },
     { id: "pending", label: "Pending" },
     { id: "request", label: "Request" },
   ];
@@ -18,25 +18,23 @@ const Appointment = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
-      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+      className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6 overflow-x-hidden"
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
               Appointments
             </h1>
           </div>
 
-          <div className="p-8 sm:p-10 space-y-8">
-            {/* Navigation Tabs */}
+          <div className="p-4 md:p-8 space-y-6 md:space-y-8">
             <div className="flex w-full justify-evenly select-none bg-white rounded-full shadow-md">
               {tabs.map((tab) => (
                 <span
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`text-base sm:text-lg w-1/3 py-3 ${
+                  className={`text-sm md:text-base w-1/3 py-2.5 md:py-3 ${
                     activeTab === tab.id
                       ? "bg-[#0B6EC9] text-white"
                       : "text-[#818487]"
@@ -50,7 +48,6 @@ const Appointment = () => {
               ))}
             </div>
 
-            {/* Content Area */}
             <div className="min-h-[60vh]">
               {activeTab === "request" && <AppointmentRequest />}
               {activeTab === "pending" && <PendingAppointment />}

@@ -26,6 +26,7 @@ const PendingAppointment = () => {
 
       console.log(result.message);
       setAppointments(result.appointment);
+      console.log(result.appointment);
 
       const encryptedAppointments = encrypt(result.appointment);
       if (encryptedAppointments) {

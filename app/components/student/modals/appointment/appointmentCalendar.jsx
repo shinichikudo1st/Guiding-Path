@@ -5,6 +5,7 @@ import {
   FaChevronRight,
   FaTimes,
   FaCalendarAlt,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -77,6 +78,7 @@ const AppointmentCalendar = () => {
       );
       if (response.ok) {
         const data = await response.json();
+        console.log(data.appointments);
         setAppointments(data.appointments);
       } else {
         console.error("Failed to fetch appointments");
@@ -166,23 +168,37 @@ const AppointmentCalendar = () => {
   };
 
   const AppointmentModal = ({ appointments, onClose }) => {
-    if (!appointments || appointments.length === 0) return null;
+    const getStatusColor = (status) => {
+      if (!status) return "bg-gray-100 text-gray-700 border-gray-200";
 
-    const formatDate = (date) => {
-      const options = {
+      switch (status.toString().toLowerCase()) {
+        case "pending":
+          return "bg-yellow-100 text-yellow-700 border-yellow-200";
+        case "closed":
+          return "bg-green-100 text-green-700 border-green-200";
+        case "cancelled":
+          return "bg-red-100 text-red-700 border-red-200";
+        default:
+          return "bg-gray-100 text-gray-700 border-gray-200";
+      }
+    };
+
+    const formatDateTime = (dateTimeStr) => {
+      const date = new Date(dateTimeStr);
+      const formattedDate = date.toLocaleDateString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
-      };
-      return date.toLocaleDateString("en-US", options);
-    };
+      });
 
-    const formatTime = (date) => {
-      return date.toLocaleTimeString("en-US", {
+      const formattedTime = date.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
+        hour12: true,
       });
+
+      return `${formattedDate} at ${formattedTime}`;
     };
 
     return (
@@ -190,90 +206,86 @@ const AppointmentCalendar = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
       >
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 w-full max-w-2xl overflow-hidden"
+          initial={{ scale: 0.95 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.95 }}
+          className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden"
         >
-          {/* Header */}
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white">
-              Appointments for {formatDate(new Date(appointments[0].date_time))}
+          <div className="p-4 md:p-6 border-b border-[#0B6EC9]/10 flex justify-between items-center">
+            <h2 className="text-lg md:text-xl font-bold text-[#062341]">
+              Appointments for{" "}
+              {new Date(appointments[0]?.date_time).toLocaleDateString(
+                "en-US",
+                {
+                  weekday: "long",
+                  month: "long",
+                  day: "numeric",
+                }
+              )}
             </h2>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+            <button
               onClick={onClose}
-              className="text-white hover:text-red-100 transition-colors"
+              className="text-[#062341]/70 hover:text-[#062341] transition-colors"
             >
-              <FaTimes className="h-6 w-6" />
-            </motion.button>
+              <FaTimes className="text-xl" />
+            </button>
           </div>
 
-          {/* Content */}
-          <div className="max-h-[60vh] overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-[#0B6EC9]/20 scrollbar-track-transparent">
-            {appointments.map((appointment, index) => {
-              const appointmentDate = new Date(appointment.date_time);
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-[#0B6EC9]/5 p-4"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0">
-                      <Image
-                        src={
-                          appointment.counselor.counselor.profilePicture ||
-                          "/default-profile.png"
-                        }
-                        alt="Counselor"
-                        width={56}
-                        height={56}
-                        className="rounded-full object-cover border-2 border-[#0B6EC9]"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      <h3 className="text-lg font-semibold text-[#062341]">
+          <div className="overflow-y-auto max-h-[calc(80vh-8rem)] p-4 md:p-6 space-y-4">
+            {appointments.map((appointment) => (
+              <motion.div
+                key={appointment.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-xl p-4 shadow-sm border border-[#0B6EC9]/10 hover:shadow-md transition-all duration-300"
+              >
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1">
+                    <Image
+                      priority
+                      alt="counselor picture"
+                      src={appointment.counselor.counselor.profilePicture}
+                      width={48}
+                      height={48}
+                      className="rounded-full object-cover border-2 border-[#0B6EC9]"
+                    />
+                    <div>
+                      <h3 className="text-base font-semibold text-[#062341]">
                         {appointment.counselor.counselor.name}
                       </h3>
                       <p className="text-sm text-[#062341]/70">
-                        {appointment.counselor.counselor.email}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <p className="text-sm font-medium text-[#0B6EC9] bg-[#0B6EC9]/10 px-3 py-1 rounded-full">
-                        {formatTime(appointmentDate)}
+                        {appointment.counselor.counselor.contact}
                       </p>
                     </div>
                   </div>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                      appointment.status
+                    )}`}
+                  >
+                    {appointment.status || "Unknown"}
+                  </span>
+                </div>
 
-                  <div className="mt-4 bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
-                    <div className="flex items-start gap-3 text-[#062341]/80">
-                      <IoDocumentTextOutline className="text-[#0B6EC9] text-xl mt-0.5" />
-                      <span>{appointment.reason}</span>
-                    </div>
+                <div className="mt-4 space-y-3 text-sm">
+                  <div className="flex items-center gap-2 text-[#062341]/80">
+                    <FaCalendarAlt className="text-[#0B6EC9] text-base flex-shrink-0" />
+                    <span>{formatDateTime(appointment.date_time)}</span>
                   </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Footer */}
-          <div className="p-6 bg-white border-t border-[#0B6EC9]/10">
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={onClose}
-              className="w-full py-3 px-4 bg-gradient-to-r from-[#0B6EC9] to-[#095396] hover:from-[#095396] hover:to-[#084B87] text-white font-semibold rounded-xl shadow-md transition-all duration-300"
-            >
-              Close
-            </motion.button>
+                  <div className="flex items-center gap-2 text-[#062341]/80">
+                    <FaMapMarkerAlt className="text-[#0B6EC9] text-base flex-shrink-0" />
+                    <span>CTU-Admin Room 301A</span>
+                  </div>
+                  <div className="flex items-start gap-2 text-[#062341]/80">
+                    <IoDocumentTextOutline className="text-[#0B6EC9] text-base mt-0.5 flex-shrink-0" />
+                    <p>{appointment.reason}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </motion.div>
