@@ -166,7 +166,7 @@ const Profile = () => {
       transition={{ duration: 0.5 }}
       className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6 overflow-x-hidden"
     >
-      <div className="max-w-6xl mx-auto space-y-4 md:space-y-6">
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto space-y-6 md:space-y-8">
         <div className="bg-white rounded-2xl shadow-lg border border-[#0B6EC9]/10 overflow-hidden">
           <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
             <h1 className="text-2xl md:text-4xl font-bold text-center">
@@ -182,7 +182,7 @@ const Profile = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
               {profileItems.map((item, index) => (
                 <motion.div
                   key={item.label}

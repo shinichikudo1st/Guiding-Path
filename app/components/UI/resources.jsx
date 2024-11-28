@@ -147,131 +147,134 @@ const ResourceFeed = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="relative min-h-screen pt-24 pb-8 px-8 max-w-5xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6 overflow-x-hidden"
     >
-      <div className="space-y-8">
-        {/* Title Card */}
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8">
-            <h2 className="text-3xl font-bold text-white text-center">
-              Resources
-            </h2>
-            <p className="text-white/80 text-center mt-2">
-              Discover and access learning materials
-            </p>
-          </div>
-        </div>
-
-        {/* Resources Feed */}
-        {resources.length === 0 && !loading ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#0B6EC9]/10 p-12"
-          >
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 bg-[#0B6EC9]/10 rounded-full flex items-center justify-center mb-6">
-                <FaBookOpen className="text-3xl text-[#0B6EC9]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#062341] mb-3">
-                No Resources Found
-              </h3>
-              <p className="text-[#062341]/70 max-w-md">
-                There are no resources available at the moment. Please check
-                back later!
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto space-y-6 md:space-y-8">
+        <div className="space-y-8">
+          {/* Title Card */}
+          <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
+            <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8">
+              <h2 className="text-3xl font-bold text-white text-center">
+                Resources
+              </h2>
+              <p className="text-white/80 text-center mt-2">
+                Discover and access learning materials
               </p>
             </div>
-          </motion.div>
-        ) : (
-          resources.map((resource, index) => (
+          </div>
+
+          {/* Resources Feed */}
+          {resources.length === 0 && !loading ? (
             <motion.div
-              key={resource.resource_id}
-              ref={
-                index === resources.length - 1 ? lastResourceElementRef : null
-              }
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="group bg-white/95 hover:bg-gradient-to-br hover:from-white/95 hover:to-[#E6F0F9]/95 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl border border-[#0B6EC9]/10 overflow-hidden transition-all duration-300"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-[#0B6EC9]/10 p-12"
             >
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-xl flex items-center justify-center text-white">
-                      <FaBookOpen className="text-2xl" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-[#062341] mb-1">
-                        {resource.title}
-                      </h3>
-                      <p className="text-sm text-[#062341]/60">
-                        {formatDate(resource.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => toggleLike(resource.resource_id)}
-                    className="p-2 rounded-full hover:bg-red-50 transition-colors duration-300"
-                  >
-                    <FaHeart
-                      className={`${
-                        likedResources.has(resource.resource_id)
-                          ? "text-red-500"
-                          : "text-red-300"
-                      }`}
-                      size={20}
-                    />
-                  </motion.button>
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="w-20 h-20 bg-[#0B6EC9]/10 rounded-full flex items-center justify-center mb-6">
+                  <FaBookOpen className="text-3xl text-[#0B6EC9]" />
                 </div>
-
-                {resource.img_path && (
-                  <div className="relative w-full h-72 mb-6 rounded-xl overflow-hidden group-hover:shadow-lg transition-all duration-300">
-                    <Image
-                      src={resource.img_path}
-                      alt={resource.title}
-                      layout="fill"
-                      objectFit="cover"
-                      className="transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                )}
-
-                <p className="text-[#062341]/70 mb-6 leading-relaxed">
-                  {resource.description}
+                <h3 className="text-2xl font-bold text-[#062341] mb-3">
+                  No Resources Found
+                </h3>
+                <p className="text-[#062341]/70 max-w-md">
+                  There are no resources available at the moment. Please check
+                  back later!
                 </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => openResourceModal(resource)}
-                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
-                    >
-                      <FaEye className="text-sm" />
-                      <span>View Resource</span>
-                    </button>
-                  </div>
-                </div>
               </div>
             </motion.div>
-          ))
-        )}
+          ) : (
+            resources.map((resource, index) => (
+              <motion.div
+                key={resource.resource_id}
+                ref={
+                  index === resources.length - 1 ? lastResourceElementRef : null
+                }
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="group bg-white/95 hover:bg-gradient-to-br hover:from-white/95 hover:to-[#E6F0F9]/95 backdrop-blur-xl rounded-2xl shadow-xl hover:shadow-2xl border border-[#0B6EC9]/10 overflow-hidden transition-all duration-300"
+              >
+                <div className="p-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-xl flex items-center justify-center text-white">
+                        <FaBookOpen className="text-2xl" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-[#062341] mb-1">
+                          {resource.title}
+                        </h3>
+                        <p className="text-sm text-[#062341]/60">
+                          {formatDate(resource.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => toggleLike(resource.resource_id)}
+                      className="p-2 rounded-full hover:bg-red-50 transition-colors duration-300"
+                    >
+                      <FaHeart
+                        className={`${
+                          likedResources.has(resource.resource_id)
+                            ? "text-red-500"
+                            : "text-red-300"
+                        }`}
+                        size={20}
+                      />
+                    </motion.button>
+                  </div>
 
-        {loading && (
-          <div className="space-y-8">
-            <ResourceSkeleton />
-            <ResourceSkeleton />
-          </div>
-        )}
+                  {resource.img_path && (
+                    <div className="relative w-full h-72 mb-6 rounded-xl overflow-hidden group-hover:shadow-lg transition-all duration-300">
+                      <Image
+                        src={resource.img_path}
+                        alt={resource.title}
+                        layout="fill"
+                        objectFit="cover"
+                        className="transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
 
-        {selectedResource && (
-          <ResourceModal
-            resource={selectedResource}
-            onClose={closeResourceModal}
-          />
-        )}
+                  <p className="text-[#062341]/70 mb-6 leading-relaxed">
+                    {resource.description}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => openResourceModal(resource)}
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                      >
+                        <FaEye className="text-sm" />
+                        <span>View Resource</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+
+          {loading && (
+            <div className="space-y-8">
+              <ResourceSkeleton />
+              <ResourceSkeleton />
+            </div>
+          )}
+
+          {selectedResource && (
+            <ResourceModal
+              resource={selectedResource}
+              onClose={closeResourceModal}
+            />
+          )}
+        </div>
       </div>
     </motion.div>
   );
