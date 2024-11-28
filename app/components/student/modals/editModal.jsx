@@ -111,13 +111,13 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 w-full max-w-lg overflow-hidden"
+        className="bg-white rounded-2xl shadow-xl border border-[#0B6EC9]/10 w-full max-w-lg overflow-hidden"
       >
         <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
@@ -131,10 +131,10 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
           </motion.button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6 bg-white">
           {inputFields.map((field) => (
             <div key={field.name} className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-[#062341]/70">
+              <label className="flex items-center gap-2 text-sm font-medium text-[#062341]">
                 <field.icon className="text-[#0B6EC9]" />
                 {field.label}
               </label>
@@ -143,7 +143,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
                   whileFocus={{ scale: 1.01 }}
                   name={field.name}
                   defaultValue={field.placeholder || ""}
-                  className="w-full px-4 py-3 bg-white rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9]/30 focus:ring-2 focus:ring-[#0B6EC9]/10 outline-none transition-all duration-300 shadow-sm"
+                  className="w-full px-4 py-3 bg-white rounded-xl border border-[#0B6EC9]/20 focus:border-[#0B6EC9]/50 focus:ring-2 focus:ring-[#0B6EC9]/20 outline-none transition-all duration-300 shadow-sm"
                 >
                   <option value="" disabled>
                     Select {field.label}
@@ -159,7 +159,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
                   whileFocus={{ scale: 1.01 }}
                   type={field.type}
                   name={field.name}
-                  className="w-full px-4 py-3 bg-white rounded-xl border border-[#0B6EC9]/10 focus:border-[#0B6EC9]/30 focus:ring-2 focus:ring-[#0B6EC9]/10 outline-none transition-all duration-300 shadow-sm"
+                  className="w-full px-4 py-3 bg-white rounded-xl border border-[#0B6EC9]/20 focus:border-[#0B6EC9]/50 focus:ring-2 focus:ring-[#0B6EC9]/20 outline-none transition-all duration-300 shadow-sm"
                   placeholder={field.placeholder}
                 />
               )}
@@ -173,7 +173,7 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
             disabled={isLoading}
             className={`w-full py-3 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 ${
               isLoading
-                ? "bg-gray-400 cursor-not-allowed"
+                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                 : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] hover:from-[#095396] hover:to-[#084B87] text-white shadow-md"
             }`}
           >

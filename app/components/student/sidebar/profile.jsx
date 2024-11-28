@@ -164,60 +164,36 @@ const Profile = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="relative min-h-screen pt-24 pb-8 px-4 sm:px-6"
-      style={{ marginLeft: "16rem", marginRight: "16rem" }}
+      className="relative min-h-screen pt-20 md:pt-24 pb-8 px-4 md:px-6 overflow-x-hidden"
     >
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-8 text-white">
-            <h1 className="text-3xl sm:text-4xl font-bold text-center">
+      <div className="max-w-6xl mx-auto lg:ml-72 lg:mr-72 2xl:mx-auto space-y-6 md:space-y-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-[#0B6EC9]/10 overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0B6EC9] to-[#095396] p-4 md:p-8 text-white">
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
               My Profile
             </h1>
           </div>
 
-          <div className="p-8 sm:p-10">
-            <div className="flex justify-center mb-10">
+          <div className="p-4 md:p-10 bg-white">
+            <div className="flex justify-center mb-6 md:mb-10">
               <UploadProfilePicture
                 toggleUploadModal={toggleUploadModal}
                 picture={profileData?.profilePicture || null}
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { icon: FaUser, label: "Name", value: profileData?.name },
-                {
-                  icon: FaGraduationCap,
-                  label: "Year",
-                  value: profileData?.year,
-                },
-                { icon: FaBook, label: "Course", value: profileData?.course },
-                {
-                  icon: FaBook,
-                  label: "Department",
-                  value: profileData?.department,
-                },
-                {
-                  icon: FaIdCard,
-                  label: "ID Number",
-                  value: profileData?.idNumber,
-                },
-                {
-                  icon: FaPhone,
-                  label: "Contact",
-                  value: profileData?.contact,
-                },
-              ].map((item, index) => (
+            <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-3 gap-3 md:gap-4">
+              {profileItems.map((item, index) => (
                 <motion.div
                   key={item.label}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-white/50 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-300"
+                  className="bg-white rounded-lg p-3 md:p-4 shadow-md border border-[#0B6EC9]/10 hover:shadow-lg transition-all duration-300"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center shadow-sm">
-                      <item.icon className="text-white text-lg" />
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-[#0B6EC9] to-[#095396] rounded-lg flex items-center justify-center shadow-sm">
+                      <item.icon className="text-white text-base md:text-lg" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <label className="text-xs text-[#062341]/70 font-medium">
@@ -232,12 +208,12 @@ const Profile = () => {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 md:gap-4 mt-6 md:mt-10">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={editButton}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl font-semibold hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 shadow-md"
+                className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-xl font-semibold hover:from-[#095396] hover:to-[#084B87] transition-all duration-300 shadow-md text-sm md:text-base"
               >
                 <FaEdit className="text-lg" />
                 Edit Profile
@@ -246,7 +222,7 @@ const Profile = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={backButton}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-white text-[#062341] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all duration-300 border border-[#0B6EC9]/20 shadow-sm"
+                className="flex items-center justify-center gap-2 px-4 md:px-6 py-2.5 md:py-3 bg-white text-[#062341] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all duration-300 border border-[#0B6EC9]/20 shadow-md text-sm md:text-base"
               >
                 <FaArrowLeft className="text-lg" />
                 Back
@@ -259,20 +235,20 @@ const Profile = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-white/95 to-[#E6F0F9]/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#0B6EC9]/10 overflow-hidden p-6"
+          className="bg-white rounded-2xl shadow-lg border border-[#0B6EC9]/10 overflow-hidden p-4 md:p-6"
         >
-          <div className="flex flex-col items-center text-center space-y-3">
-            <h2 className="text-lg font-bold text-[#0B6EC9]">
+          <div className="flex flex-col items-center text-center space-y-2 md:space-y-3">
+            <h2 className="text-base md:text-lg font-bold text-[#0B6EC9]">
               Daily Inspiration
             </h2>
             <div className="relative max-w-2xl">
-              <FaQuoteLeft className="absolute -top-3 -left-3 text-[#0B6EC9]/20 text-2xl" />
-              <p className="text-base text-[#062341] font-medium px-6 py-2">
+              <FaQuoteLeft className="absolute -top-2 -left-2 md:-top-3 md:-left-3 text-[#0B6EC9]/20 text-xl md:text-2xl" />
+              <p className="text-sm md:text-base text-[#062341] font-medium px-4 md:px-6 py-2">
                 {quote.text}
               </p>
-              <FaQuoteRight className="absolute -bottom-3 -right-3 text-[#0B6EC9]/20 text-2xl" />
+              <FaQuoteRight className="absolute -bottom-2 -right-2 md:-bottom-3 md:-right-3 text-[#0B6EC9]/20 text-xl md:text-2xl" />
             </div>
-            <p className="text-sm text-[#062341]/70 font-medium">
+            <p className="text-xs md:text-sm text-[#062341]/70 font-medium">
               ― {quote.author}
             </p>
           </div>

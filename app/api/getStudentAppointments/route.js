@@ -34,6 +34,7 @@ export async function GET(request) {
         },
       },
       select: {
+        status: true,
         appointment_id: true,
         notes: true,
         reason: true,
