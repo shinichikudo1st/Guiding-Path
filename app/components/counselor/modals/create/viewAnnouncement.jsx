@@ -117,7 +117,7 @@ const ViewAnnouncementModal = ({ announcement, closeModal, onUpdate }) => {
               {isEditing ? "Edit Announcement" : "View Announcement"}
             </h2>
             <button
-              onClick={closeModal}
+              onClick={() => closeModal()}
               className="text-white/80 hover:text-white transition duration-300"
             >
               <FaTimes size={24} />

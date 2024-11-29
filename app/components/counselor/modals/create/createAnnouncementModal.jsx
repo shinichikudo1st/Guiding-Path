@@ -60,7 +60,7 @@ const AnnouncementModal = ({ closeButton }) => {
               Create New Announcement
             </h2>
             <button
-              onClick={closeButton}
+              onClick={() => closeButton()}
               className="text-white/80 hover:text-white transition duration-300"
             >
               <FaTimes size={24} />
@@ -157,7 +157,7 @@ const AnnouncementModal = ({ closeButton }) => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={closeButton}
+              onClick={() => closeButton()}
               className="px-4 py-2 bg-white text-[#062341] rounded-lg border border-[#0B6EC9]/20 hover:bg-gray-50 transition-all duration-300"
             >
               Cancel
