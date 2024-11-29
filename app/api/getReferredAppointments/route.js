@@ -29,6 +29,7 @@ export async function GET(request) {
         referral: {
           teacher_id: sessionData.id,
         },
+        status: "pending",
       },
     });
     appointments = await prisma.appointments.findMany({
@@ -38,6 +39,7 @@ export async function GET(request) {
         referral: {
           teacher_id: sessionData.id,
         },
+        status: "pending",
       },
       include: {
         student: {

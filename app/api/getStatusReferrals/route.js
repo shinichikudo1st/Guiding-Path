@@ -17,6 +17,9 @@ export async function GET(request) {
         status: status,
         counselor_id: sessionData.userId,
       },
+      orderBy: {
+        dateSubmitted: "desc",
+      },
       include: {
         student: {
           include: {
