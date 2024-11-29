@@ -155,7 +155,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
               {isEditing ? "Edit Event" : "View Event"}
             </h2>
             <button
-              onClick={closeButton}
+              onClick={() => closeButton()}
               className="text-white/80 hover:text-white transition duration-300"
             >
               <FaTimes size={24} />
