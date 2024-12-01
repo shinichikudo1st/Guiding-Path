@@ -19,7 +19,8 @@ export async function GET(req) {
 
     const url = new URL(req.url);
     const timeFilter = url.searchParams.get("timeFilter") || "week";
-    const customDate = url.searchParams.get("date");
+    const customStartDate = url.searchParams.get("startDate");
+    const customEndDate = url.searchParams.get("endDate");
 
     let startDate, endDate;
     const now = new Date();
@@ -34,10 +35,14 @@ export async function GET(req) {
         endDate = endOfMonth(now);
         break;
       case "custom":
-        if (customDate) {
-          const date = parseISO(customDate + "-01");
-          startDate = startOfMonth(date);
-          endDate = endOfMonth(date);
+        if (customStartDate && customEndDate) {
+          const startDateObj = parseISO(customStartDate + "-01");
+          const endDateObj = parseISO(customEndDate + "-01");
+          startDate = startOfMonth(startDateObj);
+          endDate = endOfMonth(endDateObj);
+        } else {
+          startDate = startOfMonth(now);
+          endDate = endOfMonth(now);
         }
         break;
       default:
