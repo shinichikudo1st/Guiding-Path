@@ -237,7 +237,10 @@ const GeneralAppraisalReport = () => {
               Participation Rate
             </h3>
             <div className="text-2xl font-bold text-[#0B6EC9]">
-              {reportData.participationMetrics.participationRate.toFixed(1)}%
+              {(
+                reportData.participationMetrics?.participationRate || 0
+              ).toFixed(1)}
+              %
             </div>
             <p className="text-sm text-gray-600 mt-1">
               {reportData.participationMetrics.participated} of{" "}
@@ -257,8 +260,8 @@ const GeneralAppraisalReport = () => {
               {reportData.criticalMetrics.totalCritical}
             </div>
             <p className="text-sm text-gray-600 mt-1">
-              {reportData.criticalMetrics.criticalRate.toFixed(1)}% of total
-              appraisals
+              {(reportData.criticalMetrics?.criticalRate || 0).toFixed(1)}% of
+              total appraisals
             </p>
           </motion.div>
         </div>
