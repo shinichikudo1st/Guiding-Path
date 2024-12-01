@@ -237,6 +237,8 @@ const UserManagement = () => {
     </>
   );
 
+  const totalPages = Math.max(1, Math.ceil(totalPage / 10));
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -381,19 +383,19 @@ const UserManagement = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={previousPage}
-                  disabled={currentPage === 1}
+                  disabled={currentPage === 1 || users.length === 0}
                   className="p-3 rounded-xl border border-[#0B6EC9]/20 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-all duration-300 shadow-sm"
                 >
                   <FaChevronLeft className="text-[#062341]" />
                 </motion.button>
                 <span className="text-sm font-medium">
-                  Page {currentPage} of {Math.ceil(totalPage / 10)}
+                  Page {currentPage} of {totalPages}
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={nextPage}
-                  disabled={currentPage === Math.ceil(totalPage / 10)}
+                  disabled={currentPage === totalPages || users.length === 0}
                   className="p-3 rounded-xl border border-[#0B6EC9]/20 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-all duration-300 shadow-sm"
                 >
                   <FaChevronRight className="text-[#062341]" />
