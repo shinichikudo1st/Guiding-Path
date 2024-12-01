@@ -19,6 +19,7 @@ import ArchiveUser from "../modals/userManagement/archiveUser";
 import DeleteUser from "../modals/userManagement/deleteUser";
 import UnarchiveUser from "../modals/userManagement/unarchiveUser";
 import { motion } from "framer-motion";
+import UserDetails from "../modals/userManagement/userDetail";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -35,6 +36,7 @@ const UserManagement = () => {
   const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false);
   const [isUnarchiveUserModalOpen, setIsUnarchiveUserModalOpen] =
     useState(false);
+  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
 
   const retrieveUsers = async () => {
     setLoading(true);
@@ -145,9 +147,18 @@ const UserManagement = () => {
     retrieveUsers(); // Fetch updated user list
   };
 
+  const handleUserClick = (user, e) => {
+    // Prevent click when clicking action buttons
+    if (e.target.closest("button")) return;
+    setSelectedUserDetails(user);
+  };
+
   const renderTableRow = (user) => (
     <>
-      <td className="py-4 px-4">
+      <td
+        className="py-4 px-4 cursor-pointer"
+        onClick={(e) => handleUserClick(user, e)}
+      >
         <div className="flex items-center gap-3">
           <Image
             src={user.profilePicture}
@@ -162,7 +173,10 @@ const UserManagement = () => {
           </div>
         </div>
       </td>
-      <td className="py-4 px-4 text-center">
+      <td
+        className="py-4 px-4 text-center cursor-pointer"
+        onClick={(e) => handleUserClick(user, e)}
+      >
         <span
           className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
             user.role === "counselor"
@@ -373,13 +387,13 @@ const UserManagement = () => {
                   <FaChevronLeft className="text-[#062341]" />
                 </motion.button>
                 <span className="text-sm font-medium">
-                  Page {currentPage} of {totalPage}
+                  Page {currentPage} of {Math.ceil(totalPage / 10)}
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={nextPage}
-                  disabled={currentPage === totalPage}
+                  disabled={currentPage === Math.ceil(totalPage / 10)}
                   className="p-3 rounded-xl border border-[#0B6EC9]/20 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-all duration-300 shadow-sm"
                 >
                   <FaChevronRight className="text-[#062341]" />
@@ -417,6 +431,12 @@ const UserManagement = () => {
           userId={selectedUserId}
           onClose={closeUnarchiveUserModal}
           onSuccess={handleUnarchiveSuccess}
+        />
+      )}
+      {selectedUserDetails && (
+        <UserDetails
+          user={selectedUserDetails}
+          onClose={() => setSelectedUserDetails(null)}
         />
       )}
     </motion.div>

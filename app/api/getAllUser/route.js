@@ -59,6 +59,11 @@ export async function GET(request) {
       skip,
       take: limit,
       where: whereClause,
+      include: {
+        student: true,
+        counselor: true,
+        teacher: true,
+      },
     });
 
     return NextResponse.json(
