@@ -58,6 +58,7 @@ export async function POST(request) {
       name: user.name,
       email: user.email,
       role: user.role,
+      profilePicture: user.profilePicture,
     };
 
     const expires = new Date(Date.now() + 60 * 60 * 1000);
