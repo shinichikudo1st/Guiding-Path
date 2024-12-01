@@ -30,9 +30,11 @@ const ShowAppointmentRequest = () => {
       const response = await fetch(`/api/getRequests?page=${currentPage}`);
       const data = await response.json();
       setRequests(data.requests);
-      setTotalPages(data.totalPages);
+      setTotalPages(Math.max(1, data.totalPages));
       console.log(data.message);
-    } catch (error) {}
+    } catch (error) {
+      setTotalPages(1);
+    }
     setLoading(false);
   };
 
@@ -145,7 +147,7 @@ const ShowAppointmentRequest = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handlePreviousPage}
-                      disabled={currentPage === 1}
+                      disabled={currentPage === 1 || requests.length === 0}
                       className="p-1.5 rounded-lg border border-[#0B6EC9]/10 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-colors"
                     >
                       <IoChevronBackOutline className="w-4 h-4 text-[#062341]" />
@@ -154,7 +156,9 @@ const ShowAppointmentRequest = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleNextPage}
-                      disabled={currentPage === totalPages}
+                      disabled={
+                        currentPage === totalPages || requests.length === 0
+                      }
                       className="p-1.5 rounded-lg border border-[#0B6EC9]/10 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0B6EC9]/5 transition-colors"
                     >
                       <IoChevronForwardOutline className="w-4 h-4 text-[#062341]" />
