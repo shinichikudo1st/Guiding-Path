@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import OpenSettings from "./openSettings";
 import OpenLogout from "./openLogout";
 import Notifications from "./notifications";
+import Image from "next/image";
 
 const UserNavbar = ({ profile, onPageChange }) => {
   const [isLogoutToggled, setIsLogoutToggled] = useState(false);
@@ -103,11 +104,22 @@ const UserNavbar = ({ profile, onPageChange }) => {
           <motion.div
             whileHover={{ scale: 1.02 }}
             onClick={profile}
-            className="hidden sm:flex items-center gap-3 bg-gradient-to-r from-white/90 to-[#F8FAFC]/90 px-4 py-2 rounded-xl shadow-sm backdrop-blur-sm text-sm ml-3 cursor-pointer border border-[#0B6EC9]/10 hover:shadow-md transition-all duration-300"
+            className="hidden sm:flex items-center gap-4 bg-gradient-to-r from-[#F8FAFC]/80 to-white/80 px-5 py-2.5 rounded-xl shadow-sm backdrop-blur-sm text-sm ml-4 cursor-pointer border border-[#0B6EC9]/10 hover:shadow-md transition-all duration-300"
           >
+            <div className="w-10 h-10 rounded-full border-2 border-[#0B6EC9]/20 overflow-hidden">
+              <Image
+                src={userInfo.profilePicture || "/noProfile.png"}
+                alt={userInfo.name}
+                width={40}
+                height={40}
+                className="object-cover w-full h-full"
+              />
+            </div>
             <div className="flex flex-col">
-              <h2 className="text-[#062341] font-semibold">{userInfo.name}</h2>
-              <span className="text-sm text-[#0B6EC9] capitalize">
+              <h2 className="text-[#062341] font-semibold line-clamp-1">
+                {userInfo.name}
+              </h2>
+              <span className="text-sm text-[#0B6EC9]/80 capitalize font-medium">
                 {userInfo.role}
               </span>
             </div>

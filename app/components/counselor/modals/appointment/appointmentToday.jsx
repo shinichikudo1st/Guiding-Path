@@ -103,14 +103,6 @@ const ShowAppointmentToday = () => {
                       <AiFillEye className="mr-1" />
                       View
                     </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-600 bg-green-100 rounded-full hover:bg-green-200 transition-all duration-300"
-                    >
-                      <AiFillBook className="mr-1" />
-                      Set
-                    </motion.button>
                   </div>
                 </div>
               </motion.div>

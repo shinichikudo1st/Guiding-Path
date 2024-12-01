@@ -165,6 +165,12 @@ async function getReferralData(startDate, endDate) {
 }
 
 async function getAppraisalData(startDate, endDate) {
+  const totalStudents = await prisma.users.count({
+    where: {
+      role: "student",
+    },
+  });
+
   const [totalAppraisals, averageScores, completionRate] = await Promise.all([
     prisma.studentAppraisal.count({
       where: {
@@ -201,6 +207,7 @@ async function getAppraisalData(startDate, endDate) {
     totalAppraisals,
     averageScores,
     completionRate,
+    totalStudents,
   };
 }
 

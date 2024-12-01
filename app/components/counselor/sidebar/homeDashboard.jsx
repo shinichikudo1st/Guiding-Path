@@ -110,10 +110,20 @@ const CounselorHome = () => {
                   </div>
                 </div>
               ) : appointments.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-xl text-[#062341] font-semibold">
-                    No appointments scheduled for today.
-                  </p>
+                <div className="flex items-center justify-center h-[50vh]">
+                  <div className="text-center">
+                    <div className="bg-[#0B6EC9]/5 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FaClock className="text-3xl text-[#0B6EC9]/40" />
+                    </div>
+                    <p className="text-xl font-semibold text-[#062341]">
+                      No appointments scheduled for today
+                    </p>
+                    <p className="text-sm text-[#062341]/70 mt-2 max-w-md mx-auto">
+                      Your schedule is clear for now. Check back later for new
+                      appointments or view the appointments page for upcoming
+                      sessions.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

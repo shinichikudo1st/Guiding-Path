@@ -11,6 +11,7 @@ export async function GET(request) {
   const user = {
     name: sessionData.name,
     role: sessionData.role,
+    profilePicture: sessionData.profilePicture,
   };
 
   return NextResponse.json({ user }, { status: 200 });

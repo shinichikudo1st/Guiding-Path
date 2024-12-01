@@ -30,16 +30,23 @@ const GeneralAppraisalReport = () => {
   const [timeFilter, setTimeFilter] = useState("week");
   const [selectedDate, setSelectedDate] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [selectedStartDate, setSelectedStartDate] = useState("");
+  const [selectedEndDate, setSelectedEndDate] = useState("");
 
   useEffect(() => {
+    if (timeFilter === "custom" && (!selectedStartDate || !selectedEndDate))
+      return;
     fetchReportData();
-  }, [timeFilter, selectedDate]);
+  }, [timeFilter, selectedStartDate, selectedEndDate]);
 
   const fetchReportData = async () => {
     try {
       const params = new URLSearchParams({
         timeFilter,
-        ...(selectedDate && { date: selectedDate }),
+        ...(timeFilter === "custom" && {
+          startDate: selectedStartDate,
+          endDate: selectedEndDate,
+        }),
       });
 
       const response = await fetch(`/api/appraisal/getReport?${params}`);
@@ -237,7 +244,10 @@ const GeneralAppraisalReport = () => {
               Participation Rate
             </h3>
             <div className="text-2xl font-bold text-[#0B6EC9]">
-              {reportData.participationMetrics.participationRate.toFixed(1)}%
+              {(
+                reportData.participationMetrics?.participationRate || 0
+              ).toFixed(1)}
+              %
             </div>
             <p className="text-sm text-gray-600 mt-1">
               {reportData.participationMetrics.participated} of{" "}
@@ -257,8 +267,8 @@ const GeneralAppraisalReport = () => {
               {reportData.criticalMetrics.totalCritical}
             </div>
             <p className="text-sm text-gray-600 mt-1">
-              {reportData.criticalMetrics.criticalRate.toFixed(1)}% of total
-              appraisals
+              {(reportData.criticalMetrics?.criticalRate || 0).toFixed(1)}% of
+              total appraisals
             </p>
           </motion.div>
         </div>
@@ -281,16 +291,25 @@ const GeneralAppraisalReport = () => {
               >
                 <option value="week">This Week</option>
                 <option value="month">This Month</option>
-                <option value="custom">Custom Month</option>
+                <option value="custom">Custom Range</option>
               </select>
 
               {timeFilter === "custom" && (
-                <input
-                  type="month"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="px-3 py-1.5 rounded-lg border border-[#0B6EC9]/10 text-sm"
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="month"
+                    value={selectedStartDate}
+                    onChange={(e) => setSelectedStartDate(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg border border-[#0B6EC9]/10 text-sm"
+                  />
+                  <span className="text-gray-500">to</span>
+                  <input
+                    type="month"
+                    value={selectedEndDate}
+                    onChange={(e) => setSelectedEndDate(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg border border-[#0B6EC9]/10 text-sm"
+                  />
+                </div>
               )}
             </div>
           </div>
