@@ -354,14 +354,13 @@ const UserManagement = () => {
               <p className="text-sm font-medium">
                 Showing{" "}
                 <span className="font-semibold">
-                  {(currentPage - 1) * 10 + 1}
+                  {users.length === 0 ? 0 : (currentPage - 1) * 10 + 1}
                 </span>{" "}
                 to{" "}
                 <span className="font-semibold">
-                  {Math.min(currentPage * 10, totalPage * 10)}
+                  {(currentPage - 1) * 10 + users.length}
                 </span>{" "}
-                of <span className="font-semibold">{totalPage * 10}</span>{" "}
-                results
+                of <span className="font-semibold">{totalPage}</span> results
               </p>
               <div className="flex items-center gap-3">
                 <motion.button
