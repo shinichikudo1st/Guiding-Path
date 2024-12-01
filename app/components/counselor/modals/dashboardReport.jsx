@@ -119,29 +119,38 @@ const DashboardReport = () => {
           </div>
         </div>
         <div className="p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <p className="text-4xl font-bold text-[#0B6EC9]">
-                {appointmentData?.appointmentByDate || 0}
-              </p>
-              <p className="text-sm text-gray-600">Total</p>
-            </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-green-600">
-                {appointmentData?.appointmentsBySelf || 0}
-              </p>
-              <p className="text-sm text-gray-600">Self-Appointed</p>
-            </div>
-          </div>
-          {appointmentData?.appointmentByReason && (
-            <div className="mt-4 h-48">
-              <Bar
-                data={getAppointmentChartData(
-                  appointmentData.appointmentByReason
-                )}
-                options={chartOptions}
-              />
-            </div>
+          {!appointmentData?.appointmentByDate ? (
+            <EmptyState
+              icon={FaUserTie}
+              message="No appointments recorded for this month"
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <p className="text-4xl font-bold text-[#0B6EC9]">
+                    {appointmentData.appointmentByDate}
+                  </p>
+                  <p className="text-sm text-gray-600">Total</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-4xl font-bold text-green-600">
+                    {appointmentData.appointmentsBySelf}
+                  </p>
+                  <p className="text-sm text-gray-600">Self-Appointed</p>
+                </div>
+              </div>
+              {appointmentData.appointmentByReason && (
+                <div className="mt-4 h-48">
+                  <Bar
+                    data={getAppointmentChartData(
+                      appointmentData.appointmentByReason
+                    )}
+                    options={chartOptions}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -157,19 +166,28 @@ const DashboardReport = () => {
           </div>
         </div>
         <div className="p-4">
-          <div className="text-center mb-4">
-            <p className="text-4xl font-bold text-[#0B6EC9]">
-              {referralData?.referralByDate || 0}
-            </p>
-            <p className="text-sm text-gray-600">Total Referrals</p>
-          </div>
-          {referralData?.referralByReason && (
-            <div className="h-48">
-              <Pie
-                data={getReferralChartData(referralData.referralByReason)}
-                options={pieChartOptions}
-              />
-            </div>
+          {!referralData?.referralByDate ? (
+            <EmptyState
+              icon={FaChartBar}
+              message="No referrals recorded for this month"
+            />
+          ) : (
+            <>
+              <div className="text-center mb-4">
+                <p className="text-4xl font-bold text-[#0B6EC9]">
+                  {referralData.referralByDate}
+                </p>
+                <p className="text-sm text-gray-600">Total Referrals</p>
+              </div>
+              {referralData.referralByReason && (
+                <div className="h-48">
+                  <Pie
+                    data={getReferralChartData(referralData.referralByReason)}
+                    options={pieChartOptions}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -185,20 +203,42 @@ const DashboardReport = () => {
           </div>
         </div>
         <div className="p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <p className="text-4xl font-bold text-[#0B6EC9]">
-                {appraisalData?.totalAppraisals || 0}
-              </p>
-              <p className="text-sm text-gray-600">Total Appraisals</p>
+          {!appraisalData?.totalAppraisals ? (
+            <EmptyState
+              icon={FaClipboardList}
+              message="No appraisals recorded for this month"
+            />
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <p className="text-4xl font-bold text-[#0B6EC9]">
+                  {appraisalData.totalAppraisals}
+                </p>
+                <p className="text-sm text-gray-600">Total Appraisals</p>
+              </div>
+              <div className="text-center">
+                <p className="text-4xl font-bold text-green-600">
+                  {appraisalData.averageScores?._avg?.score?.toFixed(1) || 0}
+                </p>
+                <p className="text-sm text-gray-600">Average Score</p>
+              </div>
+              <div className="text-center col-span-2 mt-4 bg-blue-50 p-3 rounded-lg">
+                <p className="text-3xl font-bold text-blue-600">
+                  {(
+                    (appraisalData.totalAppraisals /
+                      appraisalData.totalStudents) *
+                    100
+                  ).toFixed(1)}
+                  %
+                </p>
+                <p className="text-sm text-blue-600">Participation Rate</p>
+                <p className="text-xs text-blue-500 mt-1">
+                  {appraisalData.totalAppraisals} out of{" "}
+                  {appraisalData.totalStudents} students
+                </p>
+              </div>
             </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-green-600">
-                {appraisalData?.averageScores?._avg?.score?.toFixed(1) || 0}
-              </p>
-              <p className="text-sm text-gray-600">Average Score</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -213,27 +253,38 @@ const DashboardReport = () => {
           </div>
         </div>
         <div className="p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <p className="text-4xl font-bold text-[#0B6EC9]">
-                {requestData?.totalRequests || 0}
-              </p>
-              <p className="text-sm text-gray-600">Total Requests</p>
-            </div>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-yellow-600">
-                {requestData?.pendingRequests || 0}
-              </p>
-              <p className="text-sm text-gray-600">Pending</p>
-            </div>
-          </div>
-          {requestData?.requestsByUrgency && (
-            <div className="mt-4 h-48">
-              <Doughnut
-                data={getRequestUrgencyChartData(requestData.requestsByUrgency)}
-                options={doughnutChartOptions}
-              />
-            </div>
+          {!requestData?.totalRequests ? (
+            <EmptyState
+              icon={FaInbox}
+              message="No requests recorded for this month"
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <p className="text-4xl font-bold text-[#0B6EC9]">
+                    {requestData.totalRequests}
+                  </p>
+                  <p className="text-sm text-gray-600">Total Requests</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-4xl font-bold text-yellow-600">
+                    {requestData.pendingRequests}
+                  </p>
+                  <p className="text-sm text-gray-600">Pending</p>
+                </div>
+              </div>
+              {requestData.requestsByUrgency && (
+                <div className="mt-4 h-48">
+                  <Doughnut
+                    data={getRequestUrgencyChartData(
+                      requestData.requestsByUrgency
+                    )}
+                    options={doughnutChartOptions}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -423,5 +474,12 @@ const DashboardReportSkeleton = () => {
     </motion.div>
   );
 };
+
+const EmptyState = ({ icon: Icon, message }) => (
+  <div className="flex flex-col items-center justify-center h-48 text-gray-500">
+    <Icon className="text-4xl mb-3 text-gray-400" />
+    <p className="text-sm text-center">{message}</p>
+  </div>
+);
 
 export default DashboardReport;
