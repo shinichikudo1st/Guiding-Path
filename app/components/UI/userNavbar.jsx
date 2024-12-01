@@ -16,37 +16,32 @@ const UserNavbar = ({ profile, onPageChange }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(fetchUnreadCount, 2000);
-    fetchUnreadCount();
-    fetchUserInfo();
-    return () => clearInterval(interval);
-  }, []);
+    let eventSource;
 
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await fetch("/api/notificationCount");
-      if (response.ok) {
-        const data = await response.json();
+    const connectSSE = () => {
+      eventSource = new EventSource("/api/notifications/stream");
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         setUnreadCount(data.unreadCount);
-      }
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-    }
-  };
+      };
 
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch("/api/navbarInfo");
-      if (response.ok) {
-        const data = await response.json();
-        setUserInfo(data.user);
-      } else {
-        console.error("Failed to fetch user info:", response.statusText);
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+        eventSource.close();
+        // Attempt to reconnect after 5 seconds
+        setTimeout(connectSSE, 5000);
+      };
+    };
+
+    connectSSE();
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
       }
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
-  };
+    };
+  }, []);
 
   const logout = async () => {
     sessionStorage.clear();
