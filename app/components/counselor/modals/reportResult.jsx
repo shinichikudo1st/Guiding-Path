@@ -78,9 +78,10 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
   };
 
   return (
-    <div className="imHere w-screen h-screen fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-[#0B6EC9] text-white p-6 rounded-t-lg shadow-md mb-8">
+    <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 p-6">
+      <div className="bg-white rounded-lg shadow-xl w-full h-[90vh] flex flex-col">
+        {/* Header Section */}
+        <div className="bg-[#0B6EC9] text-white p-6 rounded-t-lg shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FaChartBar className="text-3xl mr-4" />
@@ -94,491 +95,508 @@ const ReportResult = ({ reportData, onClose, startDate, endDate }) => {
             </div>
           </div>
         </div>
-        {reportData.map((report, index) => {
-          switch (report.name) {
-            case "appointment":
-              const appointmentRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={appointmentRef}
-                    className="bg-blue-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-blue-800 mb-6 flex items-center">
-                      <FaUserTie className="mr-3" />
-                      Appointment Report
-                    </h3>
-                    {report.appointmentByDate === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No appointment data available for the selected date
-                        range.
-                      </p>
-                    ) : (
-                      // Existing content when data is available
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-blue-800 mb-2">
-                            Total Appointments
-                          </h4>
-                          <p className="text-4xl font-bold text-blue-600">
-                            {report.appointmentByDate}
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {reportData.map((report, index) => {
+              switch (report.name) {
+                case "appointment":
+                  const appointmentRef = useRef(null);
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
+                    >
+                      <div
+                        ref={appointmentRef}
+                        className="bg-blue-50 p-6 rounded-lg shadow-md"
+                      >
+                        <h3 className="text-2xl font-semibold text-blue-800 mb-6 flex items-center">
+                          <FaUserTie className="mr-3" />
+                          Appointment Report
+                        </h3>
+                        {report.appointmentByDate === 0 ? (
+                          <p className="text-lg text-gray-600">
+                            No appointment data available for the selected date
+                            range.
                           </p>
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-green-800 mb-2">
-                            Appointments by Type
-                          </h4>
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="text-sm text-green-600">Referral</p>
-                              <p className="text-2xl font-bold text-green-700">
-                                {report.appointmentsByReferral}
+                        ) : (
+                          // Existing content when data is available
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white p-6 rounded-lg shadow">
+                              <h4 className="text-xl font-medium text-blue-800 mb-2">
+                                Total Appointments
+                              </h4>
+                              <p className="text-4xl font-bold text-blue-600">
+                                {report.appointmentByDate}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-sm text-green-600">
-                                Self-Appointed
-                              </p>
-                              <p className="text-2xl font-bold text-green-700">
-                                {report.appointmentsBySelf}
-                              </p>
+                            <div className="bg-white p-6 rounded-lg shadow">
+                              <h4 className="text-xl font-medium text-green-800 mb-2">
+                                Appointments by Type
+                              </h4>
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <p className="text-sm text-green-600">
+                                    Referral
+                                  </p>
+                                  <p className="text-2xl font-bold text-green-700">
+                                    {report.appointmentsByReferral}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-sm text-green-600">
+                                    Self-Appointed
+                                  </p>
+                                  <p className="text-2xl font-bold text-green-700">
+                                    {report.appointmentsBySelf}
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    )}
-                    <div className="mt-8">
-                      <h4 className="text-xl font-medium text-gray-700 mb-4">
-                        Appointments by Reason
-                      </h4>
-                      <Bar
-                        data={getChartData(report.appointmentByReason)}
-                        options={chartOptions}
-                      />
-                    </div>
-                  </div>
-                  {report.appointmentByDate > 0 && (
-                    <button
-                      onClick={() =>
-                        exportAsImage(appointmentRef, "appointment")
-                      }
-                      className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      Export Appointment Report
-                    </button>
-                  )}
-                </div>
-              );
-            case "referral":
-              const referralRef = useRef(null);
-              const topReasons = getTopReasons(report.referralByReason, 3);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={referralRef}
-                    className="bg-green-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-green-800 mb-6 flex items-center">
-                      <FaUserTie className="mr-3" />
-                      Referral Report
-                    </h3>
-                    {report.referralByDate === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No referral data available for the selected date range.
-                      </p>
-                    ) : (
-                      // Existing content when data is available
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-green-800 mb-2">
-                            Total Referrals
+                        )}
+                        <div className="mt-8">
+                          <h4 className="text-xl font-medium text-gray-700 mb-4">
+                            Appointments by Reason
                           </h4>
-                          <p className="text-4xl font-bold text-green-600 mb-4">
-                            {report.referralByDate}
-                          </p>
-                          <h5 className="text-lg font-medium text-green-700 mb-2">
-                            Top Reasons:
-                          </h5>
-                          <ul className="list-disc list-inside">
-                            {topReasons.map((reason, idx) => (
-                              <li key={idx} className="text-sm text-green-600">
-                                {reason.reason}: {reason.count}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow">
-                          <h4 className="text-xl font-medium text-green-800 mb-2">
-                            Referrals by Reason
-                          </h4>
-                          <Pie
-                            data={getReferralReasonChartData(
-                              report.referralByReason
-                            )}
-                            options={pieChartOptions}
+                          <Bar
+                            data={getChartData(report.appointmentByReason)}
+                            options={chartOptions}
                           />
                         </div>
                       </div>
-                    )}
-                    <div className="mt-8">
-                      <h4 className="text-xl font-medium text-gray-700 mb-4">
-                        Referrals by Teacher
-                      </h4>
-                      <Bar
-                        data={getReferralTeacherChartData(
-                          report.referralByTeacher
-                        )}
-                        options={barChartOptions}
-                      />
+                      {report.appointmentByDate > 0 && (
+                        <button
+                          onClick={() =>
+                            exportAsImage(appointmentRef, "appointment")
+                          }
+                          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Export Appointment Report
+                        </button>
+                      )}
                     </div>
-                  </div>
-                  {report.referralByDate > 0 && (
-                    <button
-                      onClick={() => exportAsImage(referralRef, "referral")}
-                      className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                  );
+                case "referral":
+                  const referralRef = useRef(null);
+                  const topReasons = getTopReasons(report.referralByReason, 3);
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
                     >
-                      Export Referral Report
-                    </button>
-                  )}
-                </div>
-              );
-
-            case "resource":
-              const resourceRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={resourceRef}
-                    className="bg-yellow-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-yellow-800 mb-6 flex items-center">
-                      <FaBook className="mr-3" />
-                      Resource Report
-                    </h3>
-                    {report.totalResourceAccesses === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No resource data available for the selected date range.
-                      </p>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                          <div className="bg-white p-6 rounded-lg shadow">
-                            <h4 className="text-xl font-medium text-yellow-800 mb-2">
-                              Total Resource Accesses
-                            </h4>
-                            <p className="text-4xl font-bold text-yellow-600">
-                              {report.totalResourceAccesses}
-                            </p>
-                          </div>
-                          <div className="bg-white p-6 rounded-lg shadow">
-                            <h4 className="text-xl font-medium text-yellow-800 mb-2">
-                              Resource Statistics
-                            </h4>
-                            <ul className="list-disc list-inside">
-                              <li className="text-sm text-yellow-600">
-                                Liked Resources: {report.likedResources}
-                              </li>
-                              <li className="text-sm text-yellow-600">
-                                New Resources: {report.newResources}
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        {report.popularResources.length > 0 && (
-                          <div className="mt-8">
-                            <h4 className="text-xl font-medium text-gray-700 mb-4">
-                              Popular Resources
-                            </h4>
-                            <div className="h-64">
-                              <Bar
-                                data={getPopularResourcesChartData(
-                                  report.popularResources
-                                )}
-                                options={popularResourcesChartOptions}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  {report.totalResourceAccesses > 0 && (
-                    <button
-                      onClick={() => exportAsImage(resourceRef, "resource")}
-                      className="mt-4 px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
-                    >
-                      Export Resource Report
-                    </button>
-                  )}
-                </div>
-              );
-
-            case "eventRegistration":
-              const eventRegistrationRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={eventRegistrationRef}
-                    className="bg-teal-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-teal-800 mb-6 flex items-center">
-                      <FaCalendar className="mr-3" />
-                      Event Registration Report
-                    </h3>
-                    {report.totalEvents === 0 ? (
-                      <p className="text-lg text-gray-600">
-                        No event registration data available for the selected
-                        date range.
-                      </p>
-                    ) : (
-                      <div className="space-y-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="bg-white p-6 rounded-lg shadow">
-                            <h4 className="text-xl font-medium text-teal-800 mb-2">
-                              Total Events
-                            </h4>
-                            <p className="text-4xl font-bold text-teal-600">
-                              {report.totalEvents}
-                            </p>
-                          </div>
-                          <div className="bg-white p-6 rounded-lg shadow">
-                            <h4 className="text-xl font-medium text-teal-800 mb-2">
-                              Total Registrations
-                            </h4>
-                            <p className="text-4xl font-bold text-teal-600">
-                              {report.totalRegistrations}
-                            </p>
-                          </div>
-                        </div>
-                        {report.popularEvents.length > 0 && (
-                          <div>
-                            <h4 className="text-xl font-medium text-gray-700 mb-4">
-                              Popular Events
-                            </h4>
-                            <div className="h-64">
-                              <Bar
-                                data={getPopularEventsChartData(
-                                  report.popularEvents
-                                )}
-                                options={popularEventsChartOptions}
-                              />
-                            </div>
-                          </div>
-                        )}
-                        {report.upcomingEvents.length > 0 && (
-                          <div>
-                            <h4 className="text-xl font-medium text-gray-700 mb-4">
-                              Upcoming Events
-                            </h4>
-                            <div className="bg-white rounded-lg shadow-md p-4 max-h-64 overflow-y-auto">
-                              <ul className="space-y-4">
-                                {report.upcomingEvents.map((event, idx) => (
+                      <div
+                        ref={referralRef}
+                        className="bg-green-50 p-6 rounded-lg shadow-md"
+                      >
+                        <h3 className="text-2xl font-semibold text-green-800 mb-6 flex items-center">
+                          <FaUserTie className="mr-3" />
+                          Referral Report
+                        </h3>
+                        {report.referralByDate === 0 ? (
+                          <p className="text-lg text-gray-600">
+                            No referral data available for the selected date
+                            range.
+                          </p>
+                        ) : (
+                          // Existing content when data is available
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white p-6 rounded-lg shadow">
+                              <h4 className="text-xl font-medium text-green-800 mb-2">
+                                Total Referrals
+                              </h4>
+                              <p className="text-4xl font-bold text-green-600 mb-4">
+                                {report.referralByDate}
+                              </p>
+                              <h5 className="text-lg font-medium text-green-700 mb-2">
+                                Top Reasons:
+                              </h5>
+                              <ul className="list-disc list-inside">
+                                {topReasons.map((reason, idx) => (
                                   <li
                                     key={idx}
-                                    className="border-b border-gray-200 pb-2 last:border-b-0"
+                                    className="text-sm text-green-600"
                                   >
-                                    <h5 className="font-semibold text-teal-700">
-                                      {event.title}
-                                    </h5>
-                                    <p className="text-sm text-gray-600">
-                                      Date:{" "}
-                                      {new Date(
-                                        event.date_time
-                                      ).toLocaleDateString()}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                      Location: {event.location}
-                                    </p>
-                                    <p className="text-sm text-gray-600">
-                                      Registrations: {event.registrations}
-                                    </p>
+                                    {reason.reason}: {reason.count}
                                   </li>
                                 ))}
                               </ul>
                             </div>
+                            <div className="bg-white p-6 rounded-lg shadow">
+                              <h4 className="text-xl font-medium text-green-800 mb-2">
+                                Referrals by Reason
+                              </h4>
+                              <Pie
+                                data={getReferralReasonChartData(
+                                  report.referralByReason
+                                )}
+                                options={pieChartOptions}
+                              />
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-8">
+                          <h4 className="text-xl font-medium text-gray-700 mb-4">
+                            Referrals by Teacher
+                          </h4>
+                          <Bar
+                            data={getReferralTeacherChartData(
+                              report.referralByTeacher
+                            )}
+                            options={barChartOptions}
+                          />
+                        </div>
+                      </div>
+                      {report.referralByDate > 0 && (
+                        <button
+                          onClick={() => exportAsImage(referralRef, "referral")}
+                          className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                        >
+                          Export Referral Report
+                        </button>
+                      )}
+                    </div>
+                  );
+
+                case "resource":
+                  const resourceRef = useRef(null);
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
+                    >
+                      <div
+                        ref={resourceRef}
+                        className="bg-yellow-50 p-6 rounded-lg shadow-md"
+                      >
+                        <h3 className="text-2xl font-semibold text-yellow-800 mb-6 flex items-center">
+                          <FaBook className="mr-3" />
+                          Resource Report
+                        </h3>
+                        {report.totalResourceAccesses === 0 ? (
+                          <p className="text-lg text-gray-600">
+                            No resource data available for the selected date
+                            range.
+                          </p>
+                        ) : (
+                          <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                              <div className="bg-white p-6 rounded-lg shadow">
+                                <h4 className="text-xl font-medium text-yellow-800 mb-2">
+                                  Total Resource Accesses
+                                </h4>
+                                <p className="text-4xl font-bold text-yellow-600">
+                                  {report.totalResourceAccesses}
+                                </p>
+                              </div>
+                              <div className="bg-white p-6 rounded-lg shadow">
+                                <h4 className="text-xl font-medium text-yellow-800 mb-2">
+                                  Resource Statistics
+                                </h4>
+                                <ul className="list-disc list-inside">
+                                  <li className="text-sm text-yellow-600">
+                                    Liked Resources: {report.likedResources}
+                                  </li>
+                                  <li className="text-sm text-yellow-600">
+                                    New Resources: {report.newResources}
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            {report.popularResources.length > 0 && (
+                              <div className="mt-8">
+                                <h4 className="text-xl font-medium text-gray-700 mb-4">
+                                  Popular Resources
+                                </h4>
+                                <div className="h-64">
+                                  <Bar
+                                    data={getPopularResourcesChartData(
+                                      report.popularResources
+                                    )}
+                                    options={popularResourcesChartOptions}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                      {report.totalResourceAccesses > 0 && (
+                        <button
+                          onClick={() => exportAsImage(resourceRef, "resource")}
+                          className="mt-4 px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 transition-colors"
+                        >
+                          Export Resource Report
+                        </button>
+                      )}
+                    </div>
+                  );
+
+                case "eventRegistration":
+                  const eventRegistrationRef = useRef(null);
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
+                    >
+                      <div
+                        ref={eventRegistrationRef}
+                        className="bg-teal-50 p-6 rounded-lg shadow-md"
+                      >
+                        <h3 className="text-2xl font-semibold text-teal-800 mb-6 flex items-center">
+                          <FaCalendar className="mr-3" />
+                          Event Registration Report
+                        </h3>
+                        {report.totalEvents === 0 ? (
+                          <p className="text-lg text-gray-600">
+                            No event registration data available for the
+                            selected date range.
+                          </p>
+                        ) : (
+                          <div className="space-y-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="bg-white p-6 rounded-lg shadow">
+                                <h4 className="text-xl font-medium text-teal-800 mb-2">
+                                  Total Events
+                                </h4>
+                                <p className="text-4xl font-bold text-teal-600">
+                                  {report.totalEvents}
+                                </p>
+                              </div>
+                              <div className="bg-white p-6 rounded-lg shadow">
+                                <h4 className="text-xl font-medium text-teal-800 mb-2">
+                                  Total Registrations
+                                </h4>
+                                <p className="text-4xl font-bold text-teal-600">
+                                  {report.totalRegistrations}
+                                </p>
+                              </div>
+                            </div>
+                            {report.popularEvents.length > 0 && (
+                              <div>
+                                <h4 className="text-xl font-medium text-gray-700 mb-4">
+                                  Popular Events
+                                </h4>
+                                <div className="h-64">
+                                  <Bar
+                                    data={getPopularEventsChartData(
+                                      report.popularEvents
+                                    )}
+                                    options={popularEventsChartOptions}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                            {report.upcomingEvents.length > 0 && (
+                              <div>
+                                <h4 className="text-xl font-medium text-gray-700 mb-4">
+                                  Upcoming Events
+                                </h4>
+                                <div className="bg-white rounded-lg shadow-md p-4 max-h-64 overflow-y-auto">
+                                  <ul className="space-y-4">
+                                    {report.upcomingEvents.map((event, idx) => (
+                                      <li
+                                        key={idx}
+                                        className="border-b border-gray-200 pb-2 last:border-b-0"
+                                      >
+                                        <h5 className="font-semibold text-teal-700">
+                                          {event.title}
+                                        </h5>
+                                        <p className="text-sm text-gray-600">
+                                          Date:{" "}
+                                          {new Date(
+                                            event.date_time
+                                          ).toLocaleDateString()}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                          Location: {event.location}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                          Registrations: {event.registrations}
+                                        </p>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
-                    )}
-                  </div>
-                  {report.totalEvents > 0 && (
-                    <button
-                      onClick={() =>
-                        exportAsImage(
-                          eventRegistrationRef,
-                          "event_registration"
-                        )
-                      }
-                      className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                      {report.totalEvents > 0 && (
+                        <button
+                          onClick={() =>
+                            exportAsImage(
+                              eventRegistrationRef,
+                              "event_registration"
+                            )
+                          }
+                          className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                        >
+                          Export Event Registration Report
+                        </button>
+                      )}
+                    </div>
+                  );
+                case "userManagement":
+                  const userManagementRef = useRef(null);
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
                     >
-                      Export Event Registration Report
-                    </button>
-                  )}
-                </div>
-              );
-            case "userManagement":
-              const userManagementRef = useRef(null);
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div
-                    ref={userManagementRef}
-                    className="bg-pink-50 p-6 rounded-lg shadow-md"
-                  >
-                    <h3 className="text-2xl font-semibold text-pink-800 mb-6 flex items-center">
-                      <FaUsers className="mr-3" />
-                      User Management Report
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="bg-white p-6 rounded-lg shadow">
-                        <h4 className="text-xl font-medium text-pink-800 mb-2">
-                          User Overview
-                        </h4>
-                        <p className="text-4xl font-bold text-pink-600 mb-4">
-                          {report.totalUsers}
-                        </p>
-                        <p className="text-sm text-pink-600">
-                          Active Users: {report.activeUsers}
-                        </p>
-                      </div>
-                      <div className="bg-white p-6 rounded-lg shadow">
-                        <h4 className="text-xl font-medium text-pink-800 mb-2">
-                          Users by Role
-                        </h4>
-                        <Pie
-                          data={getUsersByRoleChartData(report.usersByRole)}
-                          options={usersByRoleChartOptions}
-                        />
-                      </div>
-                    </div>
-                    <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="bg-white p-6 rounded-lg shadow">
-                        <h4 className="text-xl font-medium text-pink-800 mb-2">
-                          <FaUserGraduate className="inline-block mr-2" />
-                          Students by Grade
-                        </h4>
-                        <Bar
-                          data={getStudentsByGradeChartData(
-                            report.studentsByGrade
-                          )}
-                          options={studentsByGradeChartOptions}
-                        />
-                      </div>
-                      <div className="bg-white p-6 rounded-lg shadow">
-                        <h4 className="text-xl font-medium text-pink-800 mb-2">
-                          <FaChalkboardTeacher className="inline-block mr-2" />
-                          Teachers by Department
-                        </h4>
-                        <Pie
-                          data={getTeachersByDepartmentChartData(
-                            report.teachersByDepartment
-                          )}
-                          options={teachersByDepartmentChartOptions}
-                        />
-                      </div>
-                      <div className="bg-white p-6 rounded-lg shadow">
-                        <h4 className="text-xl font-medium text-pink-800 mb-2">
-                          <FaUserTie className="inline-block mr-2" />
-                          Counselors by Department
-                        </h4>
-                        <Pie
-                          data={getCounselorsByDepartmentChartData(
-                            report.counselorsByDepartment
-                          )}
-                          options={counselorsByDepartmentChartOptions}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() =>
-                      exportAsImage(userManagementRef, "user_management")
-                    }
-                    className="mt-4 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
-                  >
-                    Export User Management Report
-                  </button>
-                </div>
-              );
-            case "systemUsage":
-              return (
-                <div
-                  key={index}
-                  className="mb-12 pb-8 border-b-2 border-gray-200"
-                >
-                  <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-                    <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                      <FaChartLine className="mr-3" />
-                      System Usage Report
-                    </h3>
-                    <div className="flex flex-col items-center justify-center py-12">
-                      <svg
-                        className="animate-spin h-12 w-12 text-gray-400 mb-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                      <div
+                        ref={userManagementRef}
+                        className="bg-pink-50 p-6 rounded-lg shadow-md"
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <p className="text-xl font-semibold text-gray-600 mb-2">
-                        Coming Soon!
-                      </p>
-                      <p className="text-gray-500 text-center">
-                        We're working hard to bring you detailed system usage
-                        analytics.
-                        <br />
-                        Check back soon for insights on user engagement and
-                        platform utilization.
-                      </p>
+                        <h3 className="text-2xl font-semibold text-pink-800 mb-6 flex items-center">
+                          <FaUsers className="mr-3" />
+                          User Management Report
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="bg-white p-6 rounded-lg shadow">
+                            <h4 className="text-xl font-medium text-pink-800 mb-2">
+                              User Overview
+                            </h4>
+                            <p className="text-4xl font-bold text-pink-600 mb-4">
+                              {report.totalUsers}
+                            </p>
+                            <p className="text-sm text-pink-600">
+                              Active Users: {report.activeUsers}
+                            </p>
+                          </div>
+                          <div className="bg-white p-6 rounded-lg shadow">
+                            <h4 className="text-xl font-medium text-pink-800 mb-2">
+                              Users by Role
+                            </h4>
+                            <Pie
+                              data={getUsersByRoleChartData(report.usersByRole)}
+                              options={usersByRoleChartOptions}
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className="bg-white p-6 rounded-lg shadow">
+                            <h4 className="text-xl font-medium text-pink-800 mb-2">
+                              <FaUserGraduate className="inline-block mr-2" />
+                              Students by Grade
+                            </h4>
+                            <Bar
+                              data={getStudentsByGradeChartData(
+                                report.studentsByGrade
+                              )}
+                              options={studentsByGradeChartOptions}
+                            />
+                          </div>
+                          <div className="bg-white p-6 rounded-lg shadow">
+                            <h4 className="text-xl font-medium text-pink-800 mb-2">
+                              <FaChalkboardTeacher className="inline-block mr-2" />
+                              Teachers by Department
+                            </h4>
+                            <Pie
+                              data={getTeachersByDepartmentChartData(
+                                report.teachersByDepartment
+                              )}
+                              options={teachersByDepartmentChartOptions}
+                            />
+                          </div>
+                          <div className="bg-white p-6 rounded-lg shadow">
+                            <h4 className="text-xl font-medium text-pink-800 mb-2">
+                              <FaUserTie className="inline-block mr-2" />
+                              Counselors by Department
+                            </h4>
+                            <Pie
+                              data={getCounselorsByDepartmentChartData(
+                                report.counselorsByDepartment
+                              )}
+                              options={counselorsByDepartmentChartOptions}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          exportAsImage(userManagementRef, "user_management")
+                        }
+                        className="mt-4 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors"
+                      >
+                        Export User Management Report
+                      </button>
                     </div>
-                  </div>
-                </div>
-              );
-            // Add more cases here for other report types
-            default:
-              return null;
-          }
-        })}
-        <div className="flex justify-center mt-8 space-x-4">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Close
-          </button>
-          <button
-            onClick={exportToCSV}
-            className="px-6 py-3 bg-yellow-600 text-white rounded-md shadow-lg hover:bg-yellow-700 transition-transform transform hover:scale-105 z-10"
-          >
-            <FaFileCsv className="mr-2" />
-            Export Data as CSV
-          </button>
+                  );
+                case "systemUsage":
+                  return (
+                    <div
+                      key={index}
+                      className="mb-12 pb-8 border-b-2 border-gray-200"
+                    >
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                          <FaChartLine className="mr-3" />
+                          System Usage Report
+                        </h3>
+                        <div className="flex flex-col items-center justify-center py-12">
+                          <svg
+                            className="animate-spin h-12 w-12 text-gray-400 mb-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          <p className="text-xl font-semibold text-gray-600 mb-2">
+                            Coming Soon!
+                          </p>
+                          <p className="text-gray-500 text-center">
+                            We're working hard to bring you detailed system
+                            usage analytics.
+                            <br />
+                            Check back soon for insights on user engagement and
+                            platform utilization.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                // Add more cases here for other report types
+                default:
+                  return null;
+              }
+            })}
+          </div>
+        </div>
+
+        {/* Fixed Footer */}
+        <div className="border-t p-4 bg-white rounded-b-lg">
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={exportToCSV}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors flex items-center gap-2"
+            >
+              <FaFileCsv />
+              Export All to CSV
+            </button>
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
