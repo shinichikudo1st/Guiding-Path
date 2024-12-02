@@ -13,7 +13,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const StudentQuickView = () => {
-  const [appointment, setAppointment] = useState(null);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -35,21 +35,26 @@ const StudentQuickView = () => {
   }, []);
 
   useEffect(() => {
-    fetchAppointment();
+    fetchAppointments();
   }, []);
 
-  const fetchAppointment = async () => {
+  const fetchAppointments = async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/getStudentAppointmentToday");
       if (!response.ok) {
-        throw new Error("Failed to fetch appointment");
+        throw new Error("Failed to fetch appointments");
       }
       const data = await response.json();
-      setAppointment(data.appointment[0] || null);
+      // Sort appointments by time
+      const sortedAppointments = data.appointment.sort(
+        (a, b) =>
+          new Date(a.date_time).getTime() - new Date(b.date_time).getTime()
+      );
+      setAppointments(sortedAppointments);
     } catch (error) {
-      console.error("Error fetching appointment:", error);
-      setError("Unable to load appointment. Please try again later.");
+      console.error("Error fetching appointments:", error);
+      setError("Unable to load appointments. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -114,71 +119,82 @@ const StudentQuickView = () => {
                 <FaInfoCircle className="text-3xl text-red-500 mb-2" />
                 <p className="text-red-600 text-center">{error}</p>
               </motion.div>
-            ) : appointment ? (
-              <motion.div
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center border border-[#0B6EC9]/5"
-                onClick={() =>
-                  window.innerWidth < 768 && setIsQuickViewOpen(false)
-                }
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-[#0B6EC9] to-[#095396] rounded-xl flex items-center justify-center mb-3 shadow-md">
-                  <FaClock className="text-2xl text-white" />
-                </div>
-
-                <h2 className="text-lg font-semibold text-[#062341] text-center mb-4">
-                  Scheduled Appointment
-                </h2>
-
-                <div className="w-full">
-                  <div className="flex items-center space-x-3 bg-white/50 p-3 rounded-lg border border-[#0B6EC9]/10 hover:bg-white/80 transition-all duration-300">
-                    {appointment.counselor.counselor.profilePicture ? (
-                      <img
-                        src={appointment.counselor.counselor.profilePicture}
-                        alt="Counselor"
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-[#0B6EC9]/20"
-                      />
-                    ) : (
-                      <FaUserCircle className="w-10 h-10 text-[#0B6EC9]" />
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-[#062341] truncate">
-                        {appointment.counselor.counselor.name}
-                      </p>
-                      <div className="flex items-center text-sm text-[#062341]/70 gap-1.5">
-                        <FaEnvelope className="text-[#0B6EC9] flex-shrink-0 w-3.5 h-3.5" />
-                        <span className="truncate">
-                          {appointment.counselor.counselor.email}
+            ) : appointments.length > 0 ? (
+              <div className="space-y-4">
+                {appointments.map((appointment, index) => (
+                  <motion.div
+                    key={appointment.appointment_id}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center border border-[#0B6EC9]/5"
+                  >
+                    <div className="w-full mb-4">
+                      <div className="flex items-center justify-center gap-2 text-[#062341]/70 mb-3">
+                        <FaClock className="text-[#0B6EC9]" />
+                        <span className="text-sm font-medium">
+                          {new Date(appointment.date_time).toLocaleTimeString(
+                            "en-US",
+                            {
+                              hour: "numeric",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )}
                         </span>
                       </div>
-                    </div>
-                  </div>
-                </div>
 
-                {appointment.counsel_type === "virtual" ? (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() =>
-                      window.open(
-                        "https://meet.google.com/dcv-iuva-bni",
-                        "_blank"
-                      )
-                    }
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
-                  >
-                    <FaVideo />
-                    Join Meeting
-                  </motion.button>
-                ) : (
-                  <div className="flex items-center gap-2 text-[#062341]/70">
-                    <FaMapMarkerAlt className="text-[#0B6EC9]" />
-                    <span className="text-sm">Admin Building Room 301A</span>
-                  </div>
-                )}
-              </motion.div>
+                      <div className="flex items-center space-x-3 bg-white/50 p-3 rounded-lg border border-[#0B6EC9]/10 hover:bg-white/80 transition-all duration-300">
+                        {appointment.counselor.counselor.profilePicture ? (
+                          <img
+                            src={appointment.counselor.counselor.profilePicture}
+                            alt="Counselor"
+                            className="w-10 h-10 rounded-full object-cover ring-2 ring-[#0B6EC9]/20"
+                          />
+                        ) : (
+                          <FaUserCircle className="w-10 h-10 text-[#0B6EC9]" />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-[#062341] truncate">
+                            {appointment.counselor.counselor.name}
+                          </p>
+                          <div className="flex items-center text-sm text-[#062341]/70 gap-1.5">
+                            <FaEnvelope className="text-[#0B6EC9] flex-shrink-0 w-3.5 h-3.5" />
+                            <span className="truncate">
+                              {appointment.counselor.counselor.email}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {appointment.counsel_type === "virtual" ? (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() =>
+                          window.open(
+                            "https://meet.google.com/dcv-iuva-bni",
+                            "_blank"
+                          )
+                        }
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white rounded-lg font-medium hover:from-[#095396] hover:to-[#084B87] transition-all duration-300"
+                      >
+                        <FaVideo />
+                        Join Meeting
+                      </motion.button>
+                    ) : (
+                      <div className="flex items-center gap-2 text-[#062341]/70">
+                        <FaMapMarkerAlt className="text-[#0B6EC9]" />
+                        <span className="text-sm">
+                          Admin Building Room 301A
+                        </span>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
             ) : (
               <motion.div
                 variants={cardVariants}
