@@ -3,46 +3,41 @@ import { FaUserFriends, FaCalendarCheck, FaCalendarDay } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const QuickViewCounselor = ({ referral, appointment, todayAppointment }) => {
-  const [referralCount, setReferralCount] = useState(0);
-  const [appointmentCount, setAppointmentCount] = useState(0);
-  const [todayAppointmentCount, setTodayAppointmentCount] = useState(0);
-
-  // Fetch referral requests count
-  const fetchReferralCount = async () => {
-    try {
-      const response = await fetch("/api/countPendingReferrals");
-      const data = await response.json();
-      setReferralCount(data.pendingReferrals);
-    } catch (error) {
-      console.error("Error fetching referral count:", error);
-    }
-  };
-
-  // Fetch appointment requests count
-  const fetchAppointmentCount = async () => {
-    try {
-      const response = await fetch("/api/countPendingRequests");
-      const data = await response.json();
-      setAppointmentCount(data.pendingRequests);
-    } catch (error) {
-      console.error("Error fetching appointment count:", error);
-    }
-  };
-
-  const fetchTodayAppointmentCount = async () => {
-    try {
-      const response = await fetch("/api/countTodayAppointment");
-      const data = await response.json();
-      setTodayAppointmentCount(data.count);
-    } catch (error) {
-      console.error("Error fetching today's appointment count:", error);
-    }
-  };
+  const [counts, setCounts] = useState({
+    referralCount: 0,
+    appointmentCount: 0,
+    todayAppointmentCount: 0,
+  });
 
   useEffect(() => {
-    fetchReferralCount();
-    fetchAppointmentCount();
-    fetchTodayAppointmentCount();
+    let eventSource;
+
+    const connectSSE = () => {
+      eventSource = new EventSource("/api/quickview/stream");
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setCounts({
+          referralCount: data.referralCount,
+          appointmentCount: data.appointmentCount,
+          todayAppointmentCount: data.todayAppointmentCount,
+        });
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+        eventSource.close();
+        setTimeout(connectSSE, 5000);
+      };
+    };
+
+    connectSSE();
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
 
   const cardVariants = {
@@ -54,21 +49,21 @@ const QuickViewCounselor = ({ referral, appointment, todayAppointment }) => {
     {
       icon: FaCalendarDay,
       title: "Dashboard",
-      count: todayAppointmentCount,
+      count: counts.todayAppointmentCount,
       description: "Today's scheduled appointments",
       onClick: todayAppointment,
     },
     {
       icon: FaUserFriends,
       title: "Referral Requests",
-      count: referralCount,
+      count: counts.referralCount,
       description: "Pending referrals from teachers",
       onClick: referral,
     },
     {
       icon: FaCalendarCheck,
       title: "Appointment Requests",
-      count: appointmentCount,
+      count: counts.appointmentCount,
       description: "Pending appointment requests",
       onClick: appointment,
     },
