@@ -43,6 +43,21 @@ const UserNavbar = ({ profile, onPageChange }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch("/api/navbarInfo");
+        if (!response.ok) throw new Error("Failed to fetch user info");
+        const data = await response.json();
+        setUserInfo(data.user);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
   const logout = async () => {
     sessionStorage.clear();
     await fetch("/api/logoutUser", {

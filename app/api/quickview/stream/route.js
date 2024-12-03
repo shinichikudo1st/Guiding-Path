@@ -8,9 +8,13 @@ export async function GET() {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  let isStreamClosed = false;
+
   const stream = new ReadableStream({
     async start(controller) {
       const sendUpdate = async () => {
+        if (isStreamClosed) return;
+
         try {
           const [referralCount, appointmentCount, todayAppointmentCount] =
             await Promise.all([
@@ -39,7 +43,9 @@ export async function GET() {
 
           controller.enqueue(new TextEncoder().encode(data));
         } catch (error) {
-          console.error("Error sending quickview update:", error);
+          if (!error.message.includes("Invalid state")) {
+            console.error("Error sending quickview update:", error);
+          }
         }
       };
 
@@ -50,7 +56,13 @@ export async function GET() {
       const interval = setInterval(sendUpdate, 5000);
 
       // Cleanup on close
-      return () => clearInterval(interval);
+      return () => {
+        isStreamClosed = true;
+        clearInterval(interval);
+      };
+    },
+    cancel() {
+      isStreamClosed = true;
     },
   });
 

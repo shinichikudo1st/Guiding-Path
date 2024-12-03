@@ -8,15 +8,21 @@ export async function GET() {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  let isStreamClosed = false;
+
   const stream = new ReadableStream({
     async start(controller) {
       const sendUpdate = async () => {
+        if (isStreamClosed) return;
+
         try {
           const unreadCount = await getUnreadCount(sessionData);
           const data = `data: ${JSON.stringify({ unreadCount })}\n\n`;
           controller.enqueue(new TextEncoder().encode(data));
         } catch (error) {
-          console.error("Error sending notification update:", error);
+          if (!error.message.includes("Invalid state")) {
+            console.error("Error sending notification update:", error);
+          }
         }
       };
 
@@ -27,7 +33,13 @@ export async function GET() {
       const interval = setInterval(sendUpdate, 5000);
 
       // Cleanup on close
-      return () => clearInterval(interval);
+      return () => {
+        isStreamClosed = true;
+        clearInterval(interval);
+      };
+    },
+    cancel() {
+      isStreamClosed = true;
     },
   });
 
