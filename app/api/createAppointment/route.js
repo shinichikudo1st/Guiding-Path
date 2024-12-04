@@ -45,18 +45,20 @@ export async function POST(request) {
     );
   }
 
-  // Check if the time is within working hours (8 AM - 5 PM, excluding 12 PM - 1 PM)
+  // Check if the time is within working hours (8 AM - 9 PM, excluding 12 PM - 1 PM and 7 PM - 8 PM)
   const isValidTime =
     (hours === 8 && minutes >= 0) ||
     (hours > 8 && hours < 12) ||
     (hours === 13 && minutes >= 0) ||
-    (hours > 13 && hours < 17);
+    (hours > 13 && hours < 19) ||
+    (hours === 20 && minutes >= 0) ||
+    (hours > 20 && hours < 21);
 
   if (!isValidTime) {
     return NextResponse.json(
       {
         error:
-          "Please select a time between 8:00 AM and 5:00 PM, excluding 12:00 PM to 1:00 PM",
+          "Please select a time between 8:00 AM and 9:00 PM, excluding 12:00 PM to 1:00 PM and 7:00 PM to 8:00 PM",
       },
       { status: 400 }
     );
@@ -127,7 +129,7 @@ export async function POST(request) {
           type: submitType,
           notes: notes,
           reason: reason,
-          counsel_type: counsel_type,
+          counsel_type: "inperson",
           status: "pending",
         },
       }),
