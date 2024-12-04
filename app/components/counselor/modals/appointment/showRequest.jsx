@@ -99,6 +99,11 @@ const ShowAppointmentRequest = () => {
                           <h3 className="text-base font-semibold text-[#062341] flex items-center justify-center sm:justify-start gap-2">
                             <FaUserGraduate className="text-[#0B6EC9] text-sm" />
                             {request.name}
+                            {request.urgency === "very" && (
+                              <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-0.5 rounded-full">
+                                Very Urgent
+                              </span>
+                            )}
                           </h3>
                           <p className="text-xs font-medium text-[#062341]/70 mt-1 flex items-center justify-center sm:justify-start gap-2">
                             <AiOutlineCalendar className="text-[#0B6EC9] text-sm" />
