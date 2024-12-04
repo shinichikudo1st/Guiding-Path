@@ -26,7 +26,7 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectedRole, setSelectedRole] = useState("allRoles");
   const [search, setSearch] = useState("");
   const [isModifyUserModalOpen, setIsModifyUserModalOpen] = useState(false);
@@ -74,7 +74,7 @@ const UserManagement = () => {
   };
 
   const nextPage = () => {
-    if (currentPage < totalPage) {
+    if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -237,8 +237,6 @@ const UserManagement = () => {
     </>
   );
 
-  const totalPages = Math.max(1, Math.ceil(totalPage / 10));
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -376,7 +374,7 @@ const UserManagement = () => {
                 <span className="font-semibold">
                   {(currentPage - 1) * 10 + users.length}
                 </span>{" "}
-                of <span className="font-semibold">{totalPage}</span> results
+                of <span className="font-semibold">{totalPages}</span> results
               </p>
               <div className="flex items-center gap-3">
                 <motion.button
