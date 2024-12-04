@@ -146,7 +146,7 @@ const LoginModal = ({
   const modalVariants = {
     hidden: {
       opacity: 0,
-      y: 20,
+      y: -20,
       scale: 0.95,
     },
     visible: {
@@ -155,8 +155,8 @@ const LoginModal = ({
       scale: 1,
       transition: {
         type: "spring",
-        duration: 0.5,
-        bounce: 0.3,
+        duration: 0.6,
+        bounce: 0.25,
       },
     },
     exit: {
@@ -164,7 +164,8 @@ const LoginModal = ({
       y: 20,
       scale: 0.95,
       transition: {
-        duration: 0.2,
+        duration: 0.3,
+        ease: "easeInOut",
       },
     },
   };
@@ -173,7 +174,7 @@ const LoginModal = ({
     <AnimatePresence mode="wait">
       {login && (
         <div
-          className="fixed inset-0 flex items-center justify-center"
+          className="fixed inset-0 flex items-center justify-center p-4 lg:p-8"
           style={{ zIndex: 40 }}
         >
           <motion.div
@@ -185,7 +186,7 @@ const LoginModal = ({
             style={{ zIndex: 41 }}
           />
           <motion.div
-            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative mx-4"
+            className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 w-full max-w-md relative mx-4 max-h-[95vh] lg:max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -267,7 +268,7 @@ const LoginModal = ({
                   <input
                     type="email"
                     name="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your email"
                     required
                   />
@@ -286,7 +287,7 @@ const LoginModal = ({
                   <input
                     type={showLoginPassword ? "text" : "password"}
                     name="password"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your password"
                     required
                   />
@@ -347,7 +348,7 @@ const LoginModal = ({
 
       {signup && (
         <div
-          className="fixed inset-0 flex items-center justify-center"
+          className="fixed inset-0 flex items-center justify-center p-4 lg:p-8"
           style={{ zIndex: 40 }}
         >
           <motion.div
@@ -359,7 +360,7 @@ const LoginModal = ({
             style={{ zIndex: 41 }}
           />
           <motion.div
-            className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md relative mx-4"
+            className="bg-white rounded-2xl shadow-xl p-6 lg:p-8 w-full max-w-4xl relative mx-4 max-h-[95vh] lg:max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -386,139 +387,118 @@ const LoginModal = ({
                 <path d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </motion.button>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex justify-center mb-6"
-            >
-              <Image
-                src={ctuLogo}
-                alt="CTU Logo"
-                width={80}
-                height={80}
-                className="rounded-full drop-shadow-lg"
-              />
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl font-bold text-center text-[#062341] mb-8"
-            >
-              Create Account
-            </motion.h2>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div className="hidden lg:flex flex-col items-center justify-center bg-gradient-to-br from-[#0B6EC9]/5 to-transparent p-8 rounded-xl">
+                <Image
+                  src={ctuLogo}
+                  alt="CTU Logo"
+                  width={120}
+                  height={120}
+                  className="rounded-full drop-shadow-lg mb-6"
+                />
+                <h3 className="text-2xl font-bold text-[#062341] mb-4">
+                  Join Us Today
+                </h3>
+                <p className="text-center text-gray-600">
+                  Create an account to access our counseling services and start
+                  your journey with us.
+                </p>
+              </div>
 
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm"
-              >
-                {error}
-              </motion.div>
-            )}
-            {success && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 text-sm"
-              >
-                {success}
-              </motion.div>
-            )}
-
-            <form onSubmit={handleSignup} className="space-y-4">
-              {[
-                {
-                  label: "ID Number",
-                  name: "idNumber",
-                  type: "text",
-                  placeholder: "Enter your ID number",
-                },
-                {
-                  label: "Email Address",
-                  name: "email",
-                  type: "email",
-                  placeholder: "Enter your email",
-                },
-                {
-                  label: "Contact Number",
-                  name: "contact",
-                  type: "tel",
-                  placeholder: "Enter your contact number",
-                },
-                {
-                  label: "Password",
-                  name: "password",
-                  type: "password",
-                  placeholder: "Create a password",
-                },
-              ].map((field, index) => (
-                <motion.div
-                  key={field.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                >
-                  <label className="block text-gray-700 text-sm font-semibold mb-2">
-                    {field.label}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={
-                        field.name === "password"
-                          ? showSignupPassword
-                            ? "text"
-                            : "password"
-                          : field.type
-                      }
-                      name={field.name}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                      placeholder={field.placeholder}
-                      required
-                    />
-                    {field.name === "password" && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowSignupPassword(!showSignupPassword)
-                        }
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                      >
-                        {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                type="submit"
-                disabled={isCreatingAccount}
-                className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {isCreatingAccount ? (
-                  <div className="flex items-center justify-center">
+              <div className="lg:pt-8">
+                <form onSubmit={handleSignup} className="space-y-4">
+                  {[
+                    {
+                      label: "ID Number",
+                      name: "idNumber",
+                      type: "text",
+                      placeholder: "Enter your ID number",
+                    },
+                    {
+                      label: "Email Address",
+                      name: "email",
+                      type: "email",
+                      placeholder: "Enter your email",
+                    },
+                    {
+                      label: "Contact Number",
+                      name: "contact",
+                      type: "tel",
+                      placeholder: "Enter your contact number",
+                    },
+                    {
+                      label: "Password",
+                      name: "password",
+                      type: "password",
+                      placeholder: "Create a password",
+                    },
+                  ].map((field, index) => (
                     <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
-                    />
-                    Creating Account...
-                  </div>
-                ) : (
-                  "Create Account"
-                )}
-              </motion.button>
-            </form>
+                      key={field.name}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + index * 0.1 }}
+                    >
+                      <label className="block text-gray-700 text-sm font-semibold mb-2">
+                        {field.label}
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={
+                            field.name === "password"
+                              ? showSignupPassword
+                                ? "text"
+                                : "password"
+                              : field.type
+                          }
+                          name={field.name}
+                          className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          placeholder={field.placeholder}
+                          required
+                        />
+                        {field.name === "password" && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowSignupPassword(!showSignupPassword)
+                            }
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                          >
+                            {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+
+                  <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                    type="submit"
+                    disabled={isCreatingAccount}
+                    className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {isCreatingAccount ? (
+                      <div className="flex items-center justify-center">
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 1,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                        />
+                        Creating Account...
+                      </div>
+                    ) : (
+                      "Create Account"
+                    )}
+                  </motion.button>
+                </form>
+              </div>
+            </div>
 
             <motion.p
               initial={{ opacity: 0 }}
