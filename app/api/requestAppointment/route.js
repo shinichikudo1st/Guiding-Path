@@ -7,7 +7,6 @@ const requestAppointmentSchema = z.object({
   grade: z.string().min(1),
   reason: z.string().min(1),
   urgency: z.string().min(1),
-  type: z.string().min(1),
   contact: z.string().min(1),
   notes: z.string().min(1),
 });
@@ -23,7 +22,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    const { grade, reason, urgency, type, contact, notes } =
+    const { grade, reason, urgency, contact, notes } =
       requestAppointmentSchema.parse(body);
 
     const { sessionData } = await getSession();
@@ -44,7 +43,7 @@ export async function POST(request) {
           urgency: urgency,
           contact: contact,
           notes: notes,
-          type: type,
+          type: "inperson",
           role: sessionData.role,
           request_date: date,
         },

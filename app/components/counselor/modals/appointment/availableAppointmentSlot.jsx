@@ -48,6 +48,9 @@ const AvailableAppointmentSlot = ({ onSelectSlot, initialDate }) => {
       "02:00 PM",
       "03:00 PM",
       "04:00 PM",
+      "05:00 PM",
+      "06:00 PM",
+      "08:00 PM",
     ];
 
     const takenSlots = appointments
@@ -122,7 +125,11 @@ const AvailableAppointmentSlot = ({ onSelectSlot, initialDate }) => {
       currentDate.getMonth(),
       day
     );
-    if (selected >= new Date()) {
+    if (
+      selected >= new Date() &&
+      selected.getDay() !== 0 &&
+      selected.getDay() !== 6
+    ) {
       setSelectedDate(selected);
       setSelectedSlot(null);
     }
@@ -205,15 +212,18 @@ const AvailableAppointmentSlot = ({ onSelectSlot, initialDate }) => {
             selectedDate && date.toDateString() === selectedDate.toDateString();
           const hasAppointmentOnDay = hasAppointment(date);
           const isPastDate = date < new Date();
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+          const isDisabled = isPastDate || isWeekend;
+
           return (
             <div
               key={day}
               className={`h-10 flex items-center justify-center text-sm font-semibold cursor-pointer transition-all duration-200 ease-in-out rounded-full
                 ${isSelected ? "bg-blue-600 text-white" : ""}
                 ${hasAppointmentOnDay ? "bg-yellow-200" : "hover:bg-gray-200"}
-                ${isPastDate ? "opacity-50 cursor-not-allowed" : ""}
+                ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
               `}
-              onClick={() => !isPastDate && selectDate(day)}
+              onClick={() => !isDisabled && selectDate(day)}
             >
               {day}
             </div>

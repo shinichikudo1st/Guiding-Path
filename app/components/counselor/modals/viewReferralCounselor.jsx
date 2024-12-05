@@ -17,7 +17,6 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  const [counselType, setCounselType] = useState("inperson");
   const [isCreatingAppointment, setIsCreatingAppointment] = useState(false);
   const [message, setMessage] = useState({ type: "", content: "" });
   const [selectedDateTime, setSelectedDateTime] = useState(null);
@@ -95,7 +94,6 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
           role: "teacher", // Since this is a referral
           notes: referral.notes,
           reason: referral.reason,
-          counsel_type: counselType,
         }),
       });
 
@@ -158,196 +156,189 @@ const ViewReferralCounselor = ({ referralId, onClose, onRefresh }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 p-4">
       <div
-        className={`bg-white rounded-2xl w-full max-w-4xl mx-4 overflow-hidden shadow-xl flex flex-col ${
-          referral?.status === "pending" ? "md:flex-row" : ""
+        className={`bg-white rounded-2xl w-full max-w-4xl overflow-hidden shadow-xl flex flex-col max-h-[90vh] ${
+          referral?.status === "pending" ? "lg:flex-row" : ""
         }`}
       >
         {/* Left side - Referral Details */}
         <div
           className={`${
-            referral?.status === "pending" ? "w-full md:w-1/2" : "w-full"
-          } p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-[#0B6EC9]/60 scrollbar-track-gray-100`}
+            referral?.status === "pending" ? "w-full lg:w-1/2" : "w-full"
+          } overflow-y-auto max-h-[90vh] lg:max-h-[85vh]`}
         >
-          <h2 className="text-2xl font-bold mb-6 text-[#062341]">
-            Referral Details
-          </h2>
-          {isLoading ? (
-            <SkeletonLoading />
-          ) : error ? (
-            <div className="text-center">
-              <p className="text-xl text-red-500 font-semibold">{error}</p>
-            </div>
-          ) : referral ? (
-            <div className="space-y-6">
-              {/* Student Info */}
-              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-                <FaUser className="text-[#0B6EC9] text-xl mr-4" />
-                <div>
-                  <p className="text-sm text-gray-500">Student</p>
-                  <p className="font-semibold text-lg">
-                    {referral.student_name}
-                  </p>
-                </div>
+          <div className="sticky top-0 z-10 bg-white border-b border-[#0B6EC9]/10">
+            <h2 className="text-2xl font-bold p-6 text-[#062341]">
+              Referral Details
+            </h2>
+          </div>
+          <div className="p-6 pt-4">
+            {isLoading ? (
+              <SkeletonLoading />
+            ) : error ? (
+              <div className="text-center">
+                <p className="text-xl text-red-500 font-semibold">{error}</p>
               </div>
-
-              {/* Teacher Info */}
-              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-                <FaChalkboardTeacher className="text-[#0B6EC9] text-xl mr-4" />
-                <div>
-                  <p className="text-sm text-gray-500">Teacher</p>
-                  <p className="font-semibold text-lg">
-                    {referral.teacher_name}
-                  </p>
+            ) : referral ? (
+              <div className="space-y-6">
+                {/* Student Info */}
+                <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                  <FaUser className="text-[#0B6EC9] text-xl mr-4" />
+                  <div>
+                    <p className="text-sm text-gray-500">Student</p>
+                    <p className="font-semibold text-lg">
+                      {referral.student_name}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Status */}
-              <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-                <IoMdInformationCircle
-                  className={`text-2xl mr-4 ${getStatusColor(referral.status)}`}
-                />
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <p
-                    className={`font-semibold text-lg ${getStatusColor(
+                {/* Teacher Info */}
+                <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                  <FaChalkboardTeacher className="text-[#0B6EC9] text-xl mr-4" />
+                  <div>
+                    <p className="text-sm text-gray-500">Teacher</p>
+                    <p className="font-semibold text-lg">
+                      {referral.teacher_name}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div className="flex items-center bg-gray-50 p-4 rounded-lg">
+                  <IoMdInformationCircle
+                    className={`text-2xl mr-4 ${getStatusColor(
                       referral.status
                     )}`}
-                  >
-                    {referral.status.charAt(0).toUpperCase() +
-                      referral.status.slice(1)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Reason & Notes */}
-              <div className="space-y-4">
-                <div>
-                  <p className="font-semibold mb-2">Reason:</p>
-                  <p className="bg-gray-50 p-4 rounded-lg">{referral.reason}</p>
-                </div>
-                <div>
-                  <p className="font-semibold mb-2">Notes:</p>
-                  <p className="bg-gray-50 p-4 rounded-lg">{referral.notes}</p>
-                </div>
-              </div>
-
-              {/* Appointment Details for Confirmed/Closed Status */}
-              {(referral.status === "confirmed" ||
-                referral.status === "closed") && (
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center">
-                    <Image
-                      src={
-                        referral.counselor_profilePicture ||
-                        "/default-avatar.png"
-                      }
-                      alt="Counselor"
-                      width={50}
-                      height={50}
-                      className="rounded-full mr-4"
-                    />
-                    <div>
-                      <p className="text-sm text-gray-500">Counselor</p>
-                      <p className="font-semibold text-lg">
-                        {referral.counselor_name}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center mt-2">
-                    <FaCalendarAlt className="text-[#0B6EC9] mr-4 text-xl" />
-                    <div>
-                      <p className="text-sm text-gray-500">
-                        Appointment Schedule
-                      </p>
-                      <p className="font-semibold">
-                        {referral.appointment_date_time
-                          ? `${formatDate(
-                              referral.appointment_date_time
-                            )} at ${new Date(
-                              referral.appointment_date_time
-                            ).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}`
-                          : "Not scheduled"}
-                      </p>
-                    </div>
+                  />
+                  <div>
+                    <p className="text-sm text-gray-500">Status</p>
+                    <p
+                      className={`font-semibold text-lg ${getStatusColor(
+                        referral.status
+                      )}`}
+                    >
+                      {referral.status.charAt(0).toUpperCase() +
+                        referral.status.slice(1)}
+                    </p>
                   </div>
                 </div>
-              )}
-            </div>
-          ) : null}
+
+                {/* Reason & Notes */}
+                <div className="space-y-4">
+                  <div>
+                    <p className="font-semibold mb-2">Reason:</p>
+                    <p className="bg-gray-50 p-4 rounded-lg">
+                      {referral.reason}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-2">Notes:</p>
+                    <p className="bg-gray-50 p-4 rounded-lg">
+                      {referral.notes}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Appointment Details for Confirmed/Closed Status */}
+                {(referral.status === "confirmed" ||
+                  referral.status === "closed") && (
+                  <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center">
+                      <Image
+                        src={
+                          referral.counselor_profilePicture ||
+                          "/default-avatar.png"
+                        }
+                        alt="Counselor"
+                        width={50}
+                        height={50}
+                        className="rounded-full mr-4"
+                      />
+                      <div>
+                        <p className="text-sm text-gray-500">Counselor</p>
+                        <p className="font-semibold text-lg">
+                          {referral.counselor_name}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center mt-2">
+                      <FaCalendarAlt className="text-[#0B6EC9] mr-4 text-xl" />
+                      <div>
+                        <p className="text-sm text-gray-500">
+                          Appointment Schedule
+                        </p>
+                        <p className="font-semibold">
+                          {referral.appointment_date_time
+                            ? `${formatDate(
+                                referral.appointment_date_time
+                              )} at ${new Date(
+                                referral.appointment_date_time
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}`
+                            : "Not scheduled"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {/* Right side - Only show for pending status */}
         {referral && referral.status === "pending" && (
-          <div className="w-full md:w-1/2 p-6 border-t md:border-t-0 md:border-l border-[#0B6EC9]/10">
-            <h3 className="text-xl font-semibold mb-4">Schedule Appointment</h3>
-            <AvailableAppointmentSlot
-              onSelectSlot={handleSelectSlot}
-              initialDate={new Date()}
-            />
-            <div className="mt-4">
-              <span className="font-semibold block mb-2">Counsel Type:</span>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setCounselType("inperson")}
-                  className={`flex-1 flex items-center justify-center px-3 py-2 rounded ${
-                    counselType === "inperson"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  <FaUserFriends className="mr-2" />
-                  In-person
-                </button>
-                <button
-                  onClick={() => setCounselType("virtual")}
-                  className={`flex-1 flex items-center justify-center px-3 py-2 rounded ${
-                    counselType === "virtual"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200"
-                  }`}
-                >
-                  <FaVideo className="mr-2" />
-                  Virtual
-                </button>
-              </div>
+          <div className="w-full lg:w-1/2 border-t lg:border-t-0 lg:border-l border-[#0B6EC9]/10 flex flex-col max-h-[90vh] lg:max-h-[85vh]">
+            <div className="sticky top-0 z-10 bg-white border-b border-[#0B6EC9]/10">
+              <h3 className="text-xl font-semibold p-6">
+                Schedule Appointment
+              </h3>
             </div>
-            {message.content && (
-              <div
-                className={`mt-4 p-2 rounded ${
-                  message.type === "error"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-green-100 text-green-700"
-                }`}
-              >
-                {message.content}
+            <div className="flex-1 overflow-y-auto p-6 pt-4">
+              <AvailableAppointmentSlot
+                onSelectSlot={handleSelectSlot}
+                initialDate={new Date()}
+              />
+              {message.content && (
+                <div className="mt-4">
+                  <div
+                    className={`p-2 rounded ${
+                      message.type === "error"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="sticky bottom-0 bg-white border-t border-[#0B6EC9]/10 p-4">
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleCreateAppointment}
+                  disabled={isCreatingAppointment}
+                  className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isCreatingAppointment ? (
+                    <>
+                      <FaSpinner className="animate-spin mr-2" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Appointment"
+                  )}
+                </button>
+                <button
+                  onClick={handleRejectReferral}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Reject Referral
+                </button>
               </div>
-            )}
-            <div className="flex space-x-4 mt-4">
-              <button
-                onClick={handleCreateAppointment}
-                disabled={isCreatingAppointment}
-                className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isCreatingAppointment ? (
-                  <>
-                    <FaSpinner className="animate-spin mr-2" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create Appointment"
-                )}
-              </button>
-              <button
-                onClick={handleRejectReferral}
-                className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Reject Referral
-              </button>
             </div>
           </div>
         )}

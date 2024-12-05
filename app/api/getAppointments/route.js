@@ -96,6 +96,9 @@ export async function GET(request) {
             },
           },
         },
+        orderBy: {
+          date_time: "asc",
+        },
       });
     }
 

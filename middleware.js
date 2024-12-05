@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { getSession } from "./app/utils/authentication";
 
 // Simple in-memory store for rate limiting
-const rateLimit = new Map();
+// const rateLimit = new Map();
 
-// Rate limit configuration
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
-const MAX_REQUESTS = 100;
+// // Rate limit configuration
+// const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+// const MAX_REQUESTS = 100;
 
 const securityHeaders = {
   "X-Frame-Options": "DENY",
@@ -20,28 +20,28 @@ const securityHeaders = {
 
 export async function middleware(request) {
   // Basic rate limiting
-  const ip = request.ip || request.headers.get("x-forwarded-for") || "unknown";
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW;
+  // const ip = request.ip || request.headers.get("x-forwarded-for") || "unknown";
+  // const now = Date.now();
+  // const windowStart = now - RATE_LIMIT_WINDOW;
 
-  // Clean up old entries
-  for (const [key, timestamp] of rateLimit.entries()) {
-    if (timestamp < windowStart) {
-      rateLimit.delete(key);
-    }
-  }
+  // // Clean up old entries
+  // for (const [key, timestamp] of rateLimit.entries()) {
+  //   if (timestamp < windowStart) {
+  //     rateLimit.delete(key);
+  //   }
+  // }
 
-  // Check rate limit
-  const requestCount = [...rateLimit.values()].filter(
-    (timestamp) => timestamp > windowStart
-  ).length;
+  // // Check rate limit
+  // const requestCount = [...rateLimit.values()].filter(
+  //   (timestamp) => timestamp > windowStart
+  // ).length;
 
-  if (requestCount >= MAX_REQUESTS) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+  // if (requestCount >= MAX_REQUESTS) {
+  //   return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  // }
 
-  // Add current request to rate limit
-  rateLimit.set(`${ip}-${now}`, now);
+  // // Add current request to rate limit
+  // rateLimit.set(`${ip}-${now}`, now);
 
   // Only check session for protected routes
   if (

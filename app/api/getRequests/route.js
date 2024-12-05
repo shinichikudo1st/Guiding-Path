@@ -35,9 +35,12 @@ export async function GET(request) {
 
   try {
     const totalRequest = await prisma.appointment_Requests.count();
-    let requests = await prisma.appointment_Requests.findMany({
+    const requests = await prisma.appointment_Requests.findMany({
       skip,
       take: limit,
+      orderBy: {
+        request_date: "asc", // Default ordering by date
+      },
       include: {
         student: {
           select: {
@@ -51,7 +54,16 @@ export async function GET(request) {
       },
     });
 
-    requests = requests.map((request) => {
+    // Custom sorting to prioritize "very" urgent requests
+    const sortedRequests = requests.sort((a, b) => {
+      if (a.urgency === "very" && b.urgency !== "very") return -1;
+      if (a.urgency !== "very" && b.urgency === "very") return 1;
+      // If neither or both are "very", maintain the original date-based order
+      return 0;
+    });
+
+    // Format dates for display
+    const formattedRequests = sortedRequests.map((request) => {
       const date = new Date(request.request_date);
       const formattedDate = date.toLocaleString("en-US", {
         weekday: "short",
@@ -63,14 +75,15 @@ export async function GET(request) {
         hour12: true,
       });
 
-      request.request_date = formattedDate;
-
-      return request;
+      return {
+        ...request,
+        request_date: formattedDate,
+      };
     });
 
     return NextResponse.json(
       {
-        requests,
+        requests: formattedRequests,
         currentPage: pageNumber,
         totalPages: Math.ceil(totalRequest / limit),
         totalRequest,

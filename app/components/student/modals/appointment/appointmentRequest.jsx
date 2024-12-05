@@ -17,7 +17,6 @@ const AppointmentRequest = () => {
     grade: "",
     reason: "",
     urgency: "",
-    type: "",
     contact: "",
     notes: "",
   });
@@ -79,7 +78,6 @@ const AppointmentRequest = () => {
         grade: "",
         reason: "",
         urgency: "",
-        type: "",
         contact: "",
         notes: "",
       });
@@ -165,22 +163,6 @@ const AppointmentRequest = () => {
           <div className="space-y-4">
             <div className="h-full bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10">
               <div className="space-y-4 md:space-y-6">
-                <div className="flex items-center gap-3">
-                  <FaVideo className="text-[#0B6EC9] text-xl flex-shrink-0" />
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white rounded-lg border border-[#0B6EC9]/10 text-[#062341] focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
-                  >
-                    <option value="" disabled>
-                      Select Type
-                    </option>
-                    <option value="virtual">Virtual/Online</option>
-                    <option value="inperson">In Person</option>
-                  </select>
-                </div>
-
                 <div className="flex items-center gap-3">
                   <FaPhoneAlt className="text-[#0B6EC9] text-xl flex-shrink-0" />
                   <input
