@@ -61,7 +61,8 @@ export async function POST(request) {
       profilePicture: user.profilePicture,
     };
 
-    const expires = new Date(Date.now() + 60 * 60 * 1000);
+    //2 hours
+    const expires = new Date(Date.now() + 2 * (60 * 60 * 1000));
 
     const session = await encrypt({ sessionData, expires });
 

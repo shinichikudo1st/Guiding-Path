@@ -20,7 +20,7 @@ export async function GET(request) {
         skip,
         take: pageSize,
         orderBy: {
-          date_time: "desc",
+          date_time: "asc",
         },
       }),
       prisma.students.findUnique({

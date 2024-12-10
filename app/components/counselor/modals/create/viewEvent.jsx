@@ -197,7 +197,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
                 </label>
                 <input
                   type="datetime-local"
-                  value={new Date(dateTime).toISOString().slice(0, 16)}
+                  value={dateTime}
                   onChange={(e) => setDateTime(e.target.value)}
                   className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
                 />

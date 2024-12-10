@@ -165,13 +165,7 @@ async function getReferralData(startDate, endDate) {
 }
 
 async function getAppraisalData(startDate, endDate) {
-  const totalStudents = await prisma.users.count({
-    where: {
-      role: "student",
-    },
-  });
-
-  const [totalAppraisals, averageScores, completionRate] = await Promise.all([
+  const [totalAppraisals, categoryResponses, totalStudents] = await Promise.all([
     prisma.studentAppraisal.count({
       where: {
         submittedAt: {
@@ -180,7 +174,7 @@ async function getAppraisalData(startDate, endDate) {
         },
       },
     }),
-    prisma.categoryResponse.aggregate({
+    prisma.categoryResponse.findMany({
       where: {
         appraisal: {
           submittedAt: {
@@ -189,25 +183,31 @@ async function getAppraisalData(startDate, endDate) {
           },
         },
       },
-      _avg: {
-        score: true,
-      },
-      _min: {
-        score: true,
-      },
-      _max: {
+      select: {
         score: true,
       },
     }),
-    // Add more appraisal-related queries here
+    prisma.students.count()
   ]);
+
+  const scores = categoryResponses.map(cr => cr.score);
+  const averageScores = {
+    _avg: {
+      score: scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0,
+    },
+    _min: {
+      score: scores.length > 0 ? Math.min(...scores) : null,
+    },
+    _max: {
+      score: scores.length > 0 ? Math.max(...scores) : null,
+    },
+  };
 
   return {
     name: "appraisal",
     totalAppraisals,
     averageScores,
-    completionRate,
-    totalStudents,
+    totalStudents
   };
 }
 
