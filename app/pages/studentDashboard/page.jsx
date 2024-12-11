@@ -23,6 +23,10 @@ const Announcement = lazy(() =>
 );
 const ResourceFeed = lazy(() => import("@/app/components/UI/resources"));
 
+const EventSidebar = lazy(() =>
+  import("@/app/components/student/sidebar/event")
+);
+
 const StudentDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("profile");
 
@@ -32,6 +36,7 @@ const StudentDashboard = () => {
     appointment: Appointment,
     announcement: Announcement,
     resources: ResourceFeed,
+    event: EventSidebar,
   };
 
   const toggleComponent = (componentName) => {
@@ -50,6 +55,7 @@ const StudentDashboard = () => {
         viewAppointment={() => toggleComponent("appointment")}
         viewAnnouncement={() => toggleComponent("announcement")}
         viewResources={() => toggleComponent("resources")}
+        viewEvent={() => toggleComponent("event")}
         activeComponent={activeComponent}
       />
       <div className="fixed right-0 top-20">
