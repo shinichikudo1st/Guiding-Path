@@ -8,6 +8,7 @@ import StudentQuickView from "@/app/components/student/studentQuickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import SkeletonLoading from "@/app/components/universal/skeletonLoading";
 import Background from "@/app/components/universal/ctuBackground";
+import ChatbotButton from "@/app/components/student/modals/chatbot/chatBotButton";
 
 // Conditionally rendered components - lazy load these
 const Profile = lazy(() => import("@/app/components/student/sidebar/profile"));
@@ -22,10 +23,6 @@ const Announcement = lazy(() =>
 );
 const ResourceFeed = lazy(() => import("@/app/components/UI/resources"));
 
-const EventSidebar = lazy(() =>
-  import("@/app/components/student/sidebar/event")
-);
-
 const StudentDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("profile");
 
@@ -35,15 +32,10 @@ const StudentDashboard = () => {
     appointment: Appointment,
     announcement: Announcement,
     resources: ResourceFeed,
-    event: EventSidebar,
   };
 
   const toggleComponent = (componentName) => {
     setActiveComponent(componentName);
-  };
-
-  const handlePageChange = (page) => {
-    setActiveComponent(page);
   };
 
   const ActiveComponent = components[activeComponent];
@@ -51,20 +43,19 @@ const StudentDashboard = () => {
   return (
     <main className="h-full w-full bg-[#D9E7F3]">
       <Background />
-      <UserNavbar
-        profile={() => toggleComponent("profile")}
-        onPageChange={handlePageChange}
-      />
+      <UserNavbar profile={() => toggleComponent("profile")} />
       <StudentSidebar
         viewProfile={() => toggleComponent("profile")}
         viewAppraisal={() => toggleComponent("appraisal")}
         viewAppointment={() => toggleComponent("appointment")}
         viewAnnouncement={() => toggleComponent("announcement")}
         viewResources={() => toggleComponent("resources")}
-        viewEvent={() => toggleComponent("event")}
         activeComponent={activeComponent}
       />
-      <StudentQuickView />
+      <div className="fixed right-0 top-20">
+        <StudentQuickView />
+      </div>
+      <ChatbotButton />
       <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
