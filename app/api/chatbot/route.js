@@ -38,13 +38,21 @@ function getOverallEvaluation(score) {
       suggestion:
         "Consider seeking additional support and developing new study habits.",
     };
-  } else {
+  } else if (score > 0) {
     return {
       evaluation: "Critical Attention Required",
       description:
         "Your academic standing needs immediate attention and intervention.",
       suggestion:
         "Schedule a consultation with academic advisors and create a recovery plan.",
+    };
+  } else {
+    return {
+      evaluation: "Not Yet Evaluated",
+      description:
+        "This student is not yet evaluated, he/she has to take appraisals first",
+      suggestion:
+        "Cannot make suggestion since he/she still has no score to evaluate",
     };
   }
 }
@@ -71,7 +79,7 @@ export async function POST(request) {
     // Generate detailed content using Gemini
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const prompt = `As a Guidance Counselor, provide detailed guidance for a student with a performance score of ${averageScore.toFixed(
+    const prompt = `As a Guidance Counselor for college student, provide detailed guidance for a student with a performance score of ${averageScore.toFixed(
       2
     )} out of 5.
     
