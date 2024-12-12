@@ -72,6 +72,7 @@ export async function POST(request) {
 
     const user = await prisma.users.create({
       data: {
+        name: name,
         user_id: id,
         email: email,
         hashedPassword: hashedPassword,
@@ -84,8 +85,9 @@ export async function POST(request) {
       await prisma.students.create({
         data: {
           student_id: user.user_id,
-          grade_level: "N/A",
-          program: "N/A",
+          grade_level: grade_level,
+          program: program,
+          department: department,
         },
       });
     }
