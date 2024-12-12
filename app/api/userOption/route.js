@@ -5,10 +5,15 @@ import { z } from "zod";
 import { getSession } from "@/app/utils/authentication";
 
 const createUserSchema = z.object({
+  name: z.string(),
+  grade_level: z.string(),
+  program: z.string(),
+  department: z.string(),
   id: z.string(),
   email: z.string().email(),
   contact: z.string(),
   password: z.string().min(8),
+  confirm_password: z.string().min(8),
 });
 
 /**SANITIZED INPUTS
@@ -27,9 +32,28 @@ const createUserSchema = z.object({
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { id, email, contact, password } = createUserSchema.parse(body);
+    const {
+      name,
+      grade_level,
+      program,
+      department,
+      id,
+      email,
+      contact,
+      password,
+      confirm_password,
+    } = createUserSchema.parse(body);
 
     const role = "student";
+
+    if (password != confirm_password) {
+      return NextResponse.json(
+        { error: "Password & Confirm Password did not match" },
+        {
+          status: 404,
+        }
+      );
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
