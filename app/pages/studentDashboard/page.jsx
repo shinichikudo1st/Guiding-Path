@@ -8,6 +8,7 @@ import StudentQuickView from "@/app/components/student/studentQuickView";
 import UserNavbar from "@/app/components/UI/userNavbar";
 import SkeletonLoading from "@/app/components/universal/skeletonLoading";
 import Background from "@/app/components/universal/ctuBackground";
+import ChatbotButton from "@/app/components/student/modals/chatbot/chatBotButton";
 
 // Conditionally rendered components - lazy load these
 const Profile = lazy(() => import("@/app/components/student/sidebar/profile"));
@@ -64,7 +65,10 @@ const StudentDashboard = () => {
         viewEvent={() => toggleComponent("event")}
         activeComponent={activeComponent}
       />
-      <StudentQuickView />
+      <div className="fixed right-0 top-20">
+        <StudentQuickView />
+      </div>
+      <ChatbotButton />
       <Suspense fallback={<SkeletonLoading />}>
         <ActiveComponent />
       </Suspense>
