@@ -27,9 +27,21 @@ const createUserSchema = z.object({
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { id, email, contact, password } = createUserSchema.parse(body);
+    const {
+      id,
+      email,
+      name,
+      department,
+      type,
+      course,
+      year,
+      password,
+      confirmPassword,
+    } = createUserSchema.parse(body);
 
-    const role = "student";
+    if (password !== confirmPassword) {
+      return NextResponse.json({ message: "Bad Request" }, { status: 401 });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -50,18 +62,27 @@ export async function POST(request) {
       data: {
         user_id: id,
         email: email,
+        name: name,
         hashedPassword: hashedPassword,
         contact: contact,
-        role: role,
+        role: type,
       },
     });
 
-    if (user.role === "student") {
+    if (type === "student") {
       await prisma.students.create({
         data: {
           student_id: user.user_id,
-          grade_level: "N/A",
-          program: "N/A",
+          department: department,
+          grade_level: year,
+          program: course,
+        },
+      });
+    } else {
+      await prisma.teachers.create({
+        data: {
+          teacher_id: user.user_id,
+          department: department,
         },
       });
     }

@@ -19,6 +19,7 @@ const LoginModal = ({
   const [logging, setLogging] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [userType, setUserType] = useState("student");
   const router = useRouter();
@@ -103,9 +104,14 @@ const LoginModal = ({
     const name = DOMPurify.sanitize(formData.get("name"));
     const department = DOMPurify.sanitize(formData.get("department"));
     const type = DOMPurify.sanitize(formData.get("type"));
-    const course = type === "student" ? DOMPurify.sanitize(formData.get("course")) : null;
-    const year = type === "student" ? DOMPurify.sanitize(formData.get("year")) : null;
+    const course =
+      type === "student" ? DOMPurify.sanitize(formData.get("course")) : null;
+    const year =
+      type === "student" ? DOMPurify.sanitize(formData.get("year")) : null;
     const password = DOMPurify.sanitize(formData.get("password"));
+    const confirmPassword = DOMPurify.sanitize(
+      formData.get("confirm-password")
+    );
 
     if (!id || !email || !name || !department || !type || !password) {
       setError("All fields are required");
@@ -113,7 +119,17 @@ const LoginModal = ({
       return;
     }
 
-    const data = { id, email, name, department, type, course, year, password };
+    const data = {
+      id,
+      email,
+      name,
+      department,
+      type,
+      course,
+      year,
+      password,
+      confirmPassword,
+    };
 
     try {
       const response = await fetch("/api/userOption", {
@@ -353,9 +369,9 @@ const LoginModal = ({
 
       {signup && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
+          exit={{ opacity: 0, y: 0 }}
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         >
           <div className="bg-white p-8 rounded-2xl shadow-2xl w-[900px] max-h-[90vh] overflow-y-auto">
@@ -368,14 +384,26 @@ const LoginModal = ({
                   height={50}
                   className="rounded-full"
                 />
-                <h2 className="text-2xl font-bold text-[#062341]">Create Account</h2>
+                <h2 className="text-2xl font-bold text-[#062341]">
+                  Create Account
+                </h2>
               </div>
-              <button 
-                onClick={closeModal} 
+              <button
+                onClick={closeModal}
                 className="text-gray-500 hover:text-gray-700 transition-all duration-200 hover:scale-110"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -383,9 +411,13 @@ const LoginModal = ({
             <form onSubmit={handleSignup} className="flex gap-12">
               {/* Left Column - New Fields */}
               <div className="flex-1 space-y-5 bg-gradient-to-br from-blue-50 to-transparent p-6 rounded-xl">
-                <h3 className="text-lg font-semibold text-[#062341] mb-6">Personal Information</h3>
+                <h3 className="text-lg font-semibold text-[#062341] mb-6">
+                  Personal Information
+                </h3>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name
+                  </label>
                   <input
                     type="text"
                     name="name"
@@ -396,7 +428,9 @@ const LoginModal = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Department
+                  </label>
                   <input
                     type="text"
                     name="department"
@@ -407,7 +441,9 @@ const LoginModal = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Role
+                  </label>
                   <select
                     name="type"
                     value={userType}
@@ -427,7 +463,9 @@ const LoginModal = ({
                     className="space-y-5"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Course
+                      </label>
                       <input
                         type="text"
                         name="course"
@@ -438,13 +476,17 @@ const LoginModal = ({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Year Level</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Year Level
+                      </label>
                       <select
                         name="year"
                         required
                         className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
                       >
-                        <option value="">Select Year Level</option>
+                        <option disabled value="">
+                          Select Year Level
+                        </option>
                         <option value="1">1st Year</option>
                         <option value="2">2nd Year</option>
                         <option value="3">3rd Year</option>
@@ -458,9 +500,13 @@ const LoginModal = ({
 
               {/* Right Column - Existing Fields */}
               <div className="flex-1 space-y-5 bg-gradient-to-br from-blue-50 to-transparent p-6 rounded-xl">
-                <h3 className="text-lg font-semibold text-[#062341] mb-6">Account Information</h3>
+                <h3 className="text-lg font-semibold text-[#062341] mb-6">
+                  Account Information
+                </h3>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    ID Number
+                  </label>
                   <input
                     type="text"
                     name="idNumber"
@@ -471,7 +517,9 @@ const LoginModal = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -482,7 +530,9 @@ const LoginModal = ({
                 </div>
 
                 <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password
+                  </label>
                   <div className="relative">
                     <input
                       type={showSignupPassword ? "text" : "password"}
@@ -497,6 +547,30 @@ const LoginModal = ({
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
                     >
                       {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirm-password"
+                      required
+                      className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+                      placeholder="Confirm password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
                 </div>
@@ -538,7 +612,7 @@ const LoginModal = ({
             </form>
 
             {error && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg"
@@ -547,7 +621,7 @@ const LoginModal = ({
               </motion.div>
             )}
             {success && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg"
