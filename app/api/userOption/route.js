@@ -7,8 +7,13 @@ import { getSession } from "@/app/utils/authentication";
 const createUserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
+  name: z.string(),
   contact: z.string(),
   password: z.string().min(8),
+  type: z.string(),
+  department: z.string(),
+  course: z.string(),
+  year: z.string(),
 });
 
 /**SANITIZED INPUTS
@@ -36,12 +41,8 @@ export async function POST(request) {
       course,
       year,
       password,
-      confirmPassword,
+      contact,
     } = createUserSchema.parse(body);
-
-    if (password !== confirmPassword) {
-      return NextResponse.json({ message: "Bad Request" }, { status: 401 });
-    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -89,7 +90,7 @@ export async function POST(request) {
 
     return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {
-    //console.error("Server error:", error); (for debugging)
+    console.error("Server error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

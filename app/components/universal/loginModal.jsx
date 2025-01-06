@@ -105,13 +105,11 @@ const LoginModal = ({
     const department = DOMPurify.sanitize(formData.get("department"));
     const type = DOMPurify.sanitize(formData.get("type"));
     const course =
-      type === "student" ? DOMPurify.sanitize(formData.get("course")) : null;
+      type === "student" ? DOMPurify.sanitize(formData.get("course")) : "";
     const year =
-      type === "student" ? DOMPurify.sanitize(formData.get("year")) : null;
+      type === "student" ? DOMPurify.sanitize(formData.get("year")) : "";
     const password = DOMPurify.sanitize(formData.get("password"));
-    const confirmPassword = DOMPurify.sanitize(
-      formData.get("confirm-password")
-    );
+    const contact = DOMPurify.sanitize(formData.get("contact"));
 
     if (!id || !email || !name || !department || !type || !password) {
       setError("All fields are required");
@@ -128,7 +126,7 @@ const LoginModal = ({
       course,
       year,
       password,
-      confirmPassword,
+      contact,
     };
 
     try {
@@ -431,13 +429,27 @@ const LoginModal = ({
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Department
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="department"
                     required
                     className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
                     placeholder="Enter your department"
-                  />
+                  >
+                    <option disabled value="">
+                      Select Department
+                    </option>
+                    <option value="COE">College of Education</option>
+                    <option value="COT">College of Technology</option>
+                    <option value="COEN">College of Engineering</option>
+                    <option value="CAS">College of Arts and Sciences</option>
+                    <option value="CME">
+                      College of Management and Entrepreneurship
+                    </option>
+                    <option value="CCICT">
+                      College of Computer Information and Communications
+                      Technology
+                    </option>
+                  </select>
                 </div>
 
                 <div>
@@ -529,6 +541,19 @@ const LoginModal = ({
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Contact
+                  </label>
+                  <input
+                    type="text"
+                    name="contact"
+                    required
+                    className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
+                    placeholder="Contact Number"
+                  />
+                </div>
+
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Password
@@ -547,30 +572,6 @@ const LoginModal = ({
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
                     >
                       {showSignupPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      name="confirm-password"
-                      required
-                      className="block w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all duration-200"
-                      placeholder="Confirm password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    >
-                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
                 </div>
