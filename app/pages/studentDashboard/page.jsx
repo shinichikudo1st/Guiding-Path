@@ -48,7 +48,10 @@ const StudentDashboard = () => {
   return (
     <main className="h-full w-full bg-[#D9E7F3]">
       <Background />
-      <UserNavbar profile={() => toggleComponent("profile")} />
+      <UserNavbar 
+        profile={() => toggleComponent("profile")} 
+        onPageChange={(type) => toggleComponent(type)}
+      />
       <StudentSidebar
         viewProfile={() => toggleComponent("profile")}
         viewAppraisal={() => toggleComponent("appraisal")}

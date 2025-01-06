@@ -16,9 +16,14 @@ export async function GET() {
         if (isStreamClosed) return;
 
         try {
-          const unreadCount = await getUnreadCount(sessionData);
-          const data = `data: ${JSON.stringify({ unreadCount })}\n\n`;
-          controller.enqueue(new TextEncoder().encode(data));
+          const newUnreadCount = await getUnreadCount(sessionData);
+          
+          // Only send if there's an actual change
+          if (lastSentCount !== newUnreadCount) {
+            const data = `data: ${JSON.stringify({ unreadCount: newUnreadCount })}\n\n`;
+            controller.enqueue(new TextEncoder().encode(data));
+            lastSentCount = newUnreadCount;
+          }
         } catch (error) {
           if (!error.message.includes("Invalid state")) {
             console.error("Error sending notification update:", error);
@@ -26,11 +31,12 @@ export async function GET() {
         }
       };
 
+      let lastSentCount = null;
       // Send initial count
       await sendUpdate();
 
-      // Set up interval for updates
-      const interval = setInterval(sendUpdate, 5000);
+      // Set up interval for updates - increased to 10 seconds
+      const interval = setInterval(sendUpdate, 10000);
 
       // Cleanup on close
       return () => {

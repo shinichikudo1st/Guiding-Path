@@ -17,20 +17,31 @@ const UserNavbar = ({ profile, onPageChange }) => {
 
   useEffect(() => {
     let eventSource;
+    let retryTimeout;
 
     const connectSSE = () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+
       eventSource = new EventSource("/api/notifications/stream");
 
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        setUnreadCount(data.unreadCount);
+        if (data.unreadCount !== undefined) {
+          setUnreadCount(data.unreadCount);
+        }
       };
 
       eventSource.onerror = (error) => {
         console.error("EventSource failed:", error);
         eventSource.close();
-        // Attempt to reconnect after 5 seconds
-        setTimeout(connectSSE, 5000);
+        // Clear any existing retry timeout
+        if (retryTimeout) {
+          clearTimeout(retryTimeout);
+        }
+        // Attempt to reconnect after 10 seconds
+        retryTimeout = setTimeout(connectSSE, 10000);
       };
     };
 
@@ -39,6 +50,9 @@ const UserNavbar = ({ profile, onPageChange }) => {
     return () => {
       if (eventSource) {
         eventSource.close();
+      }
+      if (retryTimeout) {
+        clearTimeout(retryTimeout);
       }
     };
   }, []);
@@ -103,10 +117,6 @@ const UserNavbar = ({ profile, onPageChange }) => {
     initial: { opacity: 0, y: -20 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.3 },
-  };
-
-  const handleNotificationChange = () => {
-    fetchUnreadCount();
   };
 
   return (
@@ -181,9 +191,11 @@ const UserNavbar = ({ profile, onPageChange }) => {
           <Notifications
             isOpen={isNotificationsOpen}
             onClose={() => setIsNotificationsOpen(false)}
-            onNotificationChange={handleNotificationChange}
             unreadCount={unreadCount}
-            onNotificationClick={onPageChange}
+            onNotificationClick={(type) => {
+              setIsNotificationsOpen(false);
+              onPageChange(type);
+            }}
           />
         </div>
 

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 
 const Notifications = ({
   isOpen,
-  onNotificationChange,
   unreadCount,
   onNotificationClick,
   onClose,
@@ -31,7 +30,6 @@ const Notifications = ({
               : [...prev, ...data.notifications]
           );
           setHasMore(data.hasMore);
-          onNotificationChange();
         }
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -40,7 +38,7 @@ const Notifications = ({
         setIsFetchingMore(false);
       }
     },
-    [onNotificationChange]
+    []
   );
 
   useEffect(() => {
@@ -82,8 +80,6 @@ const Notifications = ({
               : notification
           )
         );
-        // Update the unread count in parent component
-        onNotificationChange();
       }
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -105,16 +101,14 @@ const Notifications = ({
             (notification) => notification.notification_id !== id
           )
         );
-        // Update the unread count in parent component
-        onNotificationChange();
       }
     } catch (error) {
       console.error("Error deleting notification:", error);
     }
   };
 
-  const handleNotificationClick = (notification) => {
-    markAsRead(notification.notification_id);
+  const handleNotificationClick = async (notification) => {
+    await markAsRead(notification.notification_id);
 
     switch (notification.title) {
       case "New Referral Request":
@@ -204,17 +198,12 @@ const Notifications = ({
         ) : (
           <div className="p-4 space-y-3">
             {notifications.map((notification) => (
-              <motion.div
+              <div
                 key={notification.notification_id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02, backgroundColor: "#F8FAFC" }}
-                className={`bg-white rounded-xl p-4 shadow-sm border cursor-pointer transform transition-all duration-200 hover:shadow-md ${
-                  notification.isRead
-                    ? "border-[#0B6EC9]/5"
-                    : "border-[#0B6EC9]/20"
-                }`}
                 onClick={() => handleNotificationClick(notification)}
+                className={`bg-white rounded-xl p-4 shadow-sm border border-[#0B6EC9]/5 hover:shadow-md transition-all cursor-pointer ${
+                  !notification.isRead ? "bg-[#0B6EC9]/5" : ""
+                }`}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-grow pr-4">
@@ -257,7 +246,7 @@ const Notifications = ({
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
             {isFetchingMore && <LoadingSkeleton />}
             <div ref={notificationsEndRef} />
