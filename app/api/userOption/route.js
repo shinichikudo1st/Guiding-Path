@@ -5,15 +5,15 @@ import { z } from "zod";
 import { getSession } from "@/app/utils/authentication";
 
 const createUserSchema = z.object({
-  name: z.string(),
-  grade_level: z.string(),
-  program: z.string(),
-  department: z.string(),
   id: z.string(),
   email: z.string().email(),
+  name: z.string(),
   contact: z.string(),
   password: z.string().min(8),
-  confirm_password: z.string().min(8),
+  type: z.string(),
+  department: z.string(),
+  course: z.string(),
+  year: z.string(),
 });
 
 /**SANITIZED INPUTS
@@ -33,27 +33,16 @@ export async function POST(request) {
   try {
     const body = await request.json();
     const {
-      name,
-      grade_level,
-      program,
-      department,
       id,
       email,
-      contact,
+      name,
+      department,
+      type,
+      course,
+      year,
       password,
-      confirm_password,
+      contact,
     } = createUserSchema.parse(body);
-
-    const role = "student";
-
-    if (password != confirm_password) {
-      return NextResponse.json(
-        { error: "Password & Confirm Password did not match" },
-        {
-          status: 404,
-        }
-      );
-    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -72,21 +61,28 @@ export async function POST(request) {
 
     const user = await prisma.users.create({
       data: {
-        name: name,
         user_id: id,
         email: email,
+        name: name,
         hashedPassword: hashedPassword,
         contact: contact,
-        role: role,
+        role: type,
       },
     });
 
-    if (user.role === "student") {
+    if (type === "student") {
       await prisma.students.create({
         data: {
           student_id: user.user_id,
-          grade_level: grade_level,
-          program: program,
+          department: department,
+          grade_level: year,
+          program: course,
+        },
+      });
+    } else {
+      await prisma.teachers.create({
+        data: {
+          teacher_id: user.user_id,
           department: department,
         },
       });
@@ -94,7 +90,7 @@ export async function POST(request) {
 
     return NextResponse.json({ message: "User Created" }, { status: 201 });
   } catch (error) {
-    //console.error("Server error:", error); (for debugging)
+    console.error("Server error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

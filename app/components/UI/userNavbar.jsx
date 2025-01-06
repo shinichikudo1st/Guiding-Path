@@ -44,18 +44,31 @@ const UserNavbar = ({ profile, onPageChange }) => {
   }, []);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await fetch("/api/navbarInfo");
-        if (!response.ok) throw new Error("Failed to fetch user info");
-        const data = await response.json();
+    let eventSource;
+
+    const connectNavbarSSE = () => {
+      eventSource = new EventSource("/api/navbarInfo");
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         setUserInfo(data.user);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("NavbarInfo EventSource failed:", error);
+        eventSource.close();
+        // Attempt to reconnect after 5 seconds
+        setTimeout(connectNavbarSSE, 5000);
+      };
     };
 
-    fetchUserInfo();
+    connectNavbarSSE();
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
 
   const logout = async () => {
