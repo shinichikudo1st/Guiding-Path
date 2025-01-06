@@ -8,9 +8,8 @@ import {
   FaLightbulb,
   FaRoad,
   FaClock,
-  FaBullseye,
   FaCheckCircle,
-  FaClipboardList,
+  FaUser,
 } from "react-icons/fa";
 
 const ChatbotModal = ({ onClose }) => {
@@ -52,44 +51,82 @@ const ChatbotModal = ({ onClose }) => {
 
   const tabs = [
     { id: "evaluation", label: "Evaluation", icon: FaChartBar },
+    { id: "personality", label: "Personality", icon: FaUser },
     { id: "action", label: "Action Plan", icon: FaLightbulb },
     { id: "roadmap", label: "Development Path", icon: FaRoad },
   ];
 
-  const EvaluationTab = ({ evaluation, getScoreColor }) => (
-    <div className="p-6 space-y-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="flex flex-col space-y-4">
-          <div className="flex justify-between items-center p-4 border-b border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#0B6EC9]/10 flex items-center justify-center">
-                <FaChartBar className="text-[#0B6EC9] text-xl" />
-              </div>
-              <h3 className="text-xl font-semibold text-[#062341]">
-                Performance Overview
-              </h3>
-            </div>
-            <span
-              className={`px-4 py-2 rounded-full text-lg font-bold text-white ${getScoreColor(
-                evaluation?.score
-              )}`}
-            >
-              {evaluation?.score.toFixed(2)}
-            </span>
-          </div>
+  const EvaluationTab = ({ evaluation, getScoreColor }) => {
+    const scoreRanges = [
+      { min: 4.5, max: 5.0, label: "Excellent", color: "bg-green-500" },
+      { min: 4.0, max: 4.49, label: "Very Good", color: "bg-lime-300" },
+      { min: 3.0, max: 3.99, label: "Satisfactory", color: "bg-yellow-500" },
+      { min: 2.0, max: 2.99, label: "Needs Improvement", color: "bg-orange-500" },
+      { min: 0.1, max: 1.99, label: "Critical", color: "bg-red-300" },
+      { min: 0.0, max: 0.0, label: "No Score", color: "bg-gray-300" },
+    ];
 
-          <div className="p-4">
-            <div className="bg-gradient-to-br from-[#0B6EC9]/5 to-transparent p-4 rounded-lg">
-              <h4 className="font-semibold text-[#062341] mb-2">
-                {evaluation?.baseEvaluation.evaluation}
-              </h4>
-              <p className="text-gray-600">{evaluation?.detailedEvaluation}</p>
+    return (
+      <div className="p-6 space-y-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="flex flex-col space-y-4">
+            <div className="flex justify-between items-center p-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#0B6EC9]/10 flex items-center justify-center">
+                  <FaChartBar className="text-[#0B6EC9] text-xl" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#062341]">
+                  Performance Overview
+                </h3>
+              </div>
+              <span
+                className={`px-4 py-2 rounded-full text-lg font-bold text-white ${getScoreColor(
+                  evaluation?.score
+                )}`}
+              >
+                {evaluation?.score.toFixed(2)}
+              </span>
+            </div>
+
+            <div className="px-4">
+              <div className="bg-gradient-to-br from-[#0B6EC9]/5 to-transparent p-4 rounded-lg">
+                <h4 className="font-semibold text-[#062341] mb-2">
+                  {evaluation?.baseEvaluation.evaluation}
+                </h4>
+                <p className="text-gray-600">{evaluation?.detailedEvaluation}</p>
+              </div>
+            </div>
+
+            {/* Score Legend */}
+            <div className="px-4 pb-4">
+              <div className="mt-4 bg-gray-50 rounded-lg p-3">
+                <h4 className="text-sm font-medium text-[#062341] mb-2 flex items-center gap-2 px-1">
+                  <FaChartBar className="text-[#0B6EC9] text-xs" />
+                  <span>Score Range Guide</span>
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {scoreRanges.map((range) => (
+                    <div
+                      key={range.label}
+                      className="bg-white flex items-center gap-2 px-3 py-1.5 rounded border border-gray-100"
+                    >
+                      <div className={`w-2 h-2 rounded-full ${range.color}`}></div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {range.label}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        ({range.min.toFixed(1)}-{range.max.toFixed(1)})
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const ActionPlanTab = ({ evaluation }) => (
     <div className="p-6 space-y-6">
@@ -176,6 +213,87 @@ const ChatbotModal = ({ onClose }) => {
     </div>
   );
 
+  const PersonalityTab = ({ evaluation }) => {
+    const traits = [
+      {
+        name: "Openness",
+        key: "openness",
+        description: "Curiosity and willingness to try new experiences",
+      },
+      {
+        name: "Conscientiousness",
+        key: "conscientiousness",
+        description: "Organization and responsibility level",
+      },
+      {
+        name: "Extraversion",
+        key: "extraversion",
+        description: "Social interaction and energy from others",
+      },
+      {
+        name: "Agreeableness",
+        key: "agreeableness",
+        description: "Cooperation and consideration of others",
+      },
+      {
+        name: "Neuroticism",
+        key: "neuroticism",
+        description: "Emotional stability and stress response",
+      },
+    ];
+
+    const getTraitColor = (score) => {
+      if (score >= 4.5) return "bg-green-500";
+      if (score >= 4.0) return "bg-lime-300";
+      if (score >= 3.0) return "bg-yellow-500";
+      if (score >= 2.0) return "bg-orange-500";
+      return "bg-red-500";
+    };
+
+    return (
+      <div className="p-6 space-y-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center p-4 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#0B6EC9]/10 flex items-center justify-center">
+                <FaUser className="text-[#0B6EC9] text-xl" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#062341]">
+                OCEAN Personality Analysis
+              </h3>
+            </div>
+          </div>
+
+          <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {traits.map((trait) => (
+              <div
+                key={trait.key}
+                className="bg-gray-50 rounded-lg p-4 space-y-3"
+              >
+                <div className="flex justify-between items-center">
+                  <h4 className="font-semibold text-[#062341]">{trait.name}</h4>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-bold text-white ${getTraitColor(
+                      evaluation?.personalityAnalysis?.[trait.key]?.score || 0
+                    )}`}
+                  >
+                    {evaluation?.personalityAnalysis?.[trait.key]?.score ? 
+                      evaluation.personalityAnalysis[trait.key].score.toFixed(1) 
+                      : "N/A"}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600">{trait.description}</p>
+                <p className="text-sm text-gray-700">
+                  {evaluation?.personalityAnalysis?.[trait.key]?.description || "No analysis available"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -237,10 +355,15 @@ const ChatbotModal = ({ onClose }) => {
                 getScoreColor={getScoreColor}
               />
             )}
+            {activeTab === "personality" && (
+              <PersonalityTab evaluation={evaluation} />
+            )}
             {activeTab === "action" && (
               <ActionPlanTab evaluation={evaluation} />
             )}
-            {activeTab === "roadmap" && <RoadmapTab evaluation={evaluation} />}
+            {activeTab === "roadmap" && (
+              <RoadmapTab evaluation={evaluation} />
+            )}
           </div>
         )}
       </motion.div>

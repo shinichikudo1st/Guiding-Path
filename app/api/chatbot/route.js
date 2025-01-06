@@ -87,7 +87,7 @@ export async function POST(request) {
     Base Description: ${baseEvaluation.description}
     Base Suggestion: ${baseEvaluation.suggestion}
 
-    Provide a response in the following JSON format:
+    Analyze the student's personality using the OCEAN model and provide a response in the following JSON format:
     {
       "detailedEvaluation": "2-3 sentences explaining what this score means for their performance standing",
       "actionPlan": [
@@ -128,10 +128,30 @@ export async function POST(request) {
           "description": "Detailed description of long-term mastery",
           "expectedOutcome": "Expected outcome after completing this milestone"
         }
-      ]
-    }
-
-    Ensure the response is strictly in this JSON format with no additional text or markdown.`;
+      ],
+      "personalityAnalysis": {
+        "openness": {
+          "score": number between 1-5,
+          "description": "Description of openness trait"
+        },
+        "conscientiousness": {
+          "score": number between 1-5,
+          "description": "Description of conscientiousness trait"
+        },
+        "extraversion": {
+          "score": number between 1-5,
+          "description": "Description of extraversion trait"
+        },
+        "agreeableness": {
+          "score": number between 1-5,
+          "description": "Description of agreeableness trait"
+        },
+        "neuroticism": {
+          "score": number between 1-5,
+          "description": "Description of neuroticism trait"
+        }
+      }
+    }`;
 
     try {
       const result = await model.generateContent(prompt);
@@ -145,6 +165,7 @@ export async function POST(request) {
         detailedEvaluation: aiResponse.detailedEvaluation,
         actionPlan: aiResponse.actionPlan,
         roadmap: aiResponse.roadmap,
+        personalityAnalysis: aiResponse.personalityAnalysis,
       });
     } catch (error) {
       console.error("Chatbot error:", error);
