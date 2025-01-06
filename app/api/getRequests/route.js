@@ -47,6 +47,7 @@ export async function GET(request) {
             student: {
               select: {
                 profilePicture: true,
+                name: true,
               },
             },
           },
