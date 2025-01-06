@@ -5,7 +5,7 @@ import AppointmentCalendar from "../modals/appointment/appointmentCalendar";
 import { motion } from "framer-motion";
 
 const Appointment = () => {
-  const [activeTab, setActiveTab] = useState("request");
+  const [activeTab, setActiveTab] = useState("pending");
 
   const tabs = [
     { id: "appointments", label: "Calendar" },

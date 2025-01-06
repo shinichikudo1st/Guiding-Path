@@ -62,7 +62,7 @@ const AdminDashboard = () => {
       <Background />
       <UserNavbar
         profile={() => toggleComponent("profile")}
-        onPageChange={handlePageChange}
+        onPageChange={(type) => toggleComponent(type)}
       />
       <CounselorSidebar
         otherButton={() => toggleComponent("otherButton")}
