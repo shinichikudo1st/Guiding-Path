@@ -43,19 +43,12 @@ const StudentDashboard = () => {
     setActiveComponent(componentName);
   };
 
-  const handlePageChange = (page) => {
-    setActiveComponent(page);
-  };
-
   const ActiveComponent = components[activeComponent];
 
   return (
     <main className="h-full w-full bg-[#D9E7F3]">
       <Background />
-      <UserNavbar
-        profile={() => toggleComponent("profile")}
-        onPageChange={handlePageChange}
-      />
+      <UserNavbar profile={() => toggleComponent("profile")} />
       <StudentSidebar
         viewProfile={() => toggleComponent("profile")}
         viewAppraisal={() => toggleComponent("appraisal")}
