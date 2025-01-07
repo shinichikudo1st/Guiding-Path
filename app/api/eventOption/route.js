@@ -2,6 +2,7 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 import { del, put } from "@vercel/blob";
+import moment from "moment-timezone";
 
 export async function DELETE(request) {
   const url = new URL(request.url);
@@ -104,7 +105,7 @@ export async function PUT(request) {
       data: {
         title: title,
         description: description,
-        date_time: date_time,
+        date_time: moment.tz(date_time, "Asia/Manila").toDate(),
         location: location,
         link: link,
         img_path: img_path,

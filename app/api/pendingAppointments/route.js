@@ -37,7 +37,6 @@ export async function GET() {
     appointments = appointments.map((appointment) => {
       // Convert to moment object in Manila timezone
       const date = moment(appointment.date_time).tz("Asia/Manila");
-      
       const formattedDate = date.format("ddd, MMM D, YYYY h:mm A");
 
       return {

@@ -1,5 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
@@ -17,11 +18,8 @@ export async function GET(request) {
   const limit = parseInt(pageSize);
   const skip = (pageNumber - 1) * limit;
 
-  const dateStartToday = new Date();
-  dateStartToday.setHours(0, 0, 0, 0);
-
-  const dateEndToday = new Date();
-  dateEndToday.setHours(23, 59, 59, 999);
+  const dateStartToday = moment().startOf("day");
+  const dateEndToday = moment().endOf("day");
 
   try {
     let totalAppointments;
@@ -30,6 +28,7 @@ export async function GET(request) {
     if (type === "today") {
       totalAppointments = await prisma.appointments.count({
         where: {
+          status: "pending",
           date_time: {
             gt: dateStartToday,
             lte: dateEndToday,
@@ -38,6 +37,7 @@ export async function GET(request) {
       });
       appointments = await prisma.appointments.findMany({
         where: {
+          status: "pending",
           date_time: {
             gt: dateStartToday,
             lte: dateEndToday,
@@ -65,6 +65,7 @@ export async function GET(request) {
     } else if (type === "upcoming") {
       totalAppointments = await prisma.appointments.count({
         where: {
+          status: "pending",
           date_time: {
             gt: dateEndToday,
           },
@@ -74,6 +75,7 @@ export async function GET(request) {
         skip,
         take: limit,
         where: {
+          status: "pending",
           date_time: {
             gt: dateEndToday,
           },
@@ -103,15 +105,8 @@ export async function GET(request) {
     }
 
     appointments = appointments.map((appointment) => {
-      const date = new Date(appointment.date_time);
-      const formattedDate = date.toLocaleString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
+      const date = moment(appointment.date_time).tz("Asia/Manila");
+      const formattedDate = date.format("ddd, MMM D, YYYY h:mm A");
 
       appointment.date_time = formattedDate;
 

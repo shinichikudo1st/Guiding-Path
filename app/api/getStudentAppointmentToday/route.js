@@ -9,8 +9,8 @@ export async function GET() {
     return NextResponse.json({ message: "Invalid Session" }, { status: 200 });
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = moment().tz("Asia/Manila");
+  today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
   try {
     const appointment = await prisma.appointments.findMany({
@@ -18,7 +18,7 @@ export async function GET() {
         student_id: sessionData.id,
         date_time: {
           gte: today,
-          lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          lt: today.clone().add(1, "day"),
         },
       },
       include: {

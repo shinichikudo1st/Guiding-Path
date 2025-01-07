@@ -32,7 +32,7 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
     }
 
-    const date = moment.tz(new Date(), "Asia/Manila");
+    const date = moment().tz("Asia/Manila");
 
     await Promise.all([
       prisma.appointment_Requests.create({
