@@ -1,6 +1,7 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import moment from "moment-timezone";
 
 export async function GET() {
   const { sessionData } = await getSession();
@@ -34,26 +35,20 @@ export async function GET() {
     });
 
     appointments = appointments.map((appointment) => {
-      const date = new Date(appointment.date_time);
-      const formattedDate = date.toLocaleString("en-US", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
+      // Convert to moment object in Manila timezone
+      const date = moment(appointment.date_time).tz("Asia/Manila");
+      
+      const formattedDate = date.format("ddd, MMM D, YYYY h:mm A");
 
       return {
         ...appointment,
-        raw_date: date.getTime(),
+        raw_date: date.valueOf(), // equivalent to getTime()
         date_time: formattedDate,
       };
     });
 
     appointments.sort((a, b) => {
-      const today = new Date().getTime();
+      const today = moment().tz("Asia/Manila").valueOf();
       return Math.abs(a.raw_date - today) - Math.abs(b.raw_date - today);
     });
 

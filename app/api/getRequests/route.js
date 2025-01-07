@@ -1,5 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 
 /**
@@ -65,16 +66,8 @@ export async function GET(request) {
 
     // Format dates for display
     const formattedRequests = sortedRequests.map((request) => {
-      const date = new Date(request.request_date);
-      const formattedDate = date.toLocaleString("en-US", {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      });
+      const date = moment(request.request_date).tz("Asia/Manila");
+      const formattedDate = date.format("ddd, MMM D, YYYY h:mm A");
 
       return {
         ...request,
