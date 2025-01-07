@@ -72,8 +72,15 @@ const EditModal = ({ editButton, profileData, retrieveProfile }) => {
       icon: FaGraduationCap,
       name: "year",
       label: "Year Level",
-      type: "text",
+      type: "select",
       placeholder: profileData.year,
+      options: [
+        "1st Year",
+        "2nd Year",
+        "3rd Year",
+        "4th Year",
+        "5th Year",
+      ],
     },
     {
       icon: FaBook,
