@@ -1,5 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -31,7 +32,7 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
     }
 
-    const date = new Date();
+    const date = moment.tz(new Date(), "Asia/Manila");
 
     await Promise.all([
       prisma.appointment_Requests.create({
@@ -45,7 +46,7 @@ export async function POST(request) {
           notes: notes,
           type: "inperson",
           role: sessionData.role,
-          request_date: date,
+          request_date: date.toDate(),
         },
       }),
       prisma.notifications.create({
@@ -53,7 +54,7 @@ export async function POST(request) {
           user_id: "332570",
           title: "New Appointment Request",
           content: "You have a new appointment request",
-          date: new Date(),
+          date: date.toDate(),
         },
       }),
     ]);

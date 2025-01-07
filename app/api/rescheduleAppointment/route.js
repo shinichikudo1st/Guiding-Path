@@ -1,6 +1,7 @@
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 import { getSession } from "@/app/utils/authentication";
+import moment from "moment-timezone";
 
 /**
  * @description check if date is available for setting appointment if there is an appointment already set then return error else return success
@@ -23,10 +24,10 @@ export async function POST(request) {
     );
   }
 
-  const appointmentDate = new Date(date);
-  const hours = appointmentDate.getHours();
-  const minutes = appointmentDate.getMinutes();
-  const dayOfWeek = appointmentDate.getDay();
+  const appointmentDate = moment.tz(date, "Asia/Manila");
+  const hours = appointmentDate.hours();
+  const minutes = appointmentDate.minutes();
+  const dayOfWeek = appointmentDate.day();
 
   //check if date is by hour
   if (minutes !== 0) {
@@ -66,7 +67,7 @@ export async function POST(request) {
   try {
     const existingAppointment = await prisma.appointments.findFirst({
       where: {
-        date_time: appointmentDate,
+        date_time: appointmentDate.toDate(),
         NOT: {
           appointment_id: id,
         },
@@ -86,7 +87,7 @@ export async function POST(request) {
         counselor_id: sessionData.id,
       },
       data: {
-        date_time: appointmentDate,
+        date_time: appointmentDate.toDate(),
       },
     });
 
