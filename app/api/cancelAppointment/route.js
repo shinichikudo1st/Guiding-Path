@@ -1,5 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 
 export async function PUT(request) {
@@ -11,15 +12,25 @@ export async function PUT(request) {
   try {
     const { id } = await request.json();
 
-    const updatedAppointment = await prisma.appointments.update({
-      where: {
-        appointment_id: id,
-        student_id: sessionData.id,
-      },
-      data: {
-        status: "cancelled",
-      },
-    });
+    const [updatedAppointment] = await Promise.all([
+      prisma.appointments.update({
+        where: {
+          appointment_id: id,
+          student_id: sessionData.id,
+        },
+        data: {
+          status: "cancelled",
+        },
+      }),
+      prisma.notifications.create({
+        data: {
+          user_id: "332570",
+          title: "Appointment Cancelled",
+          content: `${sessionData.name} has cancelled an appointment.`,
+          date: moment().tz("Asia/Manila").toDate(),
+        },
+      }),
+    ]);
 
     if (!updatedAppointment) {
       return NextResponse.json(

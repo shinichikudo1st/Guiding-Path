@@ -16,6 +16,7 @@ export async function POST(request) {
       data: {
         template_id: templateId,
         student_id: sessionData.id,
+        submittedAt: moment().tz("Asia/Manila").toDate(),
       },
     });
 

@@ -2,6 +2,7 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import moment from "moment-timezone";
 
 export async function POST(request) {
   const formData = await request.formData();
@@ -38,7 +39,7 @@ export async function POST(request) {
           user_id: "000",
           title: "New Announcement",
           content: `${sessionData.name} has created a new announcement: ${title}`,
-          date: new Date(),
+          date: moment().tz("Asia/Manila").toDate(),
         },
       }),
     ]);

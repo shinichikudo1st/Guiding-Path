@@ -2,6 +2,7 @@ import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import moment from "moment-timezone";
 
 export async function POST(request) {
   try {
@@ -26,9 +27,9 @@ export async function POST(request) {
       );
     }
 
-    const eventDate = new Date(date_time);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const eventDate = moment.tz(date_time, "Asia/Manila").toDate();
+    const today = moment().tz("Asia/Manila");
+    today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
 
     if (eventDate < today) {
       return NextResponse.json(
@@ -60,7 +61,7 @@ export async function POST(request) {
           user_id: "000",
           title: "New Event",
           content: `${sessionData.name} has created a new event: ${title}`,
-          date: new Date(),
+          date: moment().tz("Asia/Manila").toDate(),
         },
       }),
     ]);

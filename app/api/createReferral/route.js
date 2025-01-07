@@ -1,5 +1,6 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -34,7 +35,7 @@ export async function POST(request) {
           notes: notes,
           status: "pending",
           counselor_id: "332570",
-          dateSubmitted: new Date(),
+          dateSubmitted: moment().tz("Asia/Manila").toDate(),
         },
       }),
       prisma.notifications.create({
@@ -42,7 +43,7 @@ export async function POST(request) {
           user_id: "332570",
           title: "New Referral Request",
           content: "You have a new referral request",
-          date: new Date(),
+          date: moment().tz("Asia/Manila").toDate(),
         },
       }),
     ]);

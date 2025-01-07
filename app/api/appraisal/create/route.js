@@ -19,6 +19,7 @@ export async function POST(request) {
         description,
         forDepartment: department,
         counselor_id: sessionData.id,
+        createdAt: moment().tz("Asia/Manila").toDate(),
       },
     });
 
@@ -62,7 +63,7 @@ export async function POST(request) {
           user_id: "000",
           title: "New Appraisal",
           content: `Complete the ${title} appraisal test`,
-          date: new Date(),
+          date: moment().tz("Asia/Manila").toDate(),
         },
       });
     });
