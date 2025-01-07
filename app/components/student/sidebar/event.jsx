@@ -239,14 +239,11 @@ const EventSidebar = () => {
             {["all", "today", "week", "month"].map((option) => (
               <button
                 key={option}
-                className={`
-                  flex-1 px-6 py-2.5 text-sm font-medium rounded-xl transition-all duration-300
-                  ${
-                    dateFilter === option
-                      ? "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white shadow-lg transform scale-105"
-                      : "bg-white text-[#062341] hover:bg-[#E6F0F9] hover:shadow-md"
-                  }
-                `}
+                className={`flex-1 px-6 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ${
+                  dateFilter === option
+                    ? "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white shadow-lg transform scale-105"
+                    : "bg-white text-[#062341] hover:bg-[#E6F0F9] hover:shadow-md"
+                }`}
                 onClick={() => setDateFilter(option)}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -363,6 +360,8 @@ const EventSidebar = () => {
                         ? "bg-green-100 text-green-600"
                         : isEventPassed(event.date_time)
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : event.forDepartment && event.forDepartment !== event.userDepartment
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white hover:from-[#095396] hover:to-[#084B87]"
                     }`}
                   >
@@ -373,6 +372,8 @@ const EventSidebar = () => {
                       </>
                     ) : isEventPassed(event.date_time) ? (
                       "Event Closed"
+                    ) : event.forDepartment && event.forDepartment !== event.userDepartment ? (
+                      "Not Available for Your Department"
                     ) : (
                       "Register Now"
                     )}
