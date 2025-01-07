@@ -15,7 +15,7 @@ export async function GET(request) {
     const pageSize = 5;
     const skip = (page - 1) * pageSize;
 
-    const [events, student] = await Promise.all([
+    const [events, student, registrationCounts] = await Promise.all([
       prisma.events.findMany({
         skip,
         take: pageSize,
@@ -29,16 +29,39 @@ export async function GET(request) {
         },
         select: {
           department: true,
+          grade_level: true,
+        },
+      }),
+      prisma.events.findMany({
+        select: {
+          event_id: true,
+          limit: true,
+          _count: {
+            select: {
+              eventRegistrations: true,
+            },
+          },
         },
       }),
     ]);
 
-    const eventsWithAccess = events.map((event) => ({
-      ...event,
-      userDepartment: student.department,
-      canRegister:
-        !event.forDepartment || event.forDepartment === student.department,
-    }));
+    const eventsWithAccess = events.map((event) => {
+      const registrationCount = registrationCounts.find(
+        (count) => count.event_id === event.event_id
+      )?._count.eventRegistrations || 0;
+
+      return {
+        ...event,
+        userDepartment: student.department,
+        userGradeLevel: student.grade_level,
+        registrationCount,
+        isFull: event.limit ? registrationCount >= event.limit : false,
+        canRegister:
+          (!event.forDepartment || event.forDepartment === student.department) &&
+          (!event.grade_level || event.grade_level === student.grade_level) &&
+          (!event.limit || registrationCount < event.limit),
+      };
+    });
 
     const totalEvents = await prisma.events.count();
     const totalPages = Math.ceil(totalEvents / pageSize);

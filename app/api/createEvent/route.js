@@ -14,6 +14,8 @@ export async function POST(request) {
     const link = formData.get("link");
     const image = formData.get("image");
     const forDepartment = formData.get("forDepartment");
+    const limit = formData.get("limit") ? parseInt(formData.get("limit")) : null;
+    const grade_level = formData.get("grade_level");
     const { sessionData } = await getSession();
 
     if (!sessionData) {
@@ -54,6 +56,8 @@ export async function POST(request) {
           link: link || null,
           img_path,
           forDepartment,
+          limit,
+          grade_level,
         },
       }),
       prisma.notifications.create({

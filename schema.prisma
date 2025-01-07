@@ -49,6 +49,8 @@ model Events {
   link              String?
   img_path          String?
   forDepartment     String?
+  limit             Int?
+  grade_level       String?
 
   eventRegistrations Event_Registration[] 
 }

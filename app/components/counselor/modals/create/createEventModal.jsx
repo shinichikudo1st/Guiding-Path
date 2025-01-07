@@ -18,6 +18,8 @@ const EventModal = ({ closeButton }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [forDepartment, setForDepartment] = useState("");
+  const [limit, setLimit] = useState("");
+  const [gradeLevel, setGradeLevel] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -63,6 +65,8 @@ const EventModal = ({ closeButton }) => {
       formData.append("location", location);
       formData.append("link", link);
       formData.append("forDepartment", forDepartment);
+      formData.append("grade_level", gradeLevel);
+      if (limit) formData.append("limit", limit);
       if (selectedImage) {
         formData.append("image", selectedImage);
       }
@@ -208,33 +212,68 @@ const EventModal = ({ closeButton }) => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[#062341] mb-1">
-                Department Access
+            <div className="mb-6">
+              <label className="block text-[#062341] text-sm font-medium mb-2">
+                Department (Optional)
               </label>
               <select
                 value={forDepartment}
                 onChange={(e) => setForDepartment(e.target.value)}
-                className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                className="w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
               >
                 <option value="">All Departments</option>
-                <option value="College of Education">
-                  College of Education
-                </option>
-                <option value="College of Technology">
-                  College of Technology
-                </option>
-                <option value="College of Engineering">
-                  College of Engineering
-                </option>
-                <option value="College of Arts and Sciences">
-                  College of Arts and Sciences
-                </option>
-                <option value="College of Management">
-                  College of Management and Entrepreneurship
-                </option>
-                <option value="College of CCICT">College of CCICT</option>
+                  <option value="College of Education">
+                    College of Education
+                  </option>
+                  <option value="College of Technology">
+                    College of Technology
+                  </option>
+                  <option value="College of Engineering">
+                    College of Engineering
+                  </option>
+                  <option value="College of Arts and Sciences">
+                    College of Arts and Sciences
+                  </option>
+                  <option value="College of Management and Entrepreneurship">
+                    College of Management and Entrepreneurship
+                  </option>
+                  <option value="College of Computer Information and Communications Technology">
+                    College of Computer Information and Communications
+                    Technology
+                  </option>
               </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-[#062341] text-sm font-medium mb-2">
+                Grade Level (Optional)
+              </label>
+              <select
+                value={gradeLevel}
+                onChange={(e) => setGradeLevel(e.target.value)}
+                className="w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+              >
+                <option value="">All Years</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="5th Year">5th Year</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-[#062341] text-sm font-medium mb-2">
+                Number of Attendees (Optional)
+              </label>
+              <input
+                type="number"
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                min="0"
+                placeholder="Leave empty for no limit"
+                className="w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20"
+              />
             </div>
 
             <div>

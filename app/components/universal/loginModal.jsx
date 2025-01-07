@@ -19,7 +19,6 @@ const LoginModal = ({
   const [logging, setLogging] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [userType, setUserType] = useState("student");
   const router = useRouter();
@@ -438,14 +437,14 @@ const LoginModal = ({
                     <option disabled value="">
                       Select Department
                     </option>
-                    <option value="COE">College of Education</option>
-                    <option value="COT">College of Technology</option>
-                    <option value="COEN">College of Engineering</option>
-                    <option value="CAS">College of Arts and Sciences</option>
-                    <option value="CME">
+                    <option value="College of Education">College of Education</option>
+                    <option value="College of Technology">College of Technology</option>
+                    <option value="College of Engineering">College of Engineering</option>
+                    <option value="College of Arts and Sciences">College of Arts and Sciences</option>
+                    <option value="College of Management and Entrepreneurship">
                       College of Management and Entrepreneurship
                     </option>
-                    <option value="CCICT">
+                    <option value="College of Computer Information and Communications Technology">
                       College of Computer Information and Communications
                       Technology
                     </option>

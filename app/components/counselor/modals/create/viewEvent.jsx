@@ -22,6 +22,8 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(event.img_path);
   const [department, setDepartment] = useState(event.forDepartment);
+  const [limit, setLimit] = useState(event.limit || "");
+  const [gradeLevel, setGradeLevel] = useState(event.grade_level || "");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [internalError, setInternalError] = useState("");
@@ -35,6 +37,8 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     setLink(event.link);
     setPreviewImage(event.img_path);
     setDepartment(event.forDepartment);
+    setLimit(event.limit || "");
+    setGradeLevel(event.grade_level || "");
   }, [event]);
 
   const validateForm = () => {
@@ -80,6 +84,8 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
       formData.append("location", location);
       formData.append("link", link);
       formData.append("forDepartment", department);
+      formData.append("grade_level", gradeLevel);
+      if (limit) formData.append("limit", limit);
       if (selectedImage) {
         formData.append("image", selectedImage);
       }
@@ -228,14 +234,17 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#062341] mb-1">
-                  Department Access
+              <div className="mb-6">
+                <label className="block text-[#062341] text-sm font-medium mb-2">
+                  Department (Optional)
                 </label>
                 <select
-                  value={department || ""}
+                  value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full p-2.5 border border-[#0B6EC9]/20 rounded-lg focus:ring-2 focus:ring-[#0B6EC9]/20 focus:border-[#0B6EC9] transition-all duration-300"
+                  disabled={!isEditing}
+                  className={`w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20 ${
+                    !isEditing ? "bg-gray-100" : ""
+                  }`}
                 >
                   <option value="">All Departments</option>
                   <option value="College of Education">
@@ -250,14 +259,52 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
                   <option value="College of Arts and Sciences">
                     College of Arts and Sciences
                   </option>
-                  <option value="College of Management">
+                  <option value="College of Management and Entrepreneurship">
                     College of Management and Entrepreneurship
                   </option>
-                  <option value="College of CCICT">
+                  <option value="College of Computer Information and Communications Technology">
                     College of Computer Information and Communications
                     Technology
                   </option>
                 </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-[#062341] text-sm font-medium mb-2">
+                  Grade Level (Optional)
+                </label>
+                <select
+                  value={gradeLevel}
+                  onChange={(e) => setGradeLevel(e.target.value)}
+                  disabled={!isEditing}
+                  className={`w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20 ${
+                    !isEditing ? "bg-gray-100" : ""
+                  }`}
+                >
+                  <option value="">All Years</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                  <option value="5th Year">5th Year</option>
+                </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-[#062341] text-sm font-medium mb-2">
+                  Number of Attendees (Optional)
+                </label>
+                <input
+                  type="number"
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value)}
+                  disabled={!isEditing}
+                  min="0"
+                  placeholder="Leave empty for no limit"
+                  className={`w-full p-3 border border-[#0B6EC9]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B6EC9]/20 ${
+                    !isEditing ? "bg-gray-100" : ""
+                  }`}
+                />
               </div>
 
               <div>
@@ -343,6 +390,14 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
                 <p className="text-sm text-[#062341]/70">
                   <span className="font-medium">Department Access:</span>{" "}
                   {currentEvent.forDepartment || "All Departments"}
+                </p>
+                <p className="text-sm text-[#062341]/70">
+                  <span className="font-medium">Grade Level:</span>{" "}
+                  {currentEvent.grade_level || "All Years"}
+                </p>
+                <p className="text-sm text-[#062341]/70">
+                  <span className="font-medium">Number of Attendees:</span>{" "}
+                  {currentEvent.limit || "No Limit"}
                 </p>
               </div>
             </div>

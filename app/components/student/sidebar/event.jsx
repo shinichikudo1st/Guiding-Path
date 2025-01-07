@@ -7,6 +7,7 @@ import {
   FaCheck,
   FaFilter,
   FaClock,
+  FaGraduationCap,
 } from "react-icons/fa";
 import RegisterEvent from "../modals/registerEvent";
 import ProgressiveImage from "../../UI/progressiveImage";
@@ -316,6 +317,49 @@ const EventSidebar = () => {
 
                   <p className="text-[#062341]/70 mb-4">{event.description}</p>
 
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleRegister(event)}
+                    disabled={
+                      isEventPassed(event.date_time) ||
+                      isRegistered(event.event_id) ||
+                      (event.forDepartment && event.forDepartment !== event.userDepartment) ||
+                      (event.grade_level && event.grade_level !== event.userGradeLevel) ||
+                      event.isFull
+                    }
+                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 ${
+                      isRegistered(event.event_id)
+                        ? "bg-green-100 text-green-600"
+                        : isEventPassed(event.date_time)
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : event.isFull
+                        ? "bg-orange-100 text-orange-600 cursor-not-allowed"
+                        : (event.forDepartment && event.forDepartment !== event.userDepartment) ||
+                          (event.grade_level && event.grade_level !== event.userGradeLevel)
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white hover:from-[#095396] hover:to-[#084B87]"
+                    }`}
+                  >
+                    {isRegistered(event.event_id) ? (
+                      <>
+                        <FaCheck />
+                        Registered
+                      </>
+                    ) : isEventPassed(event.date_time) ? (
+                      "Event Closed"
+                    ) : event.isFull ? (
+                      "Event Full"
+                    ) : (event.forDepartment && event.forDepartment !== event.userDepartment) ? (
+                      "Not Available for Your Department"
+                    ) : (event.grade_level && event.grade_level !== event.userGradeLevel) ? (
+                      `For ${event.grade_level} Students Only`
+                    ) : (
+                      "Register Now"
+                    )}
+                  </motion.button>
+
+                  {/* Event Details */}
                   <div className="bg-[#F8FAFC] p-4 rounded-xl border border-[#0B6EC9]/10 space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
                       <FaClock className="text-[#0B6EC9]" />
@@ -330,54 +374,17 @@ const EventSidebar = () => {
                     <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
                       <FaUserFriends className="text-[#0B6EC9]" />
                       <span>
-                        {registrationCounts[event.event_id] || 0} registered
+                        {event.registrationCount} registered
+                        {event.limit ? ` (${event.limit - event.registrationCount} spots left)` : ""}
                       </span>
                     </div>
-                  </div>
-
-                  {event.link && (
-                    <a
-                      href={event.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-[#0B6EC9] text-sm hover:underline mb-4"
-                    >
-                      <FaLink />
-                      <span>Event Link</span>
-                    </a>
-                  )}
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleRegister(event)}
-                    disabled={
-                      isEventPassed(event.date_time) ||
-                      isRegistered(event.event_id)
-                    }
-                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 ${
-                      isRegistered(event.event_id)
-                        ? "bg-green-100 text-green-600"
-                        : isEventPassed(event.date_time)
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : event.forDepartment && event.forDepartment !== event.userDepartment
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-[#0B6EC9] to-[#095396] text-white hover:from-[#095396] hover:to-[#084B87]"
-                    }`}
-                  >
-                    {isRegistered(event.event_id) ? (
-                      <>
-                        <FaCheck />
-                        Registered
-                      </>
-                    ) : isEventPassed(event.date_time) ? (
-                      "Event Closed"
-                    ) : event.forDepartment && event.forDepartment !== event.userDepartment ? (
-                      "Not Available for Your Department"
-                    ) : (
-                      "Register Now"
+                    {event.grade_level && (
+                      <div className="flex items-center gap-2 text-[#062341]/80 text-sm">
+                        <FaGraduationCap className="text-[#0B6EC9]" />
+                        <span>For {event.grade_level} Students</span>
+                      </div>
                     )}
-                  </motion.button>
+                  </div>
                 </div>
               </motion.div>
             ))
