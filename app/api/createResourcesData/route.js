@@ -1,4 +1,5 @@
 import { getSession } from "@/app/utils/authentication";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -22,7 +23,7 @@ export async function POST(request) {
         data: {
           user_id: sessionData.id,
           resource_id: resourceID,
-          access_date: new Date(),
+          access_date: moment().tz("Asia/Manila").toDate(),
         },
       });
     }
