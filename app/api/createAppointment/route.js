@@ -1,6 +1,7 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
 import { NextResponse } from "next/server";
+import moment from 'moment-timezone';
 
 /**
  *
@@ -23,10 +24,11 @@ export async function POST(request) {
     return NextResponse.json({ message: "Invalid Session" }, { status: 401 });
   }
 
-  const appointmentDate = new Date(date);
-  const hours = appointmentDate.getHours();
-  const minutes = appointmentDate.getMinutes();
-  const dayOfWeek = appointmentDate.getDay();
+  // Convert the date to Manila time using moment
+  const appointmentDate = moment.tz(date, "Asia/Manila");
+  const hours = appointmentDate.hours();
+  const minutes = appointmentDate.minutes();
+  const dayOfWeek = appointmentDate.day();
 
   //check if date is by hour
   if (minutes !== 0) {
@@ -51,24 +53,20 @@ export async function POST(request) {
     (hours === 13 && minutes >= 0) ||
     (hours > 13 && hours < 19) ||
     (hours === 20 && minutes >= 0) ||
-    (hours > 20 && hours < 21);
+    (hours > 20 && hours <= 21);
 
   if (!isValidTime) {
     return NextResponse.json(
-      {
-        error:
-          "Please select a time between 8:00 AM and 9:00 PM, excluding 12:00 PM to 1:00 PM and 7:00 PM to 8:00 PM",
-      },
+      { error: "Selected time is outside of working hours" },
       { status: 400 }
     );
   }
 
   try {
-    // Conditionally create Promise.all array based on role
     const queries = [
       prisma.appointments.findFirst({
         where: {
-          date_time: appointmentDate,
+          date_time: appointmentDate.toDate(),
         },
       }),
     ];
@@ -124,7 +122,7 @@ export async function POST(request) {
         data: {
           student_id: id,
           counselor_id: sessionData.id,
-          date_time: appointmentDate,
+          date_time: appointmentDate.toDate(),
           type: submitType,
           notes: notes,
           reason: reason,
@@ -137,7 +135,7 @@ export async function POST(request) {
           user_id: id,
           title: title,
           content: content,
-          date: appointmentDate,
+          date: appointmentDate.toDate(),
         },
       }),
     ]);
@@ -149,7 +147,7 @@ export async function POST(request) {
             user_id: referralTeacher.teacher_id,
             title: "Referral Request Accepted",
             content: "Your referral request has been accepted",
-            date: appointmentDate,
+            date: appointmentDate.toDate(),
           },
         }),
         prisma.referrals.update({
