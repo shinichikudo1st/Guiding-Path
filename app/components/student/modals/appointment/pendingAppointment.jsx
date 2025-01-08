@@ -28,27 +28,12 @@ const PendingAppointment = () => {
       setAppointments(result.appointment);
       console.log(result.appointment);
 
-      const encryptedAppointments = encrypt(result.appointment);
-      if (encryptedAppointments) {
-        sessionStorage.setItem("pendingAppointments", encryptedAppointments);
-      }
     } catch (error) {}
     setLoading(false);
   };
 
   useEffect(() => {
-    const sessionCache = sessionStorage.getItem("pendingAppointments");
-    if (sessionCache) {
-      const decryptedAppointments = decrypt(sessionCache);
-      if (decryptedAppointments) {
-        setAppointments(decryptedAppointments);
-        setLoading(false);
-      } else {
-        retrievePendingAppointments();
-      }
-    } else {
-      retrievePendingAppointments();
-    }
+    retrievePendingAppointments();
   }, []);
 
   const handleCancelClick = (appointmentId) => {
