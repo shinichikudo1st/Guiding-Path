@@ -10,6 +10,8 @@ import {
   format,
 } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req) {
   try {
     const { sessionData } = await getSession();
