@@ -27,6 +27,7 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [internalError, setInternalError] = useState("");
+  const [registeredCount, setRegisteredCount] = useState(0);
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -40,6 +41,21 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
     setLimit(event.limit || "");
     setGradeLevel(event.grade_level || "");
   }, [event]);
+
+  useEffect(() => {
+    const fetchRegistrationCount = async () => {
+      try {
+        const response = await fetch(`/api/getEventRegistrations?eventId=${event.event_id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setRegisteredCount(data.count);
+        }
+      } catch (error) {
+        console.error("Error fetching registrations:", error);
+      }
+    };
+    fetchRegistrationCount();
+  }, [event.event_id]);
 
   const validateForm = () => {
     setInternalError("");
@@ -340,6 +356,36 @@ const ViewEventModal = ({ event, closeButton, onEventChange }) => {
             </div>
           ) : (
             <div className="space-y-4">
+              <div className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-4 text-white shadow-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">Registered Students</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-3xl font-bold">{registeredCount}</span>
+                      {limit && (
+                        <span className="text-sm opacity-80">
+                          out of {limit} spots
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                </div>
+                {limit && (
+                  <div className="mt-2">
+                    <div className="w-full bg-white bg-opacity-20 rounded-full h-2">
+                      <div 
+                        className="bg-white rounded-full h-2 transition-all duration-500"
+                        style={{ width: `${Math.min((registeredCount / limit) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <h3 className="text-2xl font-semibold text-[#062341]">
                 {currentEvent.title}
               </h3>
