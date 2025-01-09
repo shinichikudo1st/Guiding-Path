@@ -1,6 +1,9 @@
 import { getSession } from "@/app/utils/authentication";
 import prisma from "@/app/utils/prisma";
+import moment from "moment-timezone";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -10,9 +13,9 @@ export async function GET() {
     }
 
     // Get first and last day of current month
-    const now = new Date();
-    const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    const now = moment().tz("Asia/Manila");
+    const startDate = now.startOf("month").toDate();
+    const endDate = now.endOf("month").toDate();
 
     const [
       appointmentData,

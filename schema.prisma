@@ -14,6 +14,8 @@ model Users {
   name                String     @default("Student-C137")
   email               String     @unique
   hashedPassword      String
+  resetToken          String?
+  resetTokenExpiry    DateTime?
   role                String     @default("student")
   status              String     @default("active")
   contact             String
