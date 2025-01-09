@@ -21,6 +21,8 @@ const LoginModal = ({
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [userType, setUserType] = useState("student");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const LoginModal = ({
 
     const formData = new FormData(e.target);
     const email = DOMPurify.sanitize(formData.get("email"));
-    const password = DOMPurify.sanitize(formData.get("password"));
+    const password = DOMPurify.sanitize(formData.get("loginPassword"));
 
     if (!email || !password) {
       setError("Email and password are required");
@@ -152,6 +154,39 @@ const LoginModal = ({
       setError(error.message);
     } finally {
       setIsCreatingAccount(false);
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLogging(true);
+
+    try {
+      const sanitizedEmail = DOMPurify.sanitize(resetEmail);
+      const response = await fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: sanitizedEmail }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send reset link');
+      }
+      
+      setSuccess(data.message);
+      setResetEmail("");
+      setTimeout(() => {
+        setShowForgotPassword(false);
+      }, 3000);
+    } catch (err) {
+      setError(err.message || 'An error occurred. Please try again.');
+    } finally {
+      setLogging(false);
     }
   };
 
@@ -273,79 +308,153 @@ const LoginModal = ({
               </motion.div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <label className="block text-gray-700 text-sm font-semibold mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
+            {!showForgotPassword ? (
+              <form onSubmit={handleLogin} className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      name="email"
+                      className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showLoginPassword ? "text" : "password"}
+                      name="loginPassword"
+                      className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      placeholder="Enter your password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    >
+                      {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </motion.div>
+
+                <div className="flex items-center justify-end">
+                  <motion.button
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm font-medium text-[#0B6EC9] hover:text-[#095396] hover:underline"
+                  >
+                    Forgot password?
+                  </motion.button>
+                </div>
+
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  type="submit"
+                  disabled={logging}
+                  className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {logging ? (
+                    <div className="flex items-center justify-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                        className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      Signing in...
+                    </div>
+                  ) : (
+                    "Sign In"
+                  )}
+                </motion.button>
+              </form>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label
+                    htmlFor="reset-email"
+                    className="block text-gray-700 text-sm font-semibold mb-2"
+                  >
+                    Your email
+                  </label>
                   <input
                     type="email"
-                    name="email"
+                    name="reset-email"
+                    id="reset-email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
                     className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your email"
+                    placeholder="name@company.com"
                     required
                   />
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <label className="block text-gray-700 text-sm font-semibold mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showLoginPassword ? "text" : "password"}
-                    name="password"
-                    className="w-full px-4 py-3 text-[#062341] border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowLoginPassword(!showLoginPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  >
-                    {showLoginPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </motion.div>
-
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                type="submit"
-                disabled={logging}
-                className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {logging ? (
-                  <div className="flex items-center justify-center">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
-                    />
-                    Signing in...
-                  </div>
-                ) : (
-                  "Sign In"
-                )}
-              </motion.button>
-            </form>
-
+                </motion.div>
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  type="submit"
+                  disabled={logging}
+                  className="w-full bg-[#0B6EC9] text-white py-3 rounded-lg font-semibold hover:bg-[#095396] transition-all duration-300 disabled:opacity-50 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {logging ? (
+                    <div className="flex items-center justify-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                        className="mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      Sending...
+                    </div>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </motion.button>
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  type="button"
+                  onClick={() => setShowForgotPassword(false)}
+                  className="w-full bg-gray-100 text-gray-600 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Back to Login
+                </motion.button>
+              </form>
+            )}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
