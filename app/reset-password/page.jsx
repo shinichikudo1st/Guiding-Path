@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import DOMPurify from "dompurify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-function ResetPasswordForm() {
+export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -183,22 +183,5 @@ function ResetPasswordForm() {
         </form>
       </motion.div>
     </div>
-  );
-}
-
-// Loading component for Suspense fallback
-function LoadingState() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0B6EC9]"></div>
-    </div>
-  );
-}
-
-export default function ResetPassword() {
-  return (
-    <Suspense fallback={<LoadingState />}>
-      <ResetPasswordForm />
-    </Suspense>
   );
 }
