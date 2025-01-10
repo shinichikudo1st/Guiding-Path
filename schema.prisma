@@ -258,3 +258,7 @@ model StudentAppraisal {
   @@unique([template_id, student_id])
 }
 
+model Check {
+  check_id    String    @id
+  role        String
+}
