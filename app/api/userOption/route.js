@@ -44,6 +44,27 @@ export async function POST(request) {
       contact,
     } = createUserSchema.parse(body);
 
+    // First, check if the ID exists in the Check table and validate role
+    const checkRecord = await prisma.check.findUnique({
+      where: {
+        check_id: id,
+      },
+    });
+
+    if (!checkRecord) {
+      return NextResponse.json(
+        { message: "Invalid ID: This ID is not registered in our system" },
+        { status: 400 }
+      );
+    }
+
+    if (checkRecord.role.toLowerCase() !== type.toLowerCase()) {
+      return NextResponse.json(
+        { message: `Invalid role: This ID is registered for ${checkRecord.role} role, not ${type}` },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const emailExists = await prisma.users.findUnique({
