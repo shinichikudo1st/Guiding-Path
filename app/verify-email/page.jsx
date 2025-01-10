@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function VerifyEmail() {
+function VerificationComponent() {
   const [status, setStatus] = useState('Verifying...');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,6 +37,34 @@ export default function VerifyEmail() {
   }, [token, router]);
 
   return (
+    <div>
+      {status === 'Verifying...' ? (
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
+        <p className={`text-lg ${
+          status.includes('successfully') ? 'text-green-600' : 'text-red-600'
+        }`}>
+          {status}
+        </p>
+      )}
+      {!status.includes('Verifying') && !status.includes('successfully') && (
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => router.push('/')}
+            className="text-indigo-600 hover:text-indigo-500"
+          >
+            Return to login
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
@@ -44,28 +72,14 @@ export default function VerifyEmail() {
             Email Verification
           </h2>
           <div className="mt-4 text-center">
-            {status === 'Verifying...' ? (
+            <Suspense fallback={
               <div className="flex justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
               </div>
-            ) : (
-              <p className={`text-lg ${
-                status.includes('successfully') ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {status}
-              </p>
-            )}
+            }>
+              <VerificationComponent />
+            </Suspense>
           </div>
-          {!status.includes('Verifying') && !status.includes('successfully') && (
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => router.push('/')}
-                className="text-indigo-600 hover:text-indigo-500"
-              >
-                Return to login
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
