@@ -50,7 +50,9 @@ export async function middleware(request) {
       !request.nextUrl.pathname.includes("loginUser") &&
       !request.nextUrl.pathname.includes("userOption") &&
       !request.nextUrl.pathname.includes("forgot-password") &&
-      !request.nextUrl.pathname.includes("reset-password"))
+      !request.nextUrl.pathname.includes("reset-password") &&
+      !request.nextUrl.pathname.includes("verify-email") &&
+      !request.nextUrl.pathname.includes("resend-verification"))
   ) {
     const authorized = await getSession();
     if (!authorized) {
@@ -75,6 +77,6 @@ export const config = {
     "/pages/teacherDashboard",
     "/pages/adminDashboard",
     "/pages/studentDashboard",
-    "/((?!api/loginUser|api/userOption|api/forgot-password|api/reset-password).*)", // Exclude login, registration and password reset endpoints
+    "/((?!api/loginUser|api/userOption|api/forgot-password|api/reset-password|api/verify-email|api/resend-verification).*)", // Exclude login, registration, password reset and verification endpoints
   ],
 };

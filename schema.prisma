@@ -20,6 +20,9 @@ model Users {
   status              String     @default("active")
   contact             String
   profilePicture      String?    @default("/noProfile.png")
+  emailVerified       Boolean    @default(false)
+  verificationToken   String?    @unique
+  verificationExpiry  DateTime?
 
   student             Students?
   counselor           Counselors?
@@ -258,3 +261,7 @@ model StudentAppraisal {
   @@unique([template_id, student_id])
 }
 
+model Check {
+  check_id    String    @id
+  role        String
+}

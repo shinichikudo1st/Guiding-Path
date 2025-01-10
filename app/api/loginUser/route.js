@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import prisma from "@/app/utils/prisma";
 import { z } from "zod";
+import { generateVerificationToken, sendVerificationEmail } from "@/app/utils/emailVerification";
+import moment from "moment-timezone";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -37,6 +39,13 @@ export async function POST(request) {
       },
     });
 
+    if (!user) {
+      return NextResponse.json(
+        { message: "Invalid email or password" },
+        { status: 400 }
+      );
+    }
+
     if (user.status === "archived") {
       return NextResponse.json(
         { message: "User is archived" },
@@ -50,6 +59,38 @@ export async function POST(request) {
       return NextResponse.json(
         { message: "Password did not match" },
         { status: 400 }
+      );
+    }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      // If there's an existing token that hasn't expired, don't generate a new one
+      const hasValidToken = user.verificationToken && user.verificationExpiry && 
+                          moment(user.verificationExpiry).isAfter(moment().tz('Asia/Manila'));
+
+      if (!hasValidToken) {
+        // Generate new verification token and update user
+        const verificationToken = generateVerificationToken();
+        const verificationExpiry = moment().tz('Asia/Manila').add(24, 'hours').toDate();
+
+        await prisma.users.update({
+          where: { user_id: user.user_id },
+          data: {
+            verificationToken,
+            verificationExpiry,
+          },
+        });
+
+        // Send new verification email
+        await sendVerificationEmail(user.email, verificationToken, user.name);
+      }
+
+      return NextResponse.json(
+        { 
+          message: "Please verify your email before logging in. Check your inbox for the verification link.",
+          requiresVerification: true
+        },
+        { status: 403 }
       );
     }
 
