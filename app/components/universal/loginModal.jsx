@@ -74,10 +74,33 @@ const LoginModal = ({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "An error occurred during login");
+        if (response.status === 403 && result.requiresVerification) {
+          setError(
+            <div className="text-center">
+              <p>{result.message}</p>
+              <p className="mt-2 text-sm">
+                Didn't receive the email?{" "}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleResendVerification(email);
+                  }}
+                  className="text-blue-500 hover:text-blue-600 underline focus:outline-none"
+                >
+                  Resend verification email
+                </button>
+              </p>
+            </div>
+          );
+        } else {
+          setError(result.message);
+        }
+        setLogging(false);
+        return;
       }
 
-      console.log(result.message);
+      setSuccess("Login successful!");
+      setLogging(false);
 
       if (result.role === "counselor") {
         router.push("/pages/adminDashboard");
@@ -89,6 +112,36 @@ const LoginModal = ({
     } catch (error) {
       console.error(error);
       setError(error.message);
+      setLogging(false);
+    }
+  };
+
+  const handleResendVerification = async (email) => {
+    try {
+      setLogging(true);
+      const response = await fetch("/api/resend-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.message);
+        return;
+      }
+
+      setError(
+        <div className="text-green-600 text-center">
+          Verification email has been resent. Please check your inbox.
+        </div>
+      );
+    } catch (error) {
+      setError("Failed to resend verification email. Please try again.");
+    } finally {
       setLogging(false);
     }
   };

@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import prisma from "@/app/utils/prisma";
 import { z } from "zod";
 import { getSession } from "@/app/utils/authentication";
+import { generateVerificationToken, sendVerificationEmail } from "@/app/utils/emailVerification";
+import moment from "moment-timezone";
 
 const createUserSchema = z.object({
   id: z.string(),
@@ -67,18 +69,44 @@ export async function POST(request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Check if user_id already exists
+    const userIdExists = await prisma.users.findUnique({
+      where: {
+        user_id: id,
+      },
+    });
+
+    if (userIdExists) {
+      return NextResponse.json(
+        { message: "This ID is already registered" },
+        { status: 400 }
+      );
+    }
+
     const emailExists = await prisma.users.findUnique({
       where: {
         email: email,
       },
     });
 
+    // Check if email exists and if it belongs to a different ID
     if (emailExists) {
-      return NextResponse.json(
-        { message: "Email Already Exists" },
-        { status: 400 }
-      );
+      if (emailExists.user_id === id) {
+        return NextResponse.json(
+          { message: "Cannot use existing id" },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          { message: "Email Already Exists" },
+          { status: 400 }
+        );
+      }
     }
+
+    // Generate verification token and expiry
+    const verificationToken = generateVerificationToken();
+    const verificationExpiry = moment().tz('Asia/Manila').add(24, 'hours').toDate();
 
     const user = await prisma.users.create({
       data: {
@@ -88,6 +116,9 @@ export async function POST(request) {
         hashedPassword: hashedPassword,
         contact: contact,
         role: type,
+        verificationToken,
+        verificationExpiry,
+        emailVerified: false,
       },
     });
 
@@ -109,7 +140,18 @@ export async function POST(request) {
       });
     }
 
-    return NextResponse.json({ message: "User Created" }, { status: 201 });
+    // Send verification email
+    try {
+      await sendVerificationEmail(email, verificationToken, name);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with user creation even if email fails
+    }
+
+    return NextResponse.json({ 
+      message: "User Created. Please check your email to verify your account.",
+      requiresVerification: true
+    }, { status: 201 });
   } catch (error) {
     console.error("Server error:", error);
     if (error instanceof z.ZodError) {
