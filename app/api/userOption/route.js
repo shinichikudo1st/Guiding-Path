@@ -17,20 +17,6 @@ const createUserSchema = z.object({
   course: z.string(),
   year: z.string(),
 });
-
-/**SANITIZED INPUTS
- *
- * @description createUser creates new record in the User schema with the provided inputs
- *
- * @param {Request} request request object with a JSON body containing { id, name, contact }
- * @param {Object} request.body JSON body of the request
- * @param {string} request.body.id ID of the user
- * @param {string} request.body.email Email of the user
- * @param {string} request.body.contact Contact of the user
- * @param {string} request.body.password Password of the user
- * @returns {NextResponse}
- */
-
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -46,7 +32,6 @@ export async function POST(request) {
       contact,
     } = createUserSchema.parse(body);
 
-    // First, check if the ID exists in the Check table and validate role
     const checkRecord = await prisma.check.findUnique({
       where: {
         check_id: id,
@@ -69,7 +54,6 @@ export async function POST(request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Check if user_id already exists
     const userIdExists = await prisma.users.findUnique({
       where: {
         user_id: id,
@@ -89,7 +73,6 @@ export async function POST(request) {
       },
     });
 
-    // Check if email exists and if it belongs to a different ID
     if (emailExists) {
       if (emailExists.user_id === id) {
         return NextResponse.json(
@@ -104,7 +87,6 @@ export async function POST(request) {
       }
     }
 
-    // Generate verification token and expiry
     const verificationToken = generateVerificationToken();
     const verificationExpiry = moment().tz('Asia/Manila').add(24, 'hours').toDate();
 
@@ -140,12 +122,10 @@ export async function POST(request) {
       });
     }
 
-    // Send verification email
     try {
       await sendVerificationEmail(email, verificationToken, name);
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
-      // Continue with user creation even if email fails
     }
 
     return NextResponse.json({ 
