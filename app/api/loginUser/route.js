@@ -9,24 +9,8 @@ import moment from "moment-timezone";
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(3), //change to 8 once change password is implemented
+  password: z.string().min(8),
 });
-
-/**SANITIZED INPUTS
- *
- * @description user entering the right and existing credential are logged in and given a role
- *
- * @function loginUser
- *
- * @param {Request} request request object containing the JSON body { email, password }
- *
- * @param {string} email      email used for validating login credential
- * @param {string} password   password credential to be compared to hashed password in the database
- *
- * @returns {NextResponse} NextResponse object containing message and role of the user
- *
- *
- */
 
 export async function POST(request) {
   try {
@@ -62,14 +46,11 @@ export async function POST(request) {
       );
     }
 
-    // Check if email is verified
     if (!user.emailVerified) {
-      // If there's an existing token that hasn't expired, don't generate a new one
       const hasValidToken = user.verificationToken && user.verificationExpiry && 
                           moment(user.verificationExpiry).isAfter(moment().tz('Asia/Manila'));
 
       if (!hasValidToken) {
-        // Generate new verification token and update user
         const verificationToken = generateVerificationToken();
         const verificationExpiry = moment().tz('Asia/Manila').add(24, 'hours').toDate();
 
@@ -81,7 +62,6 @@ export async function POST(request) {
           },
         });
 
-        // Send new verification email
         await sendVerificationEmail(user.email, verificationToken, user.name);
       }
 
@@ -102,7 +82,6 @@ export async function POST(request) {
       profilePicture: user.profilePicture,
     };
 
-    //2 hours
     const expires = new Date(Date.now() + 2 * (60 * 60 * 1000));
 
     const session = await encrypt({ sessionData, expires });
