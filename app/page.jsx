@@ -26,6 +26,7 @@ export default function Home() {
     setSignupFlag(false);
   };
 
+  //add new photo for logo
   return (
     <main className="min-h-screen w-full bg-gradient-to-b from-[#D9E7F3] to-white overflow-hidden">
       <Navbar login={toggleLogin} signup={toggleSignup} />
