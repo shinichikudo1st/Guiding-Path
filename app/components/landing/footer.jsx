@@ -2,6 +2,7 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import Image from "next/image";
 import ctuLogo from "@/public/ctuLogo.png";
 
+//Change appropriate footer for CCMSC
 const Footer = () => {
   return (
     <footer className="bg-[#062341] text-white relative z-20">
