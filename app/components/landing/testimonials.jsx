@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FaQuoteLeft } from "react-icons/fa";
 
+
+//Change testimonial with a different name
 const testimonials = [
   {
     content:
