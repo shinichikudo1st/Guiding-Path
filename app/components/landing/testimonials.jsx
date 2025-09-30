@@ -8,8 +8,8 @@ const testimonials = [
   {
     content:
       "An excellent platform that makes counseling services easily accessible.",
-    author: "Vaughn Andre Camangyan",
-    role: "Information Systems Student",
+    author: "Bartolome A. Pablo",
+    role: "###############",
     image: "/vaughn.jpg",
   },
 ];
