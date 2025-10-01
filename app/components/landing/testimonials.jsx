@@ -4,15 +4,7 @@ import { FaQuoteLeft } from "react-icons/fa";
 
 
 //Change testimonial with a different name
-const testimonials = [
-  {
-    content:
-      "An excellent platform that makes counseling services easily accessible.",
-    author: "Bartolome A. Pablo",
-    role: "###############",
-    image: "/vaughn.jpg",
-  },
-];
+const testimonials = [];
 
 const Testimonials = () => {
   return (
