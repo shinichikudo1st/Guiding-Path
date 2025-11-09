@@ -63,12 +63,7 @@ const Features = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{
-                scale: 1.02,
-                boxShadow: "0 10px 30px -10px rgba(6, 35, 65, 0.2)",
-                zIndex: 20,
-              }}
-              className="group relative bg-gradient-to-b from-[#F8FAFC] to-[#E6F0F9] rounded-2xl p-8 shadow-lg transition-all duration-300"
+              className="group cursor-pointer relative bg-gradient-to-b from-[#F8FAFC] to-[#E6F0F9] rounded-2xl p-8 shadow-lg transition-all duration-300"
             >
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0B6EC9] to-[#062341] rounded-t-2xl"></div>
 
@@ -83,27 +78,6 @@ const Features = () => {
               <p className="text-[#062341]/70 leading-relaxed">
                 {feature.description}
               </p>
-
-              <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="w-8 h-8 bg-[#0B6EC9] rounded-full flex items-center justify-center text-white"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </motion.div>
-              </div>
             </motion.div>
           ))}
         </div>

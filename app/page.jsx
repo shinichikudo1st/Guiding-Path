@@ -7,7 +7,6 @@ import LoginModal from "./components/universal/loginModal";
 import Hero from "./components/landing/hero";
 import Features from "./components/landing/features";
 import Footer from "./components/landing/footer";
-import Testimonials from "./components/landing/testimonials";
 
 export default function Home() {
   const [loginFlag, setLoginFlag] = useState(false);
@@ -40,7 +39,6 @@ export default function Home() {
       />
       <Hero onGetStarted={toggleSignup} />
       <Features />
-      <Testimonials />
       <Footer />
     </main>
   );
